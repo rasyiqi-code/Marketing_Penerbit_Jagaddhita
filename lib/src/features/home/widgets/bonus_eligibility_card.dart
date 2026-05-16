@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/models/global_settings_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/product_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
 import 'package:intl/intl.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
@@ -29,13 +30,13 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
 
   Future<void> _loadUserStats() async {
     if (!mounted) return;
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final salesService = Provider.of<SalesService>(context, listen: false);
 
     // Fetch stats
-    final monthlyBonuses = await firestore.getUserBonusCountThisMonth(
+    final monthlyBonuses = await salesService.getUserBonusCountThisMonth(
       widget.userId,
     );
-    final monthlyStats = await firestore.getUserSalesStatsThisMonth(
+    final monthlyStats = await salesService.getUserSalesStatsThisMonth(
       widget.userId,
     );
 
@@ -51,7 +52,7 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<GlobalSettingsModel>(
-      stream: Provider.of<FirestoreService>(
+      stream: Provider.of<ProductService>(
         context,
         listen: false,
       ).getGlobalSettings(),

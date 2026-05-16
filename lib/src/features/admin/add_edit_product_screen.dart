@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:markating_kbm_app/src/core/models/product_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/productService/product_service.dart';
 import 'package:markating_kbm_app/src/core/services/storage_service.dart';
+import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
 import 'package:markating_kbm_app/src/core/utils/network_image_web_helper.dart';
 import 'package:markating_kbm_app/src/features/admin/image_management_screen.dart';
 import 'package:provider/provider.dart';
@@ -49,12 +50,12 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final productService = Provider.of<ProductService>(context, listen: false);
 
       final product = ProductModel(
         id:
             widget.product?.id ??
-            '', // ID handled by firestore if empty but we use .add() or .update
+            '', // ID handled by productService if empty but we use .add() or .update
         houseType: _houseType,
         name: _nameController.text,
         category: _categoryController.text,
@@ -69,9 +70,9 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
       );
 
       if (widget.product == null) {
-        await firestore.addProduct(product);
+        await productService.addProduct(product);
       } else {
-        await firestore.updateProduct(product);
+        await productService.updateProduct(product);
       }
 
       if (mounted) {
@@ -86,6 +87,16 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _categoryController.dispose();
+    _priceController.dispose();
+    _descriptionController.dispose();
+    _copywritingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -113,28 +124,32 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 onChanged: (val) => setState(() => _houseType = val!),
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Product Name'),
+                label: 'Product Name',
+                icon: Icons.label_important_outline,
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _categoryController,
-                decoration: const InputDecoration(labelText: 'Category'),
+                label: 'Category',
+                icon: Icons.category_outlined,
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _priceController,
-                decoration: const InputDecoration(labelText: 'Base Price (Rp)'),
+                label: 'Base Price (Rp)',
+                icon: Icons.payments_outlined,
                 keyboardType: TextInputType.number,
                 validator: (v) => v!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
+                label: 'Description',
+                icon: Icons.description_outlined,
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
@@ -144,11 +159,10 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              TextFormField(
+              AppTextField(
                 controller: _copywritingController,
-                decoration: const InputDecoration(
-                  labelText: 'Copywriting Text',
-                ),
+                label: 'Copywriting Text',
+                icon: Icons.edit_note_outlined,
                 maxLines: 4,
               ),
               const SizedBox(height: 16),

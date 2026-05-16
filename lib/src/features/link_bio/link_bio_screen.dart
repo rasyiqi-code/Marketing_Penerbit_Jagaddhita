@@ -8,7 +8,7 @@ import 'package:markating_kbm_app/src/core/models/global_settings_model.dart';
 import 'package:markating_kbm_app/src/core/models/link_bio_model.dart';
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
 import 'package:markating_kbm_app/src/core/services/auth_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/linkBioService/link_bio_service.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/features/link_bio/add_edit_link_dialog.dart';
 import 'package:markating_kbm_app/src/features/link_bio/link_bio_preview_screen.dart';
@@ -64,7 +64,7 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
     );
 
     if (confirm == true && mounted) {
-      await Provider.of<FirestoreService>(
+      await Provider.of<LinkBioService>(
         context,
         listen: false,
       ).deleteLink(linkId);
@@ -73,7 +73,7 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
 
   Future<void> _toggleActive(LinkBioModel link, bool newVal) async {
     final updated = link.copyWith(isActive: newVal);
-    await Provider.of<FirestoreService>(
+    await Provider.of<LinkBioService>(
       context,
       listen: false,
     ).updateLink(updated);
@@ -85,12 +85,12 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final firestore = Provider.of<FirestoreService>(context);
+    final linkBioService = Provider.of<LinkBioService>(context);
 
     return Scaffold(
       backgroundColor: Colors.grey[50], // Keep background
       body: StreamBuilder<List<LinkBioModel>>(
-        stream: firestore.getLinks(_currentUser!.id),
+        stream: linkBioService.getLinks(_currentUser!.id),
         builder: (context, snapshot) {
           // ... (Error/Loading checks remain same)
           if (snapshot.hasError) {
@@ -141,7 +141,7 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [AppTheme.primaryColor, Color(0xFF6A11CB)],
+                    colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -156,7 +156,7 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
                   ],
                 ),
                 child: StreamBuilder<GlobalSettingsModel>(
-                  stream: firestore.getGlobalSettings(),
+                  stream: linkBioService.getGlobalSettings(),
                   builder: (context, settingsSnapshot) {
                     String baseUrl;
                     if (kIsWeb) {
@@ -224,7 +224,7 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
                                     // ignore: deprecated_member_use
                                     await Share.share(
                                       'Check out my bio: $bioUrl',
-                                      subject: 'My KBM Bio',
+                                      subject: 'My Jagaddhita Bio',
                                     );
                                   },
                                   icon: const Icon(

@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:markating_kbm_app/src/core/models/notification_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/notificationService/notification_service.dart';
 import 'package:markating_kbm_app/src/core/services/notification_service.dart';
 
 class NotificationController extends ChangeNotifier {
-  final FirestoreService _firestore;
+  final AppNotificationService _notificationService;
   final NotificationService _localNotifications;
 
   List<NotificationModel> _notifications = [];
@@ -16,7 +16,7 @@ class NotificationController extends ChangeNotifier {
 
   int get unreadCount => _notifications.where((n) => !n.isRead).length;
 
-  NotificationController(this._firestore, this._localNotifications);
+  NotificationController(this._notificationService, this._localNotifications);
 
   @override
   void dispose() {
@@ -33,11 +33,11 @@ class NotificationController extends ChangeNotifier {
 
     Stream<List<NotificationModel>> stream;
     if (isAdmin) {
-      stream = _firestore.getAdminNotifications();
+      stream = _notificationService.getAdminNotifications();
     } else {
-      stream = _firestore.getUserNotifications(userId);
+      stream = _notificationService.getUserNotifications(userId);
       // Run cleanup once on start (optimistic, don't await)
-      _firestore.cleanupOldNotifications(userId);
+      _notificationService.cleanupOldNotifications(userId);
     }
 
     _subscription = stream.listen((newList) {
@@ -72,7 +72,7 @@ class NotificationController extends ChangeNotifier {
   }
 
   Future<void> markAsRead(String notificationId) async {
-    await _firestore.markNotificationAsRead(notificationId);
+    await _notificationService.markNotificationAsRead(notificationId);
     // Optimistic update
     final index = _notifications.indexWhere((n) => n.id == notificationId);
     if (index != -1) {

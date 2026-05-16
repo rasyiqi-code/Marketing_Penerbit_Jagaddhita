@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/models/claim_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/wallet_service.dart';
 import 'package:provider/provider.dart';
 import 'package:markating_kbm_app/src/features/admin/admin_withdrawals_screen.dart';
 
@@ -10,9 +10,9 @@ class AdminPendingClaimsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final walletService = Provider.of<WalletService>(context, listen: false);
     return StreamBuilder<List<ClaimModel>>(
-      stream: firestore.getPendingClaims(),
+      stream: walletService.getPendingClaims(),
       builder: (context, snapshot) {
         final count = snapshot.data?.length ?? 0;
         return GestureDetector(

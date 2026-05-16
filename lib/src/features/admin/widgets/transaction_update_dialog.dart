@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:markating_kbm_app/src/core/models/notification_model.dart';
 import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
 import 'package:markating_kbm_app/src/core/services/storage_service.dart';
 import 'package:markating_kbm_app/src/core/utils/network_image_web_helper.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +72,7 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
         if (!mounted) return null;
 
         // Update Sale Document Immediately
-        await Provider.of<FirestoreService>(
+        await Provider.of<SalesService>(
           context,
           listen: false,
         ).updateSaleStatus(
@@ -111,7 +112,8 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
     String? note,
   }) async {
     try {
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final salesService = Provider.of<SalesService>(context, listen: false);
+      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
 
       final Map<String, dynamic> extraData = {};
       if (newStatus == SaleModel.statusLunas ||
@@ -119,7 +121,7 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
         extraData['paid_amount'] = sale.totalPrice;
       }
 
-      await firestore.updateSaleStatus(
+      await salesService.updateSaleStatus(
         sale,
         newStatus,
         note: note,
@@ -141,7 +143,7 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
         createdAt: DateTime.now(),
       );
 
-      await firestore.sendNotification(notification);
+      await notificationService.sendNotification(notification);
 
       if (!mounted) return;
 

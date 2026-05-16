@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
 import 'package:markating_kbm_app/src/core/models/claim_model.dart';
 import 'package:markating_kbm_app/src/core/services/auth_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
 import 'package:markating_kbm_app/src/features/home/widgets/dashboard_stats.dart';
 import 'package:markating_kbm_app/src/features/home/widgets/wallet_card.dart';
 import 'package:markating_kbm_app/src/features/wallet/withdrawal_request_screen.dart';
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return StreamBuilder<UserModel>(
-      stream: Provider.of<FirestoreService>(
+      stream: Provider.of<UserService>(
         context,
         listen: false,
       ).getUserStream(_currentUser!.id),

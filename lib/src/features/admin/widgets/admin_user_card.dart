@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 
 class AdminUserCard extends StatelessWidget {
   final UserModel user;
-  final FirestoreService firestore;
+  final UserService userService;
 
-  const AdminUserCard({super.key, required this.user, required this.firestore});
+  const AdminUserCard({super.key, required this.user, required this.userService});
 
   @override
   Widget build(BuildContext context) {
@@ -336,7 +336,7 @@ class AdminUserCard extends StatelessWidget {
             onPressed: () async {
               Navigator.pop(context);
               try {
-                await firestore.updateAdminUser(user.id, {
+                await userService.updateAdminUser(user.id, {
                   'name': nameController.text.trim(),
                 });
                 if (context.mounted) {
@@ -364,7 +364,7 @@ class AdminUserCard extends StatelessWidget {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Recalculating stats...')));
-      await firestore.recalculateUserStats(user.id);
+      await userService.recalculateUserStats(user.id);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -399,7 +399,7 @@ class AdminUserCard extends StatelessWidget {
             onPressed: () async {
               Navigator.pop(context);
               try {
-                await firestore.deleteUser(user.id);
+                await userService.deleteUser(user.id);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

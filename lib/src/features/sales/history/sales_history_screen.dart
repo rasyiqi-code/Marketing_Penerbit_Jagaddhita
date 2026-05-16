@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:markating_kbm_app/src/core/models/claim_model.dart';
 import 'package:markating_kbm_app/src/core/models/sale_model.dart';
 import 'package:markating_kbm_app/src/core/services/auth_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/salesService/sales_service.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
 import 'package:markating_kbm_app/src/core/utils/network_image_web_helper.dart';
@@ -74,7 +74,7 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final firestore = Provider.of<FirestoreService>(context);
+    final salesService = Provider.of<SalesService>(context);
     // Use Activity History Title
     const title = 'Riwayat Aktivitas';
 
@@ -96,7 +96,7 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
           children: [
             // Tab 1: Sales (Infinite Scroll)
             StreamBuilder<List<SaleModel>>(
-              stream: firestore.getUserSales(_userId!, limit: _limitSales),
+              stream: salesService.getUserSales(_userId!, limit: _limitSales),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   if (_limitSales == 20) {
@@ -156,7 +156,7 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
 
             // Tab 2: Claims (New Logic)
             StreamBuilder<List<ClaimModel>>(
-              stream: firestore.getUserClaims(_userId!),
+              stream: salesService.getUserClaims(_userId!),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -584,7 +584,7 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
       // Assuming Provider:
       // Assuming Provider:
       final storage = Provider.of<StorageService>(context, listen: false);
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final salesService = Provider.of<SalesService>(context, listen: false);
 
       // Upload
       // storage.uploadImage usually takes File? Or XFile?
@@ -602,7 +602,7 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
       if (!mounted) return;
 
       // 2. Update Sale Status
-      await firestore.updateSaleStatus(
+      await salesService.updateSaleStatus(
         sale,
         SaleModel.statusLunas, // Mark as LUNAS (Pending Admin Review)
         note: 'Pelunasan by Marketing via App',
@@ -611,7 +611,7 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
           'transaction_proof_url':
               url, // Update proof URL (Logic needed in Backend or just rely on this overwrite?)
           // Wait, 'transaction_proof_url' is in SaleModel.
-          // FirestoreService updateSaleStatus merges extraData?
+          // SalesService updateSaleStatus merges extraData?
           // I implemented `...?extraData` in `updateSaleStatus` specifically for this!
           'paid_amount': sale.totalPrice, // Full Payment
         },
@@ -629,7 +629,7 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
 
         createdAt: DateTime.now(),
       );
-      await firestore.sendNotification(notification);
+      await salesService.sendNotification(notification);
 
       scaffoldMessenger.showSnackBar(
         const SnackBar(

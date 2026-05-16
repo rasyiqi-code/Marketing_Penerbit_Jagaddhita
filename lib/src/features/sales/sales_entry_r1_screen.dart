@@ -6,8 +6,11 @@ import 'package:markating_kbm_app/src/core/models/sale_model.dart';
 
 
 import 'package:markating_kbm_app/src/core/services/auth_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
-import 'package:markating_kbm_app/src/core/services/notification_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/product_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
+import 'package:markating_kbm_app/src/core/services/notification_service.dart' as local;
 import 'package:markating_kbm_app/src/core/models/notification_model.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
@@ -63,7 +66,7 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
   void initState() {
     super.initState();
     // House Type 1 = Penerbit KBM
-    _productsStream = Provider.of<FirestoreService>(
+    _productsStream = Provider.of<ProductService>(
       context,
       listen: false,
     ).getProducts(1);
@@ -73,16 +76,17 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
 
   Future<void> _loadUserInfo() async {
     final auth = Provider.of<AuthService>(context, listen: false);
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final userService = Provider.of<UserService>(context, listen: false);
+    final salesService = Provider.of<SalesService>(context, listen: false);
     final user = await auth.getCurrentUserDetails();
 
     if (mounted && user != null) {
       // Fetch stats for limits
-      final monthlyBonuses = await firestore.getUserBonusCountThisMonth(
+      final monthlyBonuses = await salesService.getUserBonusCountThisMonth(
         user.id,
       );
       // Fetch accumulated stats
-      final monthlyStats = await firestore.getUserSalesStatsThisMonth(user.id);
+      final monthlyStats = await salesService.getUserSalesStatsThisMonth(user.id);
 
       setState(() {
         _agentName = (user.name != null && user.name!.isNotEmpty)
@@ -97,8 +101,8 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
   }
 
   void _loadSettings() {
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
-    firestore.getGlobalSettings().listen((settings) {
+    final productService = Provider.of<ProductService>(context, listen: false);
+    productService.getGlobalSettings().listen((settings) {
       if (mounted) {
         setState(() => _settings = settings);
         _calculateValues();
@@ -215,7 +219,7 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Harga satuan tidak boleh 0'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.primaryColor,
         ),
       );
       setState(() => _isLoading = false);
@@ -226,7 +230,7 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Jumlah tidak boleh 0'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.primaryColor,
         ),
       );
       setState(() => _isLoading = false);
@@ -243,7 +247,7 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Total harga tidak valid'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.primaryColor,
         ),
       );
       setState(() => _isLoading = false);
@@ -251,14 +255,15 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
     }
 
     try {
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final salesService = Provider.of<SalesService>(context, listen: false);
+      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
       final user = await auth.getCurrentUserDetails();
 
       if (user == null) throw Exception('User not found');
 
       // Use explicit logic to get agent name
 
-      final qty = int.parse(_qtyController.text);
+      final qty = int.tryParse(_qtyController.text) ?? 0;
       final markupPerQty =
           int.tryParse(
             _markupController.text.replaceAll(RegExp(r'[^0-9]'), ''),
@@ -313,9 +318,9 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
           'house_type': 1, // Penerbitan
           'agent_name': user.name ?? 'Unknown',
         },
-        totalPrice: double.parse(
+        totalPrice: double.tryParse(
           _totalPriceController.text.replaceAll(RegExp(r'[^0-9]'), ''),
-        ),
+        ) ?? 0,
         paymentStatus: SaleModel.statusPending, // Force Pending
         bonusAmount: 0, // Calculated by server/admin later or here
         commissionAmount: _commissionAmount,
@@ -324,12 +329,12 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
         totalMarkup: totalMarkup,
         pulsaBonusAmount: _pulsaBonusAmount,
         paidAmount: _paymentStatus == 'LUNAS'
-            ? double.parse(
+            ? (double.tryParse(
                 _totalPriceController.text.replaceAll(RegExp(r'[^0-9]'), ''),
-              )
-            : double.parse(
+              ) ?? 0)
+            : (double.tryParse(
                 _dpAmountController.text.replaceAll(RegExp(r'[^0-9]'), ''),
-              ),
+              ) ?? 0),
         createdAt: DateTime.now(),
         transactionProofUrl: _transactionProofUrl,
       );
@@ -337,7 +342,7 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
       // Add requested status for Admin visibility
       sale.details['requested_status'] = _paymentStatus;
 
-      await firestore.addSale(sale);
+      await salesService.addSale(sale);
 
       // Trigger Notification
       final notification = NotificationModel(
@@ -349,11 +354,11 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
         recipientId: 'role:admin',
         createdAt: DateTime.now(),
       );
-      await firestore.sendNotification(notification);
+      await notificationService.sendNotification(notification);
 
       if (mounted) {
         try {
-          final notificationService = Provider.of<NotificationService>(
+          final notificationService = Provider.of<local.NotificationService>(
             context,
             listen: false,
           );
@@ -386,6 +391,18 @@ class _SalesEntryR1ScreenState extends State<SalesEntryR1Screen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _unitPriceController.dispose();
+    _qtyController.dispose();
+    _totalPriceController.dispose();
+    _markupController.dispose();
+    _dpAmountController.dispose();
+    _penulisController.dispose();
+    _judulNaskahController.dispose();
+    super.dispose();
   }
 
   @override

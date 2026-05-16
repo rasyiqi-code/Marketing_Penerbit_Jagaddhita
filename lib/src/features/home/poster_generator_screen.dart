@@ -107,11 +107,11 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
     }
   }
 
-  void _showEditDialog() {
+  void _showEditDialog() async {
     final nameController = TextEditingController(text: _name);
     final phoneController = TextEditingController(text: _phone);
 
-    showDialog(
+    await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
@@ -157,6 +157,9 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
         ],
       ),
     );
+
+    nameController.dispose();
+    phoneController.dispose();
   }
 
   void _showStylePanel() {

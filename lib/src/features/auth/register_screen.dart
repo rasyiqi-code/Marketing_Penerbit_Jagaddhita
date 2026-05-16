@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:markating_kbm_app/src/core/services/auth_service.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
 import 'package:markating_kbm_app/src/core/models/notification_model.dart';
+import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
 
       // Default role is 'marketing'. Admin must approve or manually set admin role in DB.
       final cred = await authService.signUp(
@@ -51,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           relatedId: cred.user?.uid,
           createdAt: DateTime.now(),
         );
-        await firestore.sendNotification(notification);
+        await notificationService.sendNotification(notification);
       } catch (e) {
         debugPrint('Failed to send notification: $e');
       }
@@ -83,6 +84,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -138,36 +148,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  TextFormField(
+                  AppTextField(
                     controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Alamat Email',
-                      prefixIcon: Icon(Icons.email_outlined),
-                    ),
+                    label: 'Alamat Email',
+                    icon: Icons.email_outlined,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) =>
                         value!.isEmpty ? 'Harap masukkan email Anda' : null,
                   ),
                   const SizedBox(height: 16),
-                  TextFormField(
+                  AppTextField(
                     controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Kata Sandi',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                    ),
+                    label: 'Kata Sandi',
+                    icon: Icons.lock_outline,
                     obscureText: _obscurePassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Harap masukkan kata sandi';
@@ -179,12 +185,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  TextFormField(
+                  AppTextField(
                     controller: _confirmPasswordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Konfirmasi Kata Sandi',
-                      prefixIcon: Icon(Icons.lock_outline),
-                    ),
+                    label: 'Konfirmasi Kata Sandi',
+                    icon: Icons.lock_outline,
                     obscureText: true,
                     validator: (value) {
                       if (value != _passwordController.text) {

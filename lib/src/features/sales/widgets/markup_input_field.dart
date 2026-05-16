@@ -42,7 +42,7 @@ class _MarkupInputFieldState extends State<MarkupInputField> {
     int markupPerItem = 0;
     String cleanText = widget.controller.text.replaceAll(RegExp(r'[^0-9]'), '');
     if (cleanText.isNotEmpty) {
-      markupPerItem = int.parse(cleanText);
+      markupPerItem = int.tryParse(cleanText) ?? 0;
     }
     int totalEstimated = markupPerItem * widget.quantity;
 

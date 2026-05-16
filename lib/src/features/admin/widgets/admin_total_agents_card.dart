@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:markating_kbm_app/src/features/admin/admin_user_list_screen.dart';
@@ -11,9 +11,9 @@ class AdminTotalAgentsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final userService = Provider.of<UserService>(context, listen: false);
     return StreamBuilder<List<UserModel>>(
-      stream: firestore.getAllMarketingUsers(),
+      stream: userService.getAllMarketingUsers(),
       builder: (context, snapshot) {
         final count = snapshot.data?.length ?? 0;
         return GestureDetector(

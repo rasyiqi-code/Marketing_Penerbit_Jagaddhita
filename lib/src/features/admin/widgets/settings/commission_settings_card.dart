@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
 
 class CommissionSettingsCard extends StatelessWidget {
   final bool enableR1Commission;
@@ -44,14 +45,11 @@ class CommissionSettingsCard extends StatelessWidget {
           if (enableR1Commission)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextFormField(
+              child: AppTextField(
                 controller: bonusR1Controller,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Persentase Komisi R1',
-                  suffixText: '%',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Persentase Komisi R1',
+                icon: Icons.percent,
               ),
             ),
           const Divider(),
@@ -63,14 +61,11 @@ class CommissionSettingsCard extends StatelessWidget {
           if (enableR2Commission)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextFormField(
+              child: AppTextField(
                 controller: bonusR2Controller,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Persentase Komisi R2',
-                  suffixText: '%',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Persentase Komisi R2',
+                icon: Icons.percent,
               ),
             ),
         ],

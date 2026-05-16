@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
 
 class AnnouncementSettingsCard extends StatelessWidget {
   final TextEditingController latestInfoController;
@@ -28,26 +29,18 @@ class AnnouncementSettingsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextFormField(
+          AppTextField(
             controller: latestInfoController,
-            decoration: const InputDecoration(
-              labelText: 'Info Terkini',
-              hintText: 'Contoh: Batas klaim pulsa bulan ini: Tgl 25.',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.info_outline),
-            ),
+            label: 'Info Terkini',
+            icon: Icons.info_outline,
             maxLines: 2,
           ),
           const SizedBox(height: 16),
-          TextFormField(
+          AppTextField(
             controller: webBaseUrlController,
-            decoration: const InputDecoration(
-              labelText: 'URL Dasar Web App',
-              hintText: 'https://kbm-group-app.web.app',
-              helperText: 'URL dasar untuk link Bio',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.link),
-            ),
+            label: 'URL Dasar Web App',
+            icon: Icons.link,
+            helperText: 'URL dasar untuk link Bio',
           ),
         ],
       ),

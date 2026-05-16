@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
 import 'package:markating_kbm_app/src/features/notifications/notification_controller.dart';
 
 // Screens
@@ -39,7 +39,7 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     return StreamBuilder<UserModel>(
-      stream: Provider.of<FirestoreService>(
+      stream: Provider.of<UserService>(
         context,
         listen: false,
       ).getUserStream(user.uid),

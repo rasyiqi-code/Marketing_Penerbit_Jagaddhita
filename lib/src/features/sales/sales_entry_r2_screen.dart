@@ -7,8 +7,11 @@ import 'package:markating_kbm_app/src/core/models/sale_model.dart';
 // import 'package:image_picker/image_picker.dart';
 
 import 'package:markating_kbm_app/src/core/services/auth_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
-import 'package:markating_kbm_app/src/core/services/notification_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/product_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
+import 'package:markating_kbm_app/src/core/services/notification_service.dart' as local;
 import 'package:markating_kbm_app/src/core/models/notification_model.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
@@ -68,7 +71,7 @@ class _SalesEntryR2ScreenState extends State<SalesEntryR2Screen> {
   void initState() {
     super.initState();
     // House Type 2 = KBM Kreator
-    _productsStream = Provider.of<FirestoreService>(
+    _productsStream = Provider.of<ProductService>(
       context,
       listen: false,
     ).getProducts(2);
@@ -78,16 +81,17 @@ class _SalesEntryR2ScreenState extends State<SalesEntryR2Screen> {
 
   Future<void> _loadUserInfo() async {
     final auth = Provider.of<AuthService>(context, listen: false);
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final userService = Provider.of<UserService>(context, listen: false);
+    final salesService = Provider.of<SalesService>(context, listen: false);
     final user = await auth.getCurrentUserDetails();
 
     if (mounted && user != null) {
       // Fetch stats for limits
-      final monthlyBonuses = await firestore.getUserBonusCountThisMonth(
+      final monthlyBonuses = await salesService.getUserBonusCountThisMonth(
         user.id,
       );
       // Fetch accumulated stats
-      final monthlyStats = await firestore.getUserSalesStatsThisMonth(user.id);
+      final monthlyStats = await salesService.getUserSalesStatsThisMonth(user.id);
 
       setState(() {
         _agentName = (user.name != null && user.name!.isNotEmpty)
@@ -102,8 +106,8 @@ class _SalesEntryR2ScreenState extends State<SalesEntryR2Screen> {
   }
 
   void _loadSettings() {
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
-    firestore.getGlobalSettings().listen((settings) {
+    final productService = Provider.of<ProductService>(context, listen: false);
+    productService.getGlobalSettings().listen((settings) {
       if (mounted) {
         setState(() => _settings = settings);
         _calculateValues();
@@ -206,13 +210,14 @@ class _SalesEntryR2ScreenState extends State<SalesEntryR2Screen> {
 
     try {
       final auth = Provider.of<AuthService>(context, listen: false);
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final salesService = Provider.of<SalesService>(context, listen: false);
+      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
       final user = await auth.getCurrentUserDetails();
 
       if (user == null) throw Exception('Pengguna tidak ditemukan');
 
       // Construct Details Map
-      final qty = int.parse(_qtyController.text);
+      final qty = int.tryParse(_qtyController.text) ?? 0;
       final markupPerQty =
           int.tryParse(
             _markupController.text.replaceAll(RegExp(r'[^0-9]'), ''),
@@ -260,9 +265,9 @@ class _SalesEntryR2ScreenState extends State<SalesEntryR2Screen> {
           'house_type': 2, // Creator
           'agent_name': user.name ?? 'Unknown',
         },
-        totalPrice: double.parse(
+        totalPrice: double.tryParse(
           _totalPriceController.text.replaceAll(RegExp(r'[^0-9]'), ''),
-        ),
+        ) ?? 0,
         paymentStatus: SaleModel.statusPending, // Force Pending
         bonusAmount: 0, // Calculated by server/admin later or here
         commissionAmount: _commissionAmount,
@@ -278,7 +283,7 @@ class _SalesEntryR2ScreenState extends State<SalesEntryR2Screen> {
       // Add requested status for Admin visibility
       sale.details['requested_status'] = _paymentStatus;
 
-      await firestore.addSale(sale);
+      await salesService.addSale(sale);
 
       // Trigger Notification
       final notification = NotificationModel(
@@ -290,11 +295,11 @@ class _SalesEntryR2ScreenState extends State<SalesEntryR2Screen> {
         recipientId: 'role:admin',
         createdAt: DateTime.now(),
       );
-      await firestore.sendNotification(notification);
+      await notificationService.sendNotification(notification);
 
       if (mounted) {
         try {
-          final notificationService = Provider.of<NotificationService>(
+          final notificationService = Provider.of<local.NotificationService>(
             context,
             listen: false,
           );
@@ -327,6 +332,20 @@ class _SalesEntryR2ScreenState extends State<SalesEntryR2Screen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _unitPriceController.dispose();
+    _qtyController.dispose();
+    _totalPriceController.dispose();
+    _markupController.dispose();
+    _dpAmountController.dispose();
+    _mitraController.dispose();
+    _judulLayoutController.dispose();
+    _ukuranController.dispose();
+    _halamanController.dispose();
+    super.dispose();
   }
 
   @override

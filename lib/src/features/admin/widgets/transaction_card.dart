@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:markating_kbm_app/src/core/models/notification_model.dart';
 import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/salesService/sales_service.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/transaction_detail_modal.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/transaction_update_dialog.dart';
@@ -16,9 +16,9 @@ class TransactionCard extends StatelessWidget {
 
   Future<void> _cancelTransaction(BuildContext context, SaleModel sale) async {
     try {
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final salesService = Provider.of<SalesService>(context, listen: false);
 
-      await firestore.updateSaleStatus(
+      await salesService.updateSaleStatus(
         sale,
         SaleModel.statusCanceled,
         note: 'Dibatalkan oleh Admin via tombol Batalkan',
@@ -36,7 +36,7 @@ class TransactionCard extends StatelessWidget {
         createdAt: DateTime.now(),
       );
 
-      await firestore.sendNotification(notification);
+      await salesService.sendNotification(notification);
 
       if (!context.mounted) return;
 

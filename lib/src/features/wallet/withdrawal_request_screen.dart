@@ -5,7 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:markating_kbm_app/src/core/models/claim_model.dart';
 import 'package:markating_kbm_app/src/core/models/global_settings_model.dart'; // Import Settings
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/wallet_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/product_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
 import 'package:markating_kbm_app/src/core/models/notification_model.dart';
@@ -133,9 +136,10 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
     );
 
     try {
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final walletService = Provider.of<WalletService>(context, listen: false);
+      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
 
-      final claimId = await firestore.requestClaim(claim);
+      final claimId = await walletService.requestClaim(claim);
 
       // Trigger Notification
       final notification = NotificationModel(
@@ -148,7 +152,7 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
         relatedId: claimId,
         createdAt: DateTime.now(),
       );
-      await firestore.sendNotification(notification);
+      await notificationService.sendNotification(notification);
 
       if (mounted) {
         ScaffoldMessenger.of(
@@ -170,7 +174,8 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
   @override
   Widget build(BuildContext context) {
     final title = isBank ? 'Tarik Saldo Komisi' : 'Klaim Saldo Pulsa';
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final userService = Provider.of<UserService>(context, listen: false);
+    final productService = Provider.of<ProductService>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -182,7 +187,7 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
         elevation: 0,
       ),
       body: StreamBuilder<UserModel>(
-        stream: firestore.getUserStream(widget.user.id),
+        stream: userService.getUserStream(widget.user.id),
         builder: (context, userSnapshot) {
           if (userSnapshot.hasError) {
             return Center(child: Text('Error: ${userSnapshot.error}'));
@@ -194,7 +199,7 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
           final currentUser = userSnapshot.data!;
 
           return StreamBuilder<GlobalSettingsModel>(
-            stream: firestore.getGlobalSettings(),
+            stream: productService.getGlobalSettings(),
             builder: (context, settingsSnapshot) {
               if (settingsSnapshot.hasError) {
                 return Center(child: Text('Error: ${settingsSnapshot.error}'));

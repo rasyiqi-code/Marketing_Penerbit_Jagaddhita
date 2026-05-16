@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/models/link_bio_model.dart';
 import 'package:markating_kbm_app/src/core/services/auth_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/linkBioService/link_bio_service.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -108,13 +108,13 @@ class _AddEditLinkDialogState extends State<AddEditLinkDialog> {
 
     try {
       final auth = Provider.of<AuthService>(context, listen: false);
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final linkBioService = Provider.of<LinkBioService>(context, listen: false);
       final user = await auth.getCurrentUserDetails();
 
       if (user == null) throw Exception('User not logged in');
 
       final toSave = LinkBioModel(
-        id: widget.link?.id ?? '', // ID handled by firestore for add
+        id: widget.link?.id ?? '', // ID handled by linkBioService for add
         userId: user.id,
         label: _labelController.text.trim(),
         url: _formatUrl(_urlController.text),
@@ -124,9 +124,9 @@ class _AddEditLinkDialogState extends State<AddEditLinkDialog> {
       );
 
       if (widget.link == null) {
-        await firestore.addLink(toSave);
+        await linkBioService.addLink(toSave);
       } else {
-        await firestore.updateLink(toSave);
+        await linkBioService.updateLink(toSave);
       }
 
       if (mounted) Navigator.pop(context);
@@ -139,6 +139,13 @@ class _AddEditLinkDialogState extends State<AddEditLinkDialog> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _labelController.dispose();
+    _urlController.dispose();
+    super.dispose();
   }
 
   @override

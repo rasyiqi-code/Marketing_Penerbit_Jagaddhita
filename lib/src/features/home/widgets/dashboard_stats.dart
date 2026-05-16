@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
 import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
 
 import 'package:provider/provider.dart';
@@ -14,10 +14,10 @@ class DashboardStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final salesService = Provider.of<SalesService>(context, listen: false);
 
     return StreamBuilder<List<SaleModel>>(
-      stream: firestore.getUserSales(userId),
+      stream: salesService.getUserSales(userId),
       builder: (context, snapshot) {
         double totalRevenue = 0; // Status: COMPLETE
         double pendingRevenue = 0; // Status: LUNAS (Komisi Pending)

@@ -73,14 +73,8 @@ class _SplashScreenState extends State<SplashScreen>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Image.asset(
-                          'assets/logo_kbm_red.png',
-                          height: 100,
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(height: 30),
-                        Image.asset(
-                          'assets/logo_kbm_blue.png',
-                          height: 120, // Slightly larger as it usually has text
+                          'assets/logo.png',
+                          height: 180,
                           fit: BoxFit.contain,
                         ),
                       ],
@@ -88,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                   const SizedBox(height: 50),
                   const CircularProgressIndicator(
-                    color: Color(0xFFD32F2F), // KBM Red
+                    color: Color(0xFFE53935), // Jagaddhita Red
                   ),
                 ],
               ),

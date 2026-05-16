@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/models/claim_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/wallet_service.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/admin_claim_card.dart';
 import 'package:provider/provider.dart';
 
@@ -38,10 +38,10 @@ class _RequestsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = Provider.of<FirestoreService>(context);
+    final walletService = Provider.of<WalletService>(context);
 
     return StreamBuilder<List<ClaimModel>>(
-      stream: firestoreService.getPendingClaims(),
+      stream: walletService.getPendingClaims(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -80,7 +80,7 @@ class _RequestsTab extends StatelessWidget {
             return AdminClaimCard(
               claim: claims[index],
               isHistory: false,
-              firestoreService: firestoreService,
+              walletService: walletService,
             );
           },
         );
@@ -94,10 +94,10 @@ class _HistoryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = Provider.of<FirestoreService>(context);
+    final walletService = Provider.of<WalletService>(context);
 
     return StreamBuilder<List<ClaimModel>>(
-      stream: firestoreService.getClaimHistory(),
+      stream: walletService.getClaimHistory(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -132,7 +132,7 @@ class _HistoryTab extends StatelessWidget {
             return AdminClaimCard(
               claim: claims[index],
               isHistory: true,
-              firestoreService: firestoreService,
+              walletService: walletService,
             );
           },
         );

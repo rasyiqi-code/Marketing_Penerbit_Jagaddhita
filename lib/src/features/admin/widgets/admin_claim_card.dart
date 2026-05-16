@@ -4,23 +4,26 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:markating_kbm_app/src/core/models/claim_model.dart';
 import 'package:markating_kbm_app/src/core/models/notification_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/wallet_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
+import 'package:provider/provider.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 
 class AdminClaimCard extends StatelessWidget {
   final ClaimModel claim;
   final bool isHistory;
-  final FirestoreService firestoreService;
+  final WalletService walletService;
 
   const AdminClaimCard({
     super.key,
     required this.claim,
     required this.isHistory,
-    required this.firestoreService,
+    required this.walletService,
   });
 
   @override
   Widget build(BuildContext context) {
+    final notificationService = Provider.of<AppNotificationService>(context, listen: false);
     final currencyFormat = NumberFormat.currency(
       locale: 'id',
       symbol: 'Rp',
@@ -241,7 +244,7 @@ class AdminClaimCard extends StatelessWidget {
                         'Tolak',
                         'Saldo akan dikembalikan ke user. Lanjutkan?',
                         () async {
-                          await firestoreService.rejectClaim(claim);
+                          await walletService.rejectClaim(claim);
 
                           // Notify
                           final notification = NotificationModel(
@@ -254,7 +257,7 @@ class AdminClaimCard extends StatelessWidget {
                             relatedId: claim.id,
                             createdAt: DateTime.now(),
                           );
-                          await firestoreService.sendNotification(notification);
+                          await notificationService.sendNotification(notification);
                         },
                         Colors.red,
                       ),
@@ -278,7 +281,7 @@ class AdminClaimCard extends StatelessWidget {
                         'Setujui',
                         'Pastikan Anda sudah transfer dana/pulsa. Lanjutkan?',
                         () async {
-                          await firestoreService.approveClaim(claim.id);
+                          await walletService.approveClaim(claim.id);
 
                           // Notify
                           final notification = NotificationModel(
@@ -291,7 +294,7 @@ class AdminClaimCard extends StatelessWidget {
                             relatedId: claim.id,
                             createdAt: DateTime.now(),
                           );
-                          await firestoreService.sendNotification(notification);
+                          await notificationService.sendNotification(notification);
                         },
                         Colors.green,
                       ),

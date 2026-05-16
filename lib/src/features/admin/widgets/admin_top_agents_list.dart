@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
 import 'package:provider/provider.dart';
 
 class AdminTopAgentsList extends StatelessWidget {
@@ -9,9 +9,9 @@ class AdminTopAgentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final userService = Provider.of<UserService>(context, listen: false);
     return StreamBuilder<List<UserModel>>(
-      stream: firestore.getAllMarketingUsers(),
+      stream: userService.getAllMarketingUsers(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());

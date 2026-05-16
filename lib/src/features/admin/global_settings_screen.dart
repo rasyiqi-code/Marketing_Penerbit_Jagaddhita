@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:markating_kbm_app/src/core/models/global_settings_model.dart';
 import 'package:markating_kbm_app/src/core/services/data_seeder_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/productService/product_service.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/settings/announcement_settings_card.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/settings/appearance_settings_card.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/settings/bonus_pulsa_settings_card.dart';
@@ -72,8 +72,8 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
 
   void _loadSettings() {
     // Initial fetch to populate fields
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
-    firestore.getGlobalSettings().first.then((settings) {
+    final productService = Provider.of<ProductService>(context, listen: false);
+    productService.getGlobalSettings().first.then((settings) {
       if (mounted) {
         setState(() {
           _bonusR1Controller.text = settings.bonusPercentR1.toString();
@@ -119,7 +119,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final productService = Provider.of<ProductService>(context, listen: false);
       final settings = GlobalSettingsModel(
         bonusPercentR1: double.tryParse(_bonusR1Controller.text) ?? 0,
         bonusPercentR2: double.tryParse(_bonusR2Controller.text) ?? 10,
@@ -157,7 +157,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
             int.tryParse(_minCompletedSalesCountController.text) ?? 5,
         enableMinSalesLimit: _enableMinSalesLimit,
       );
-      await firestore.updateGlobalSettings(settings);
+      await productService.updateGlobalSettings(settings);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -237,6 +237,22 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _bonusR1Controller.dispose();
+    _bonusR2Controller.dispose();
+    _pulsaBonusController.dispose();
+    _minSalePulsaController.dispose();
+    _pulsaBonusR2Controller.dispose();
+    _minPayoutController.dispose();
+    _minPulsaWithdrawalController.dispose();
+    _latestInfoController.dispose();
+    _webBaseUrlController.dispose();
+    _maxPulsaBonusCountController.dispose();
+    _minCompletedSalesCountController.dispose();
+    super.dispose();
   }
 
   @override

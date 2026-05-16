@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
 
 class BonusPulsaSettingsCard extends StatelessWidget {
   final bool enableR1PulsaBonus;
@@ -81,16 +82,13 @@ class BonusPulsaSettingsCard extends StatelessWidget {
                   onChanged: onR1PulsaBonusChanged,
                   contentPadding: EdgeInsets.zero,
                 ),
-                TextFormField(
+                AppTextField(
                   controller: pulsaBonusController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Nominal Bonus',
-                    prefixText: 'Rp ',
-                    border: const OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Theme.of(context).cardColor,
-                  ),
+                  label: 'Nominal Bonus',
+                  icon: Icons.money,
+                  prefixText: 'Rp ',
+                  fillColor: Theme.of(context).cardColor,
                 ),
               ],
             ),
@@ -121,16 +119,13 @@ class BonusPulsaSettingsCard extends StatelessWidget {
                   onChanged: onR2PulsaBonusChanged,
                   contentPadding: EdgeInsets.zero,
                 ),
-                TextFormField(
+                AppTextField(
                   controller: pulsaBonusR2Controller,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Nominal Bonus',
-                    prefixText: 'Rp ',
-                    border: const OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Theme.of(context).cardColor,
-                  ),
+                  label: 'Nominal Bonus',
+                  icon: Icons.money,
+                  prefixText: 'Rp ',
+                  fillColor: Theme.of(context).cardColor,
                 ),
               ],
             ),
@@ -158,16 +153,14 @@ class BonusPulsaSettingsCard extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
           ),
           if (enableMinSalesLimit)
-            TextFormField(
+            AppTextField(
               controller: minSalePulsaController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Target Akumulasi Penjualan (Bulanan)',
-                prefixText: 'Rp ',
-                border: OutlineInputBorder(),
-                helperText:
-                    'Min. total penjualan sebulan agar bonus cair (R1 & R2)',
-              ),
+              label: 'Target Akumulasi Penjualan (Bulanan)',
+              icon: Icons.track_changes,
+              prefixText: 'Rp ',
+              helperText:
+                  'Min. total penjualan sebulan agar bonus cair (R1 & R2)',
             ),
           const Divider(height: 32),
           SwitchListTile(
@@ -178,14 +171,12 @@ class BonusPulsaSettingsCard extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
           ),
           if (enableMaxPulsaBonusLimit)
-            TextFormField(
+            AppTextField(
               controller: maxPulsaBonusCountController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Maksimal (Kali)',
-                border: OutlineInputBorder(),
-                helperText: 'Contoh: 1x sebulan',
-              ),
+              label: 'Maksimal (Kali)',
+              icon: Icons.repeat_one_rounded,
+              helperText: 'Contoh: 1x sebulan',
             ),
           const SizedBox(height: 16),
           SwitchListTile(
@@ -196,14 +187,12 @@ class BonusPulsaSettingsCard extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
           ),
           if (enableMinCompletedSalesLimit)
-            TextFormField(
+            AppTextField(
               controller: minCompletedSalesCountController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Min. Akumulasi Transaksi (Bulanan)',
-                border: OutlineInputBorder(),
-                helperText: 'Alternatif jika target nominal tidak tercapai',
-              ),
+              label: 'Min. Akumulasi Transaksi (Bulanan)',
+              icon: Icons.history_edu_rounded,
+              helperText: 'Alternatif jika target nominal tidak tercapai',
             ),
         ],
       ),

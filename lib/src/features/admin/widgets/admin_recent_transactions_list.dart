@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/transaction_detail_modal.dart';
 import 'package:provider/provider.dart';
 
@@ -13,9 +13,9 @@ class AdminRecentTransactionsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final salesService = Provider.of<SalesService>(context, listen: false);
     return StreamBuilder(
-      stream: firestore.getSales(limit: 5),
+      stream: salesService.getSales(limit: 5),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());

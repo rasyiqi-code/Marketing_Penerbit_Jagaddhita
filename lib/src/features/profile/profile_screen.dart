@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/services/auth_service.dart';
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/features/admin/image_management_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:markating_kbm_app/src/core/services/storage_service.dart';
 import 'package:markating_kbm_app/src/core/utils/network_image_web_helper.dart';
+import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -22,10 +23,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
   UserModel? _currentUser;
   bool _isLoading = true;
 
+  // Controllers
+  late TextEditingController _bankNameController;
+  late TextEditingController _accNumberController;
+  late TextEditingController _holderNameController;
+  late TextEditingController _bankPhoneController;
+
+  late TextEditingController _emailController;
+  late TextEditingController _nameController;
+  late TextEditingController _usernameController;
+  late TextEditingController _ktpController;
+  late TextEditingController _addressController;
+  late TextEditingController _profilePhoneController;
+
   @override
   void initState() {
     super.initState();
+    _bankNameController = TextEditingController();
+    _accNumberController = TextEditingController();
+    _holderNameController = TextEditingController();
+    _bankPhoneController = TextEditingController();
+
+    _emailController = TextEditingController();
+    _nameController = TextEditingController();
+    _usernameController = TextEditingController();
+    _ktpController = TextEditingController();
+    _addressController = TextEditingController();
+    _profilePhoneController = TextEditingController();
+
     _loadUser();
+  }
+
+  @override
+  void dispose() {
+    _bankNameController.dispose();
+    _accNumberController.dispose();
+    _holderNameController.dispose();
+    _bankPhoneController.dispose();
+
+    _emailController.dispose();
+    _nameController.dispose();
+    _usernameController.dispose();
+    _ktpController.dispose();
+    _addressController.dispose();
+    _profilePhoneController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUser() async {
@@ -35,6 +77,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _currentUser = user;
         _isLoading = false;
+
+        if (user != null) {
+          // Sync controllers
+          final bank = user.bankDetails ?? {};
+          _bankNameController.text = bank['bank_name'] ?? '';
+          _accNumberController.text = bank['account_number'] ?? '';
+          _holderNameController.text = bank['account_holder'] ?? '';
+          _bankPhoneController.text = bank['phone'] ?? '';
+
+          _emailController.text = user.email;
+          _nameController.text = user.name ?? '';
+          _usernameController.text = user.username ?? '';
+          _ktpController.text = user.ktpNumber ?? '';
+          _addressController.text = user.address ?? '';
+          _profilePhoneController.text = user.phoneNumber ?? '';
+        }
       });
     }
   }
@@ -257,18 +315,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _showBankSettingsDialog(BuildContext context) {
     if (_currentUser == null) return;
 
-    final bankDetails = _currentUser!.bankDetails ?? {};
-    final bankNameController = TextEditingController(
-      text: bankDetails['bank_name'],
-    );
-    final accNumberController = TextEditingController(
-      text: bankDetails['account_number'],
-    );
-    final holderNameController = TextEditingController(
-      text: bankDetails['account_holder'],
-    );
-    final phoneController = TextEditingController(text: bankDetails['phone']);
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -293,47 +339,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              TextField(
-                controller: bankNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Bank Name',
-                  border: OutlineInputBorder(),
-                  hintText: 'e.g. BCA, Mandiri',
-                ),
+              AppTextField(
+                controller: _bankNameController,
+                label: 'Bank Name',
+                icon: Icons.account_balance_outlined,
               ),
               const SizedBox(height: 12),
-              TextField(
-                controller: accNumberController,
+              AppTextField(
+                controller: _accNumberController,
+                label: 'Account Number',
+                icon: Icons.numbers_outlined,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Account Number',
-                  border: OutlineInputBorder(),
-                ),
               ),
               const SizedBox(height: 12),
-              TextField(
-                controller: holderNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Account Holder Name',
-                  border: OutlineInputBorder(),
-                ),
+              AppTextField(
+                controller: _holderNameController,
+                label: 'Account Holder Name',
+                icon: Icons.person_outline,
               ),
               const SizedBox(height: 12),
-              TextField(
-                controller: phoneController,
+              AppTextField(
+                controller: _bankPhoneController,
+                label: 'Phone/E-Wallet Number',
+                icon: Icons.phone_android_outlined,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Phone/E-Wallet Number',
-                  border: OutlineInputBorder(),
-                  hintText: 'For Pulsa or E-Wallet',
-                ),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () async {
-                  final bankName = bankNameController.text.trim();
-                  final accNumber = accNumberController.text.trim();
-                  final holderName = holderNameController.text.trim();
+                  final bankName = _bankNameController.text.trim();
+                  final accNumber = _accNumberController.text.trim();
+                  final holderName = _holderNameController.text.trim();
 
                   if (bankName.isEmpty ||
                       accNumber.isEmpty ||
@@ -353,15 +389,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return;
                   }
 
-                  final newDetails = {
                     'bank_name': bankName,
                     'account_number': accNumber,
                     'account_holder': holderName,
-                    'phone': phoneController.text.trim(),
+                    'phone': _bankPhoneController.text.trim(),
                   };
 
                   try {
-                    await Provider.of<FirestoreService>(
+                    await Provider.of<UserService>(
                       context,
                       listen: false,
                     ).updateUserBankDetails(_currentUser!.id, newDetails);
@@ -410,19 +445,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showEditProfileDialog(BuildContext context) {
     if (_currentUser == null) return;
-
-    final emailController = TextEditingController(text: _currentUser!.email);
-    final nameController = TextEditingController(text: _currentUser!.name);
-    final usernameController = TextEditingController(
-      text: _currentUser!.username,
-    );
-    final ktpController = TextEditingController(text: _currentUser!.ktpNumber);
-    final addressController = TextEditingController(
-      text: _currentUser!.address,
-    );
-    final phoneController = TextEditingController(
-      text: _currentUser!.phoneNumber,
-    );
 
     // Dialog state
     // ignore: no_leading_underscores_for_local_identifiers
@@ -550,79 +572,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 24),
 
                     // Email (Read Only)
-                    TextField(
-                      controller: emailController,
+                    AppTextField(
+                      controller: _emailController,
+                      label: 'Alamat Email',
+                      icon: Icons.email_outlined,
                       readOnly: true,
-                      decoration: InputDecoration(
-                        labelText: 'Alamat Email',
-                        border: const OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest, // Colors.grey[100]
-                        helperText: 'Email tidak dapat diubah',
-                      ),
+                      helperText: 'Email tidak dapat diubah',
                     ),
                     const SizedBox(height: 16),
 
                     // Name
-                    TextField(
-                      controller: nameController,
+                    AppTextField(
+                      controller: _nameController,
+                      label: 'Nama Lengkap',
+                      icon: Icons.person_outline,
                       textCapitalization: TextCapitalization.words,
-                      decoration: const InputDecoration(
-                        labelText: 'Nama Lengkap',
-                        border: OutlineInputBorder(),
-                        hintText: 'Nama sesuai KTP',
-                      ),
                     ),
                     const SizedBox(height: 16),
 
                     // Username
-                    TextField(
-                      controller: usernameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        border: OutlineInputBorder(),
-                        hintText: 'Username unik',
-                        helperText: 'Untuk link bio: kbm.bio/username',
-                      ),
+                    AppTextField(
+                      controller: _usernameController,
+                      label: 'Username',
+                      icon: Icons.alternate_email,
+                      helperText: 'Untuk link bio: kbm.bio/username',
                     ),
                     const SizedBox(height: 16),
 
                     // No KTP
-                    TextField(
-                      controller: ktpController,
+                    AppTextField(
+                      controller: _ktpController,
+                      label: 'No. KTP',
+                      icon: Icons.badge_outlined,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'No. KTP',
-                        border: OutlineInputBorder(),
-                        hintText: '16 digit NIK',
-                      ),
                     ),
                     const SizedBox(height: 16),
 
                     // Address
-                    TextField(
-                      controller: addressController,
+                    AppTextField(
+                      controller: _addressController,
+                      label: 'Alamat Lengkap',
+                      icon: Icons.home_outlined,
                       maxLines: 2,
                       textCapitalization: TextCapitalization.sentences,
-                      decoration: const InputDecoration(
-                        labelText: 'Alamat Lengkap',
-                        border: OutlineInputBorder(),
-                        hintText: 'Jalan, RT/RW, Kelurahan, Kecamatan',
-                      ),
                     ),
                     const SizedBox(height: 16),
 
                     // Phone Number
-                    TextField(
-                      controller: phoneController,
+                    AppTextField(
+                      controller: _profilePhoneController,
+                      label: 'No. WhatsApp / HP',
+                      icon: Icons.phone_outlined,
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        labelText: 'No. WhatsApp / HP',
-                        border: OutlineInputBorder(),
-                        hintText: 'Contoh: 081234567890',
-                      ),
                     ),
                     const SizedBox(height: 24),
 
@@ -630,12 +631,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onPressed: _isUploading
                           ? null
                           : () async {
-                              final newName = nameController.text.trim();
-                              final newUsername = usernameController.text
+                              final newName = _nameController.text.trim();
+                              final newUsername = _usernameController.text
                                   .trim();
-                              final newKtp = ktpController.text.trim();
-                              final newAddress = addressController.text.trim();
-                              final newPhone = phoneController.text.trim();
+                              final newKtp = _ktpController.text.trim();
+                              final newAddress = _addressController.text.trim();
+                              final newPhone = _profilePhoneController.text.trim();
 
                               if (newName.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -672,14 +673,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               }
 
                               try {
-                                final firestore = Provider.of<FirestoreService>(
+                                final userService = Provider.of<UserService>(
                                   context,
                                   listen: false,
                                 );
 
                                 // Check uniqueness
                                 if (newUsername != _currentUser!.username) {
-                                  final exists = await firestore
+                                  final exists = await userService
                                       .checkUsernameExists(newUsername);
                                   if (exists) {
                                     if (context.mounted) {
@@ -725,7 +726,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   updateData['photo_url'] = newPhotoUrl;
                                 }
 
-                                await firestore.updateUserProfile(
+                                await userService.updateUserProfile(
                                   _currentUser!.id,
                                   updateData,
                                 );

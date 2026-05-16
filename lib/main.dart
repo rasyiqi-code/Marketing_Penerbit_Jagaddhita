@@ -19,8 +19,13 @@ import 'package:markating_kbm_app/src/features/admin/admin_user_list_screen.dart
 import 'package:markating_kbm_app/src/features/catalog/catalog_screen.dart';
 import 'package:markating_kbm_app/src/features/catalog/product_detail_screen.dart';
 import 'package:markating_kbm_app/src/core/services/auth_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
-import 'package:markating_kbm_app/src/core/services/notification_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/product_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/wallet_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/link_bio_service.dart';
+import 'package:markating_kbm_app/src/core/services/notification_service.dart' as local;
 import 'package:markating_kbm_app/src/features/sales/sales_entry_r1_screen.dart';
 import 'package:markating_kbm_app/src/features/sales/sales_entry_r2_screen.dart';
 import 'package:markating_kbm_app/src/features/link_bio/link_bio_loading_screen.dart';
@@ -43,15 +48,20 @@ void main() async {
     MultiProvider(
       providers: [
         Provider<AuthService>(create: (_) => AuthService()),
-        Provider<FirestoreService>(create: (_) => FirestoreService()),
-        Provider<NotificationService>(create: (_) => NotificationService()),
+        Provider<UserService>(create: (_) => UserService()),
+        Provider<ProductService>(create: (_) => ProductService()),
+        Provider<SalesService>(create: (_) => SalesService()),
+        Provider<WalletService>(create: (_) => WalletService()),
+        Provider<AppNotificationService>(create: (_) => AppNotificationService()),
+        Provider<LinkBioService>(create: (_) => LinkBioService()),
+        Provider<local.NotificationService>(create: (_) => local.NotificationService()),
         Provider<StorageService>(
           create: (_) => StorageService(),
-        ), // Register StorageService
+        ),
         ChangeNotifierProvider<NotificationController>(
           create: (context) => NotificationController(
-            Provider.of<FirestoreService>(context, listen: false),
-            Provider.of<NotificationService>(context, listen: false),
+            Provider.of<SalesService>(context, listen: false),
+            Provider.of<local.NotificationService>(context, listen: false),
           ),
         ),
       ],
@@ -66,7 +76,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Marketing KBM',
+      title: 'Jagaddhita Marketing',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system, // Enable System Dark Mode

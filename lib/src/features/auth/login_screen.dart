@@ -242,7 +242,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'KBM Group',
+                        'Penerbit Jagaddhita',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
                           fontSize: 32,

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
 import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/salesService/sales_service.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/transaction_card.dart';
 
 class AdminTransactionsScreen extends StatefulWidget {
@@ -94,7 +94,7 @@ class _AdminTransactionsScreenState extends State<AdminTransactionsScreen> {
         ],
       ),
       body: StreamBuilder<List<SaleModel>>(
-        stream: Provider.of<FirestoreService>(context).getSales(
+        stream: Provider.of<SalesService>(context).getSales(
           houseType: widget.houseType,
           status: _selectedStatus,
           limit: _limit,

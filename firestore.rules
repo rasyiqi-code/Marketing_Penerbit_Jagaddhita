@@ -1,21 +1,83 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Default Rule: Require Auth
-    match /{document=**} {
-      allow read, write: if request.auth != null;
-    }
     
-    // Public Access for Link Bio
-    match /links/{linkId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == request.resource.data.user_id;
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
-    
-    // Public Access for User Profiles (for Bio resolution)
+
+    // Helper to check ownership
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // Users collection
     match /users/{userId} {
-      allow read: if true; // Public can read user data (name/photo)
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.role == 'marketing'; // Default role
+      allow update: if isAdmin() || (
+        isOwner(userId) && 
+        request.resource.data.role == resource.data.role && // Cannot change role
+        request.resource.data.email == resource.data.email   // Cannot change email (auth sync)
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Products collection (Catalog)
+    match /products/{productId} {
+      allow read: if true; // Publicly viewable
+      allow write: if isAdmin();
+    }
+
+    // Sales collection
+    match /sales/{saleId} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow create: if request.auth != null;
+      allow update, delete: if isAdmin();
+    }
+
+    // Link Bio collection
+    match /links/{linkId} {
+      allow read: if true; // Public for bio pages
+      allow create: if request.auth != null;
+      allow update, delete: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+    }
+
+    // Global Settings
+    match /global_settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null && (
+        resource.data.recipientId == request.auth.uid || 
+        (resource.data.recipientId == 'role:admin' && isAdmin())
+      );
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && (
+        resource.data.recipientId == request.auth.uid || isAdmin()
+      );
+    }
+
+    // Wallet & Claims
+    match /wallet_history/{historyId} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow write: if isAdmin();
+    }
+
+    match /claims/{claimId} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow create: if request.auth != null;
+      allow update: if isAdmin();
+    }
+    
+    // Explicitly deny everything else
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
 import 'package:provider/provider.dart';
 
 class TopMarketersList extends StatelessWidget {
@@ -24,7 +24,7 @@ class TopMarketersList extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         StreamBuilder<List<UserModel>>(
-          stream: Provider.of<FirestoreService>(
+          stream: Provider.of<UserService>(
             context,
             listen: false,
           ).getAllMarketingUsers(),

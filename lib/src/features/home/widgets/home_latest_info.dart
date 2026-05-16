@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/models/global_settings_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/notificationService/notification_service.dart';
 import 'package:provider/provider.dart';
 
 class HomeLatestInfo extends StatelessWidget {
@@ -10,7 +10,7 @@ class HomeLatestInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<GlobalSettingsModel>(
-      stream: Provider.of<FirestoreService>(
+      stream: Provider.of<AppNotificationService>(
         context,
         listen: false,
       ).getGlobalSettings(),

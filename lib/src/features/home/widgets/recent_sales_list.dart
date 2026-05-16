@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
 import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
 import 'package:markating_kbm_app/src/features/sales/history/sales_history_screen.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +38,7 @@ class RecentSalesList extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         StreamBuilder<List<SaleModel>>(
-          stream: Provider.of<FirestoreService>(
+          stream: Provider.of<SalesService>(
             context,
             listen: false,
           ).getUserSales(userId),

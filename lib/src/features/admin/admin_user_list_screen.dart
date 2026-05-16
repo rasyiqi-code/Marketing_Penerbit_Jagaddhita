@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/admin_user_card.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +10,7 @@ class AdminUserListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = Provider.of<FirestoreService>(context);
+    final userService = Provider.of<UserService>(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -25,7 +25,7 @@ class AdminUserListScreen extends StatelessWidget {
         foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
       body: StreamBuilder<List<UserModel>>(
-        stream: firestoreService.getAllMarketingUsers(),
+        stream: userService.getAllMarketingUsers(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -46,7 +46,7 @@ class AdminUserListScreen extends StatelessWidget {
             itemCount: users.length,
             itemBuilder: (context, index) {
               final user = users[index];
-              return AdminUserCard(user: user, firestore: firestoreService);
+              return AdminUserCard(user: user, userService: userService);
             },
           );
         },

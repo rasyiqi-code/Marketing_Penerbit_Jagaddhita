@@ -47,7 +47,7 @@ class AdminHomeScreen extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: const BoxDecoration(
-                          color: Colors.red,
+                          color: AppTheme.primaryColor,
                           shape: BoxShape.circle,
                         ),
                         child: Text(

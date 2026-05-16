@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:markating_kbm_app/src/core/models/product_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore_service.dart';
+import 'package:markating_kbm_app/src/core/services/productService/product_service.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/admin_product_card.dart';
 import 'package:markating_kbm_app/src/features/admin/widgets/admin_product_empty_state.dart';
 import 'package:provider/provider.dart';
@@ -47,10 +47,10 @@ class ProductList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final productService = Provider.of<ProductService>(context, listen: false);
 
     return StreamBuilder<List<ProductModel>>(
-      stream: firestore.getProducts(houseType),
+      stream: productService.getProducts(houseType),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -68,7 +68,7 @@ class ProductList extends StatelessWidget {
             final product = products[index];
             return AdminProductCard(
               product: product,
-              firestore: firestore,
+              productService: productService,
               houseType: houseType,
             );
           },

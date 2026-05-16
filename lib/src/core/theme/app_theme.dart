@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Brand Colors - Vibrant & Premium
-  static const primaryColor = Color(0xFFD32F2F); // KBM Red
-  static const secondaryColor = Color(0xFF0D47A1); // KBM Creator Blue (Navy)
-  static const accentColor = Color(0xFFFFC107); // Amber Gold
+  // Brand Colors - Jagaddhita
+  static const primaryColor = Color(0xFFE53935); // Jagaddhita Red
+  static const secondaryColor = Color(0xFF2E7D32); // Jagaddhita Green
+  static const accentColor = Color(0xFFFFEB3B); // Jagaddhita Yellow
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFFD32F2F), Color(0xFFB71C1C)],
+    colors: [Color(0xFFE53935), Color(0xFFC62828)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient creatorGradient = LinearGradient(
-    colors: [Color(0xFF1976D2), Color(0xFF0D47A1)],
+    colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

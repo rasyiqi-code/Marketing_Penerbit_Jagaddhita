@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
 
 class WithdrawalSettingsCard extends StatelessWidget {
   final TextEditingController minPayoutController;
@@ -32,24 +33,20 @@ class WithdrawalSettingsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextFormField(
+          AppTextField(
             controller: minPayoutController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Min. Penarikan Bank',
-              prefixText: 'Rp ',
-              border: OutlineInputBorder(),
-            ),
+            label: 'Min. Penarikan Bank',
+            icon: Icons.account_balance_outlined,
+            prefixText: 'Rp ',
           ),
           const SizedBox(height: 16),
-          TextFormField(
+          AppTextField(
             controller: minPulsaWithdrawalController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Min. Klaim Pulsa',
-              prefixText: 'Rp ',
-              border: OutlineInputBorder(),
-            ),
+            label: 'Min. Klaim Pulsa',
+            icon: Icons.phonelink_ring_outlined,
+            prefixText: 'Rp ',
           ),
           const SizedBox(height: 24),
           const Text(
