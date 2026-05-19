@@ -3,11 +3,12 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/auth_service.dart';
-import 'package:markating_kbm_app/src/core/services/poster_generator_service.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/utils/poster_export_helper.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/poster_generator_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/poster_export_helper.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/poster_generator_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
@@ -205,7 +206,7 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
                 if (_isBgEnabled) ...[
                   const Text('Warna Background'),
                   const SizedBox(height: 8),
-                  _buildColorPicker(
+                  PosterColorPicker(
                     selectedColor: _bgColor,
                     onSelected: (col) {
                       setState(() => _bgColor = col);
@@ -228,7 +229,7 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
 
                 const Text('Warna Font'),
                 const SizedBox(height: 8),
-                _buildColorPicker(
+                PosterColorPicker(
                   selectedColor: _textColor,
                   onSelected: (col) {
                     setState(() => _textColor = col);
@@ -238,14 +239,12 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
 
                 const SizedBox(height: 16),
                 const Text('Ukuran Font'),
-                Row(
-                  children: [
-                    _buildTierChip(1, 'Kecil', setModalState),
-                    const SizedBox(width: 8),
-                    _buildTierChip(2, 'Sedang', setModalState),
-                    const SizedBox(width: 8),
-                    _buildTierChip(3, 'Besar', setModalState),
-                  ],
+                PosterFontTierChips(
+                  fontTier: _fontTier,
+                  onChanged: (tier) {
+                    setState(() => _fontTier = tier);
+                    setModalState(() {});
+                  },
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -265,62 +264,6 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildColorPicker({
-    required Color selectedColor,
-    required Function(Color) onSelected,
-  }) {
-    final colors = [
-      Colors.white,
-      Colors.black,
-      const Color(0xFF333333),
-      const Color(0xFFDAA520),
-      const Color(0xFF1B5E20),
-      const Color(0xFF0D47A1),
-      const Color(0xFFB71C1C),
-    ];
-
-    return Wrap(
-      spacing: 12,
-      children: colors
-          .map(
-            (col) => GestureDetector(
-              onTap: () => onSelected(col),
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: col,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: selectedColor == col
-                        ? AppTheme.primaryColor
-                        : Colors.grey.withValues(alpha: 0.3),
-                    width: selectedColor == col ? 3 : 1,
-                  ),
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _buildTierChip(int tier, String label, Function setModalState) {
-    final isSelected = _fontTier == tier;
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
-        if (selected) {
-          setState(() => _fontTier = tier);
-          setModalState(() {});
-        }
-      },
-      selectedColor: AppTheme.primaryColor,
-      labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black),
     );
   }
 
@@ -454,7 +397,7 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
 
       if (mounted) {
         final fileName =
-            'poster_kbm_${DateTime.now().millisecondsSinceEpoch}.png';
+            'poster_jagaddhita_${DateTime.now().millisecondsSinceEpoch}.png';
         await PosterExportHelper.exportImage(processed, fileName);
       }
     } catch (e) {
@@ -499,10 +442,14 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
                   ? const CircularProgressIndicator()
                   : _originalImageBytes != null
                   ? _buildEditorStack()
-                  : _buildEmptyState(),
+                  : PosterEmptyState(onPickImage: _pickImage),
             ),
           ),
-          if (_originalImageBytes != null && !_isLoading) _buildBottomActions(),
+          if (_originalImageBytes != null && !_isLoading)
+            PosterBottomActions(
+              onPickImage: _pickImage,
+              onDownload: _processAndDownloadPoster,
+            ),
         ],
       ),
     );
@@ -528,36 +475,13 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
                     _position += details.delta;
                   });
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _isBgEnabled
-                        ? _bgColor.withValues(alpha: _bgOpacity)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '$_name | WA: $_phone',
-                    style: TextStyle(
-                      color: _textColor,
-                      fontSize: _fontTier == 3
-                          ? 24
-                          : (_fontTier == 2 ? 16 : 10),
-                      fontWeight: FontWeight.bold,
-                      shadows: !_isBgEnabled
-                          ? [
-                              const Shadow(
-                                color: Colors.black45,
-                                blurRadius: 4,
-                                offset: Offset(2, 2),
-                              ),
-                            ]
-                          : null,
-                    ),
-                  ),
+                child: PosterOverlayText(
+                  text: '$_name | WA: $_phone',
+                  textColor: _textColor,
+                  bgColor: _bgColor,
+                  bgOpacity: _bgOpacity,
+                  isBgEnabled: _isBgEnabled,
+                  fontTier: _fontTier,
                 ),
               ),
             ),
@@ -585,69 +509,6 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
           ],
         );
       },
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(Icons.image_search, size: 80, color: Colors.grey),
-        const SizedBox(height: 16),
-        Text(
-          'Pilih poster untuk dipersonalisasi',
-          style: GoogleFonts.outfit(color: Colors.grey),
-        ),
-        const SizedBox(height: 24),
-        ElevatedButton.icon(
-          onPressed: _pickImage,
-          icon: const Icon(Icons.photo_library),
-          label: const Text('Pilih dari Galeri'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryColor,
-            foregroundColor: Colors.white,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomActions() {
-    return Container(
-      padding: const EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 24),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Ganti'),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: _processAndDownloadPoster,
-              icon: const Icon(Icons.download),
-              label: const Text('Download'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

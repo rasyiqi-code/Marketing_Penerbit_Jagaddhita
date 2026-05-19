@@ -1,46 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:markating_kbm_app/src/core/models/product_model.dart';
-import 'package:markating_kbm_app/src/core/services/productService/product_service.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
-import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 
-class CatalogScreen extends StatefulWidget {
+class CatalogScreen extends StatelessWidget {
   const CatalogScreen({super.key});
-
-  @override
-  State<CatalogScreen> createState() => _CatalogScreenState();
-}
-
-class _CatalogScreenState extends State<CatalogScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  late Gradient _currentGradient;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _currentGradient = AppTheme.primaryGradient;
-
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging ||
-          _tabController.animation!.value == _tabController.index) {
-        setState(() {
-          _currentGradient = _tabController.index == 0
-              ? AppTheme.primaryGradient
-              : AppTheme.creatorGradient;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,28 +20,14 @@ class _CatalogScreenState extends State<CatalogScreen>
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
-        flexibleSpace: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          decoration: BoxDecoration(gradient: _currentGradient),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppTheme.primaryGradient,
+          ),
         ),
         elevation: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          indicatorWeight: 3,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          tabs: const [
-            Tab(text: 'Penerbitan Buku (B2C)'),
-            Tab(text: 'KBM Creator (B2B)'),
-          ],
-        ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [CatalogList(houseType: 1), CatalogList(houseType: 2)],
-      ),
+      body: const CatalogList(houseType: 1),
     );
   }
 }

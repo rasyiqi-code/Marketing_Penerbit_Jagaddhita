@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
-import 'package:markating_kbm_app/src/features/notifications/notification_controller.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
 
 // Screens
-import 'package:markating_kbm_app/src/features/home/home_screen.dart'; // Marketing Home
-import 'package:markating_kbm_app/src/features/link_bio/link_bio_screen.dart';
-import 'package:markating_kbm_app/src/features/catalog/catalog_screen.dart';
-import 'package:markating_kbm_app/src/features/profile/profile_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/home_screen.dart'; // Marketing Home
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/link_bio_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/catalog/catalog_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/profile/profile_screen.dart';
 
 // Admin Screens
-import 'package:markating_kbm_app/src/features/admin/product_management_screen.dart'; // Manage Catalog
-import 'package:markating_kbm_app/src/features/admin/admin_home_screen.dart'; // NEW Admin Home
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/product_management_screen.dart'; // Manage Catalog
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/admin_home_screen.dart'; // NEW Admin Home
 
 // Widgets
-import 'package:markating_kbm_app/src/features/home/widgets/main_bottom_nav_bar.dart';
-import 'package:markating_kbm_app/src/features/home/widgets/marketing_fab_menu.dart';
-import 'package:markating_kbm_app/src/features/home/widgets/admin_fab_menu.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/main_bottom_nav_bar.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/marketing_fab_menu.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/admin_fab_menu.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

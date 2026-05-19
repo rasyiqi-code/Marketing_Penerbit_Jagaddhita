@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:markating_kbm_app/src/core/models/claim_model.dart';
-import 'package:markating_kbm_app/src/core/models/wallet_history_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/base_firestore_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/wallet_history_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/base_firestore_service.dart';
 
 class WalletService extends BaseFirestoreService {
   WalletService({super.firestore});

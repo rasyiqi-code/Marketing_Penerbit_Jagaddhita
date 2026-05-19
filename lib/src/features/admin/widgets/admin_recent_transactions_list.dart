@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/transaction_detail_modal.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction_detail_modal.dart';
 import 'package:provider/provider.dart';
 
 class AdminRecentTransactionsList extends StatelessWidget {

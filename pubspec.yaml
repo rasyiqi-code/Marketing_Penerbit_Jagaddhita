@@ -1,4 +1,4 @@
-name: markating_kbm_app
+name: marketing_penerbit_jagaddhita
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -40,13 +40,13 @@ dependencies:
   firebase_auth: ^6.1.3
   cloud_firestore: ^6.1.1
   provider: ^6.1.5+1
-  google_fonts: ^6.3.3
+  google_fonts: ^8.1.0
   intl: ^0.20.2
   uuid: ^4.5.2
   file_picker: ^10.3.8
   flutter_svg: ^2.2.3
-  flutter_local_notifications: ^19.5.0
-  google_sign_in: ^6.2.1
+  flutter_local_notifications: ^21.0.0
+  google_sign_in: ^7.2.0
   url_launcher: ^6.3.2
   share_plus: ^12.0.1
   minio: ^3.5.8
@@ -58,7 +58,7 @@ dependencies:
   badges: ^3.1.2
   image: ^4.2.0
   path_provider: ^2.1.3
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
   http: ^1.2.1
 
 dev_dependencies:

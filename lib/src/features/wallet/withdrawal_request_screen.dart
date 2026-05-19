@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:markating_kbm_app/src/core/models/claim_model.dart';
-import 'package:markating_kbm_app/src/core/models/global_settings_model.dart'; // Import Settings
-import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/wallet_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/product_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
-import 'package:markating_kbm_app/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/global_settings_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/wallet/widgets/withdrawal_widgets.dart';
 
 class WithdrawalRequestScreen extends StatefulWidget {
   final UserModel user;
-  final String allowedType; // ClaimModel.typeBank or typePulsa
+  final String allowedType;
 
   const WithdrawalRequestScreen({
     super.key,
@@ -41,7 +41,7 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
   void initState() {
     super.initState();
     _amountController = TextEditingController();
-    _infoController = TextEditingController(text: _getAutoFillText());
+    _infoController = TextEditingController(text: _getAutoFillText(widget.user));
   }
 
   @override
@@ -51,8 +51,7 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
     super.dispose();
   }
 
-  String _getAutoFillText() {
-    final user = widget.user;
+  String _getAutoFillText(UserModel user) {
     if (user.bankDetails == null || user.bankDetails!.isEmpty) return '';
 
     if (isBank) {
@@ -106,7 +105,6 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
       return;
     }
 
-    // Balance Check
     int currentBalance = 0;
     if (widget.allowedType == ClaimModel.typeBank) {
       currentBalance =
@@ -141,7 +139,6 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
 
       final claimId = await walletService.requestClaim(claim);
 
-      // Trigger Notification
       final notification = NotificationModel(
         id: '',
         title: isBank ? 'Permintaan Withdraw Baru' : 'Permintaan Pulsa Baru',
@@ -158,7 +155,7 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Permintaan terkirim!')));
-        Navigator.pop(context); // Go back
+        Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
@@ -197,6 +194,13 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
           }
 
           final currentUser = userSnapshot.data!;
+          final autoFillText = _getAutoFillText(currentUser);
+          if (_infoController.text != autoFillText) {
+            _infoController.text = autoFillText;
+          }
+          final availableBalance = isBank
+              ? (currentUser.commissionBalance + currentUser.markupBalance)
+              : currentUser.pulsaBalance;
 
           return StreamBuilder<GlobalSettingsModel>(
             stream: productService.getGlobalSettings(),
@@ -210,9 +214,7 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
 
               final settings = settingsSnapshot.data!;
               final today = DateTime.now().weekday;
-              final isAllowedDay = settings.allowedWithdrawalDays.contains(
-                today,
-              );
+              final isAllowedDay = settings.allowedWithdrawalDays.contains(today);
               final dayName =
                   [
                     'Senin',
@@ -229,216 +231,31 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (!isAllowedDay)
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 24),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.red.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.info_outline, color: Colors.red),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Penarikan tidak tersedia hari ini ($dayName). Silakan cek jadwal operasional.',
-                                style: GoogleFonts.outfit(
-                                  color: Colors.red[800],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    WithdrawalAllowedDayWarning(
+                      isAllowedDay: isAllowedDay,
+                      dayName: dayName,
+                    ),
 
-                    // Balance Card
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors:
-                              isBank
-                                  ? [Colors.blue.shade700, Colors.blue.shade500]
-                                  : [
-                                    Colors.orange.shade700,
-                                    Colors.orange.shade500,
-                                  ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isBank ? Colors.blue : Colors.orange)
-                                .withValues(alpha: 0.3),
-                            offset: const Offset(0, 8),
-                            blurRadius: 16,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          const Text(
-                            'Saldo Tersedia',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            AppFormatters.currency(
-                              isBank
-                                  ? (currentUser.commissionBalance +
-                                      currentUser.markupBalance)
-                                  : currentUser.pulsaBalance,
-                            ),
-                            style: GoogleFonts.outfit(
-                              color: Colors.white,
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                    WithdrawalBalanceCard(
+                      isBank: isBank,
+                      balance: availableBalance,
                     ),
                     const SizedBox(height: 24),
 
-                    Text(
-                      isBank
-                          ? 'Dana akan ditransfer ke rekening bank Anda.'
-                          : 'Pulsa akan dikirim ke nomor HP Anda.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-
-                    if ((isBank
-                            ? settings.minPayout
-                            : settings.minPulsaWithdrawal) >
-                        0)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: Text(
-                          'Minimal penarikan: ${AppFormatters.currency(isBank ? settings.minPayout : settings.minPulsaWithdrawal)}',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.outfit(
-                            color: Colors.red[700],
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-
-                    const SizedBox(height: 24),
-
-                    // Form
-                    TextField(
-                      controller: _amountController,
-                      keyboardType: TextInputType.number,
-                      enabled: isAllowedDay,
-                      decoration: InputDecoration(
-                        labelText: 'Nominal Penarikan',
-                        border: const OutlineInputBorder(),
-                        prefixText: 'Rp ',
-                        suffixIcon: TextButton(
-                          onPressed:
-                              isAllowedDay
-                                  ? () {
-                                    final max =
-                                        isBank
-                                            ? (currentUser.commissionBalance +
-                                                currentUser
-                                                    .markupBalance)
-                                            : currentUser.pulsaBalance;
-                                    setState(() {
-                                      _amountController.text = max
-                                          .toStringAsFixed(0);
-                                    });
-                                  }
-                                  : null,
-                          child: const Text('Tarik Semua'),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _infoController,
-                      readOnly: true, // User request: ReadOnly
-                      enabled: isAllowedDay,
-                      decoration: InputDecoration(
-                        labelText: isBank ? 'Bank & No. Rekening' : 'Nomor HP',
-                        border: const OutlineInputBorder(),
-                        hintText: isBank ? 'Belum diset' : 'Belum diset',
-                        filled: true,
-                        fillColor: Colors.grey[100],
-                        helperText:
-                            (_infoController.text.isNotEmpty)
-                                ? 'Data dikunci. Ubah via Profile.'
-                                : 'Mohon lengkapi data di menu Profile.',
-                        helperStyle: TextStyle(
-                          color:
-                              _infoController.text.isEmpty ? Colors.red : null,
-                        ),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.edit_rounded, size: 18),
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Silakan ubah data di menu Profile',
-                                ),
-                              ),
-                            );
-                            // Optionally navigate to Profile
-                          },
-                          tooltip: 'Ubah di Profile',
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-                    SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed:
-                            (_isLoading ||
-                                    _infoController.text.isEmpty ||
-                                    !isAllowedDay)
-                                ? null
-                                : () => _submitRequest(settings),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 2,
-                          disabledBackgroundColor: Colors.grey[300],
-                        ),
-                        child:
-                            _isLoading
-                                ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                                : const Text(
-                                  'Kirim Permintaan',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                      ),
+                    WithdrawalForm(
+                      isBank: isBank,
+                      isAllowedDay: isAllowedDay,
+                      isLoading: _isLoading,
+                      minWithdrawalAmount: isBank ? settings.minPayout : settings.minPulsaWithdrawal,
+                      availableBalance: availableBalance,
+                      amountController: _amountController,
+                      infoController: _infoController,
+                      onTarikSemua: () {
+                        setState(() {
+                          _amountController.text = availableBalance.toStringAsFixed(0);
+                        });
+                      },
+                      onSubmit: () => _submitRequest(settings),
                     ),
                   ],
                 ),

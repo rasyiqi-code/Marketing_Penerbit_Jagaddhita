@@ -29,7 +29,7 @@ class NotificationService {
         );
 
     await _notificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) async {
         if (kDebugMode) {
           print('Notification payload: ${response.payload}');
@@ -77,10 +77,10 @@ class NotificationService {
     );
 
     await _notificationsPlugin.show(
-      id,
-      title,
-      body,
-      platformChannelSpecifics,
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: platformChannelSpecifics,
       payload: payload,
     );
   }

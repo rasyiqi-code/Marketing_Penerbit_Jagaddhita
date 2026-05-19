@@ -35,4 +35,8 @@ class AppFormatters {
       return 'Baru saja';
     }
   }
+
+  /// Format tanggal + jam: "19 Mei 2025, 20:30"
+  static String dateTime(DateTime dt) =>
+      DateFormat('dd MMM yyyy, HH:mm').format(dt);
 }

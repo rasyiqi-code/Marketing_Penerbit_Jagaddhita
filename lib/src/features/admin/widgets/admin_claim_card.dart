@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:markating_kbm_app/src/core/models/claim_model.dart';
-import 'package:markating_kbm_app/src/core/models/notification_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/wallet_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
 import 'package:provider/provider.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 
 class AdminClaimCard extends StatelessWidget {
   final ClaimModel claim;

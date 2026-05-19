@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "markating_kbm_app" "\0"
+            VALUE "FileDescription", "marketing_penerbit_jagaddhita" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "markating_kbm_app" "\0"
+            VALUE "InternalName", "marketing_penerbit_jagaddhita" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "markating_kbm_app.exe" "\0"
-            VALUE "ProductName", "markating_kbm_app" "\0"
+            VALUE "OriginalFilename", "marketing_penerbit_jagaddhita.exe" "\0"
+            VALUE "ProductName", "marketing_penerbit_jagaddhita" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

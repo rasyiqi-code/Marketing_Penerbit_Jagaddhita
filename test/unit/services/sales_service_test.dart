@@ -1,7 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
 
 void main() {
   late FakeFirebaseFirestore fakeFirestore;

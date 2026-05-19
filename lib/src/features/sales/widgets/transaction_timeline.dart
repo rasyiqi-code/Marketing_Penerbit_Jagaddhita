@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:markating_kbm_app/src/core/models/sale_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 
 class TransactionTimeline extends StatelessWidget {
   final List<SaleHistoryItem> history;

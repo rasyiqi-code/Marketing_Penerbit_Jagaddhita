@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:markating_kbm_app/src/core/services/auth_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/auth/widgets/login_form.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -237,15 +238,15 @@ class _LoginScreenState extends State<LoginScreen>
                       // Header
                       const Icon(
                         Icons.auto_stories_rounded,
-                        size: 80,
+                        size: 60,
                         color: Colors.white,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                       Text(
                         'Penerbit Jagaddhita',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
-                          fontSize: 32,
+                          fontSize: 30,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           letterSpacing: 1.5,
@@ -255,209 +256,46 @@ class _LoginScreenState extends State<LoginScreen>
                         'Portal Penjualan Internal',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.white70,
                           letterSpacing: 0.5,
                         ),
                       ),
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 24),
 
-                      // Glass Window Card
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          borderRadius: BorderRadius.circular(32),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(32),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                'Selamat Datang Kembali',
-                                style: Theme.of(context).textTheme.headlineSmall
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppTheme.primaryColor,
-                                    ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Masuk untuk mengakses dashboard Anda',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                              const SizedBox(height: 32),
-
-                              // Email Field
-                              TextFormField(
-                                controller: _emailController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Alamat Email',
-                                  prefixIcon: Icon(Icons.email_outlined),
+                      // Glass Window Card Form
+                      LoginForm(
+                        formKey: _formKey,
+                        emailController: _emailController,
+                        passwordController: _passwordController,
+                        isLoading: _isLoading,
+                        obscurePassword: _obscurePassword,
+                        onToggleObscure: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                        onLogin: _handleLogin,
+                        onGoogleLogin: _handleGoogleLogin,
+                        onForgotPassword: () {
+                          if (_emailController.text.isEmpty) {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Please enter email to reset password',
                                 ),
-                                keyboardType: TextInputType.emailAddress,
-                                validator: (value) => value!.isEmpty
-                                    ? 'Harap masukkan email Anda'
-                                    : null,
+                                backgroundColor: Colors.orange,
                               ),
-                              const SizedBox(height: 20),
-
-                              // Password Field
-                              TextFormField(
-                                controller: _passwordController,
-                                decoration: InputDecoration(
-                                  labelText: 'Kata Sandi',
-                                  prefixIcon: const Icon(Icons.lock_outline),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _obscurePassword
-                                          ? Icons.visibility_outlined
-                                          : Icons.visibility_off_outlined,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _obscurePassword = !_obscurePassword;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                obscureText: _obscurePassword,
-                                validator: (value) => value!.isEmpty
-                                    ? 'Harap masukkan kata sandi Anda'
-                                    : null,
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    if (_emailController.text.isEmpty) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Please enter email to reset password',
-                                          ),
-                                          backgroundColor: Colors.orange,
-                                        ),
-                                      );
-                                      return;
-                                    }
-                                    _showResetPasswordDialog(context);
-                                  },
-                                  child: const Text(
-                                    'Lupa Kata Sandi?',
-                                    style: TextStyle(
-                                      color: AppTheme.primaryColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-
-                              // Login Button
-                              SizedBox(
-                                height: 56,
-                                child: ElevatedButton(
-                                  onPressed: _isLoading ? null : _handleLogin,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppTheme.primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    elevation: 8,
-                                    shadowColor: AppTheme.primaryColor
-                                        .withValues(alpha: 0.5),
-                                  ),
-                                  child: _isLoading
-                                      ? const SizedBox(
-                                          width: 24,
-                                          height: 24,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Text(
-                                          'MASUK',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.2,
-                                          ),
-                                        ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 24),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Divider(color: Colors.grey[300]),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    child: Text(
-                                      'ATAU',
-                                      style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Divider(color: Colors.grey[300]),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 24),
-
-                              OutlinedButton.icon(
-                                onPressed: _isLoading
-                                    ? null
-                                    : _handleGoogleLogin,
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  side: BorderSide(color: Colors.grey.shade300),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                icon: Image.asset(
-                                  'assets/google_logo.png',
-                                  height: 24,
-                                ),
-                                label: const Text(
-                                  'Masuk dengan Google',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                            );
+                            return;
+                          }
+                          _showResetPasswordDialog(context);
+                        },
                       ),
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

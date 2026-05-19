@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:markating_kbm_app/src/core/models/notification_model.dart';
-import 'package:markating_kbm_app/src/features/notifications/notification_controller.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
 
-import 'package:markating_kbm_app/src/core/services/notificationService/notification_service.dart';
-import 'package:markating_kbm_app/src/features/sales/widgets/sale_detail_dialog.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sale_detail_dialog.dart';
 import 'package:provider/provider.dart';
 
 class NotificationListScreen extends StatelessWidget {
@@ -149,7 +150,8 @@ class NotificationListScreen extends StatelessWidget {
 
     if (notification.relatedId == null) return;
 
-    final notificationService = Provider.of<AppNotificationService>(context, listen: false);
+    final salesService = Provider.of<SalesService>(context, listen: false);
+    final walletService = Provider.of<WalletService>(context, listen: false);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     // Show loading
@@ -167,7 +169,7 @@ class NotificationListScreen extends StatelessWidget {
           title.contains('penjualan') ||
           title.contains('bukti')) {
         // Fetch Sale
-        final sale = await notificationService.getSale(notification.relatedId!);
+        final sale = await salesService.getSale(notification.relatedId!);
 
         if (context.mounted) Navigator.pop(context); // Close loading
 
@@ -188,7 +190,7 @@ class NotificationListScreen extends StatelessWidget {
           title.contains('claim') ||
           title.contains('permintaan')) {
         // Fetch Claim (Just check if exists for now, maybe show simple dialog)
-        final claim = await notificationService.getClaim(notification.relatedId!);
+        final claim = await walletService.getClaim(notification.relatedId!);
 
         if (context.mounted) Navigator.pop(context); // Close loading
 

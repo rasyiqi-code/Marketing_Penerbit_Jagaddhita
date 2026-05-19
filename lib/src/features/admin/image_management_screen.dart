@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:markating_kbm_app/src/core/services/storage_service.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/storage_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:markating_kbm_app/src/core/utils/network_image_web_helper.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 
 class ImageManagementScreen extends StatefulWidget {
   final bool isPicker;

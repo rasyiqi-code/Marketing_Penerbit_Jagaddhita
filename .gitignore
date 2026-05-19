@@ -48,3 +48,8 @@ app.*.map.json
 
 # Firebase
 .firebase/
+
+# Web / Node / Wrangler Dependencies
+**/node_modules/
+**/.wrangler/
+.wrangler/

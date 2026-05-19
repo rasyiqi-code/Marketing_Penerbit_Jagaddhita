@@ -1,0 +1,13 @@
+{
+  "name": "marketing-jagaddhita-r2-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker proxy untuk R2 bucket Marketing Jagaddhita",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 
 class MainBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -18,10 +18,10 @@ class MainBottomNavigationBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       child: Container(
-        height: 70,
+        height: 60,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.1),
@@ -99,12 +99,30 @@ class MainBottomNavigationBar extends StatelessWidget {
                 : Colors.transparent,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            isSelected ? selectedIcon : unselectedIcon,
-            color: isSelected
-                ? AppTheme.primaryColor
-                : Theme.of(context).unselectedWidgetColor,
-            size: 28,
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              Icon(
+                isSelected ? selectedIcon : unselectedIcon,
+                color: isSelected
+                    ? AppTheme.primaryColor
+                    : Theme.of(context).unselectedWidgetColor,
+                size: 26,
+              ),
+              if (isSelected)
+                Positioned(
+                  bottom: -4,
+                  child: Container(
+                    width: 4,
+                    height: 4,
+                    decoration: const BoxDecoration(
+                      color: AppTheme.accentColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),

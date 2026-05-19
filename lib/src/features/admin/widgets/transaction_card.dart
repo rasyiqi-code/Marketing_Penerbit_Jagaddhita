@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:markating_kbm_app/src/core/models/notification_model.dart';
-import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/salesService/sales_service.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/transaction_detail_modal.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/transaction_update_dialog.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction_detail_modal.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction_update_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TransactionCard extends StatelessWidget {
@@ -17,6 +18,7 @@ class TransactionCard extends StatelessWidget {
   Future<void> _cancelTransaction(BuildContext context, SaleModel sale) async {
     try {
       final salesService = Provider.of<SalesService>(context, listen: false);
+      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
 
       await salesService.updateSaleStatus(
         sale,
@@ -36,7 +38,7 @@ class TransactionCard extends StatelessWidget {
         createdAt: DateTime.now(),
       );
 
-      await salesService.sendNotification(notification);
+      await notificationService.sendNotification(notification);
 
       if (!context.mounted) return;
 
@@ -65,14 +67,16 @@ class TransactionCard extends StatelessWidget {
     final isPending = sale.paymentStatus == SaleModel.statusPending;
 
     Color statusColor;
-    if (isComplete) {
-      statusColor = Colors.purple;
-    } else if (isLunas) {
-      statusColor = Colors.green;
+    Color textColor;
+    if (isComplete || isLunas) {
+      statusColor = AppTheme.primaryColor;
+      textColor = AppTheme.primaryColor;
     } else if (isPending) {
-      statusColor = Colors.orange;
+      statusColor = AppTheme.accentColor;
+      textColor = const Color(0xFFB8860B); // Darker yellow/gold for text contrast
     } else {
-      statusColor = Colors.blue;
+      statusColor = AppTheme.secondaryColor;
+      textColor = AppTheme.secondaryColor;
     }
 
     return Card(
@@ -111,7 +115,7 @@ class TransactionCard extends StatelessWidget {
                       sale.paymentStatus,
                       style: GoogleFonts.outfit(
                         fontSize: 11, // Reduced font size
-                        color: statusColor,
+                        color: textColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -184,7 +188,7 @@ class TransactionCard extends StatelessWidget {
                           ),
                           child: const Text(
                             'Batalkan',
-                            style: TextStyle(color: Colors.red, fontSize: 12),
+                            style: TextStyle(color: AppTheme.secondaryColor, fontSize: 12),
                           ),
                         ),
                         const SizedBox(width: 8),

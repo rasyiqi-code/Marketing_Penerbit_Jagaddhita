@@ -168,7 +168,7 @@ SHA-256: E2:35:3A:4F:D2:DC:BD:98:22:B1:E8:E8:0C:98:11:86:36:52:FE:B6:94:79:9F:80
 Valid until: Kamis, 24 Februari 2056
 ----------
 
-[Incubating] Problems report is available at: file:///home/rasyiqi/Project/owwcommerce/markating_kbm_app/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file:///home/rasyiqi/Project/owwcommerce/marketing_penerbit_jagaddhita/build/reports/problems/problems-report.html
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 

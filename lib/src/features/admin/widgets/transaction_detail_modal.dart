@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/utils/network_image_web_helper.dart';
-import 'package:markating_kbm_app/src/features/sales/widgets/transaction_timeline.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_timeline.dart';
 
 class TransactionDetailModal extends StatelessWidget {
   final SaleModel sale;
@@ -111,6 +111,30 @@ class TransactionDetailModal extends StatelessWidget {
                     'Produk',
                     sale.details['product_name'] ?? 'Unknown Product',
                   ),
+                  if (sale.details['sekolah'] != null)
+                    _buildDetailRow(
+                      context,
+                      'Sekolah Tujuan',
+                      sale.details['sekolah'],
+                    ),
+                  if (sale.details['nama_pemesan'] != null)
+                    _buildDetailRow(
+                      context,
+                      'Nama Pemesan',
+                      sale.details['nama_pemesan'],
+                    ),
+                  if (sale.details['alamat_pengiriman'] != null)
+                    _buildDetailRow(
+                      context,
+                      'Alamat Kirim',
+                      sale.details['alamat_pengiriman'],
+                    ),
+                  if (sale.details['telepon_penerima'] != null)
+                    _buildDetailRow(
+                      context,
+                      'Telp Penerima',
+                      sale.details['telepon_penerima'],
+                    ),
                   if (sale.details['judul_naskah'] != null)
                     _buildDetailRow(
                       context,
@@ -119,11 +143,17 @@ class TransactionDetailModal extends StatelessWidget {
                     ),
                   _buildDetailRow(
                     context,
-                    'Nama Agent (Buyer)',
+                    'Nama Agent',
                     sale.details['agent_name'] ??
                         sale.details['buyer_name'] ??
                         '-',
                   ),
+                  if (sale.details['marketing_category'] != null && sale.details['marketing_category'] != 'none')
+                    _buildDetailRow(
+                      context,
+                      'Kategori Marketing',
+                      sale.details['marketing_category'].toString().toUpperCase(),
+                    ),
                   if (sale.details['judul_layout'] != null)
                     _buildDetailRow(
                       context,

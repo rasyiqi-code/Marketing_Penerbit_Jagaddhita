@@ -22,7 +22,7 @@ class MarketingFabMenu extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Quick Sale',
+            'Menu Pemasaran',
             style: GoogleFonts.outfit(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -35,27 +35,13 @@ class MarketingFabMenu extends StatelessWidget {
               Expanded(
                 child: _buildFabOption(
                   context,
-                  'Penerbitan',
+                  'Entri Penjualan',
                   Icons.book_rounded,
                   Colors.blue,
-                  '/sales/r1',
+                  '/sales/penerbitan',
                 ),
               ),
               const SizedBox(width: 16),
-              Expanded(
-                child: _buildFabOption(
-                  context,
-                  'KBM Creator',
-                  Icons.brush_rounded,
-                  Colors.purple,
-                  '/sales/r2',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
               Expanded(
                 child: _buildFabOption(
                   context,
@@ -65,7 +51,6 @@ class MarketingFabMenu extends StatelessWidget {
                   '/poster_generator',
                 ),
               ),
-              const Expanded(child: SizedBox()),
             ],
           ),
         ],

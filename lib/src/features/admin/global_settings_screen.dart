@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:markating_kbm_app/src/core/models/global_settings_model.dart';
-import 'package:markating_kbm_app/src/core/services/data_seeder_service.dart';
-import 'package:markating_kbm_app/src/core/services/productService/product_service.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/settings/announcement_settings_card.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/settings/appearance_settings_card.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/settings/bonus_pulsa_settings_card.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/settings/commission_settings_card.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/settings/danger_zone_settings_card.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/settings/withdrawal_settings_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/global_settings_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/data_seeder_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/announcement_settings_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/appearance_settings_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/bonus_pulsa_settings_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/commission_settings_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/progressive_commission_settings_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/danger_zone_settings_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/withdrawal_settings_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/settings_scaffold_widgets.dart';
 import 'package:provider/provider.dart';
 
 class GlobalSettingsScreen extends StatefulWidget {
@@ -19,96 +21,103 @@ class GlobalSettingsScreen extends StatefulWidget {
 
 class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
+
   late TextEditingController _bonusR1Controller;
-  late TextEditingController _bonusR2Controller;
+  late TextEditingController _resellerCommissionController;
+  late TextEditingController _distributorCommissionController;
   late TextEditingController _pulsaBonusController;
   late TextEditingController _minSalePulsaController;
-
-  late TextEditingController _pulsaBonusR2Controller; // New
   late TextEditingController _minPayoutController;
-  late TextEditingController _minPulsaWithdrawalController; // New
+  late TextEditingController _minPulsaWithdrawalController;
   late TextEditingController _latestInfoController;
   late TextEditingController _webBaseUrlController;
-
-  // New Controllers
   late TextEditingController _maxPulsaBonusCountController;
   late TextEditingController _minCompletedSalesCountController;
 
-  bool _enableR1 = true;
-  bool _enableR2 = true;
+  late TextEditingController _thresholdJagaddhitaMediumController;
+  late TextEditingController _percentJagaddhitaMediumController;
+  late TextEditingController _thresholdJagaddhitaHighController;
+  late TextEditingController _percentJagaddhitaHighController;
+  late TextEditingController _thresholdSibiController;
+  late TextEditingController _percentSibiController;
 
-  // Granular Reward Toggles
+  bool _enableR1 = true;
   bool _enableR1Commission = true;
   bool _enableR1PulsaBonus = true;
-  bool _enableR2Commission = true;
-
-  bool _enableR2PulsaBonus = true;
-
-  // New Limit Toggles
   bool _enableMaxPulsaBonusLimit = false;
   bool _enableMinCompletedSalesLimit = false;
   bool _enableMinSalesLimit = true;
 
   List<int> _allowedWithdrawalDays = [1, 2, 3, 4, 5, 6, 7];
-
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _bonusR1Controller = TextEditingController();
-    _bonusR2Controller = TextEditingController();
+    _resellerCommissionController = TextEditingController();
+    _distributorCommissionController = TextEditingController();
     _pulsaBonusController = TextEditingController();
     _minSalePulsaController = TextEditingController();
-    _pulsaBonusR2Controller = TextEditingController();
     _minPayoutController = TextEditingController();
     _minPulsaWithdrawalController = TextEditingController();
     _latestInfoController = TextEditingController();
     _webBaseUrlController = TextEditingController();
     _maxPulsaBonusCountController = TextEditingController();
     _minCompletedSalesCountController = TextEditingController();
+    _thresholdJagaddhitaMediumController = TextEditingController();
+    _percentJagaddhitaMediumController = TextEditingController();
+    _thresholdJagaddhitaHighController = TextEditingController();
+    _percentJagaddhitaHighController = TextEditingController();
+    _thresholdSibiController = TextEditingController();
+    _percentSibiController = TextEditingController();
     _loadSettings();
   }
 
   void _loadSettings() {
-    // Initial fetch to populate fields
     final productService = Provider.of<ProductService>(context, listen: false);
     productService.getGlobalSettings().first.then((settings) {
       if (mounted) {
         setState(() {
           _bonusR1Controller.text = settings.bonusPercentR1.toString();
-          _bonusR2Controller.text = settings.bonusPercentR2.toString();
-          _pulsaBonusController.text = settings.pulsaBonusAmount
-              .toStringAsFixed(0);
-          _minSalePulsaController.text = settings.minSaleForPulsa
-              .toStringAsFixed(0);
-
-          _pulsaBonusR2Controller.text = settings.pulsaBonusAmountR2
-              .toStringAsFixed(0);
+          _resellerCommissionController.text =
+              settings.resellerCommissionPercent.toString();
+          _distributorCommissionController.text =
+              settings.distributorCommissionPercent.toString();
+          _pulsaBonusController.text =
+              settings.pulsaBonusAmount.toStringAsFixed(0);
+          _minSalePulsaController.text =
+              settings.minSaleForPulsa.toStringAsFixed(0);
           _minPayoutController.text = settings.minPayout.toStringAsFixed(0);
-          _minPulsaWithdrawalController.text = settings.minPulsaWithdrawal
-              .toStringAsFixed(0);
+          _minPulsaWithdrawalController.text =
+              settings.minPulsaWithdrawal.toStringAsFixed(0);
           _latestInfoController.text = settings.latestInfo;
           _webBaseUrlController.text = settings.webBaseUrl;
 
           _enableR1 = settings.enableR1;
-          _enableR2 = settings.enableR2;
-
           _enableR1Commission = settings.enableR1Commission;
           _enableR1PulsaBonus = settings.enableR1PulsaBonus;
-          _enableR2Commission = settings.enableR2Commission;
-
-          _enableR2PulsaBonus = settings.enableR2PulsaBonus;
           _allowedWithdrawalDays = List.from(settings.allowedWithdrawalDays);
 
           _enableMaxPulsaBonusLimit = settings.enableMaxPulsaBonusLimit;
-          _maxPulsaBonusCountController.text = settings.maxPulsaBonusCount
-              .toString();
+          _maxPulsaBonusCountController.text =
+              settings.maxPulsaBonusCount.toString();
           _enableMinCompletedSalesLimit = settings.enableMinCompletedSalesLimit;
-          _minCompletedSalesCountController.text = settings
-              .minCompletedSalesCount
-              .toString();
+          _minCompletedSalesCountController.text =
+              settings.minCompletedSalesCount.toString();
           _enableMinSalesLimit = settings.enableMinSalesLimit;
+
+          _thresholdJagaddhitaMediumController.text =
+              settings.thresholdJagaddhitaMedium.toStringAsFixed(0);
+          _percentJagaddhitaMediumController.text =
+              settings.percentJagaddhitaMedium.toString();
+          _thresholdJagaddhitaHighController.text =
+              settings.thresholdJagaddhitaHigh.toStringAsFixed(0);
+          _percentJagaddhitaHighController.text =
+              settings.percentJagaddhitaHigh.toString();
+          _thresholdSibiController.text =
+              settings.thresholdSibi.toStringAsFixed(0);
+          _percentSibiController.text = settings.percentSibi.toString();
         });
       }
     });
@@ -119,36 +128,40 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final productService = Provider.of<ProductService>(context, listen: false);
+      final productService =
+          Provider.of<ProductService>(context, listen: false);
       final settings = GlobalSettingsModel(
         bonusPercentR1: double.tryParse(_bonusR1Controller.text) ?? 0,
-        bonusPercentR2: double.tryParse(_bonusR2Controller.text) ?? 10,
-        pulsaBonusAmount: double.tryParse(_pulsaBonusController.text) ?? 50000,
+        resellerCommissionPercent:
+            double.tryParse(_resellerCommissionController.text) ?? 30.0,
+        distributorCommissionPercent:
+            double.tryParse(_distributorCommissionController.text) ?? 40.0,
+        pulsaBonusAmount:
+            double.tryParse(_pulsaBonusController.text) ?? 50000,
         minSaleForPulsa:
             double.tryParse(_minSalePulsaController.text) ?? 10000000,
-
-        pulsaBonusAmountR2:
-            double.tryParse(_pulsaBonusR2Controller.text) ?? 50000,
-        // Sync R2 Min Sale with Global (R1) Controller
-        minSaleForPulsaR2:
-            double.tryParse(_minSalePulsaController.text) ?? 10000000,
-
         minPayout: double.tryParse(_minPayoutController.text) ?? 0,
         minPulsaWithdrawal:
             double.tryParse(_minPulsaWithdrawalController.text) ?? 20000,
-
+        thresholdJagaddhitaMedium:
+            double.tryParse(_thresholdJagaddhitaMediumController.text) ??
+                20000000.0,
+        percentJagaddhitaMedium:
+            double.tryParse(_percentJagaddhitaMediumController.text) ?? 60.0,
+        thresholdJagaddhitaHigh:
+            double.tryParse(_thresholdJagaddhitaHighController.text) ??
+                50000000.0,
+        percentJagaddhitaHigh:
+            double.tryParse(_percentJagaddhitaHighController.text) ?? 70.0,
+        thresholdSibi:
+            double.tryParse(_thresholdSibiController.text) ?? 10000000.0,
+        percentSibi: double.tryParse(_percentSibiController.text) ?? 50.0,
         enableR1: _enableR1,
-        enableR2: _enableR2,
-
         enableR1Commission: _enableR1Commission,
         enableR1PulsaBonus: _enableR1PulsaBonus,
-        enableR2Commission: _enableR2Commission,
-
-        enableR2PulsaBonus: _enableR2PulsaBonus,
         allowedWithdrawalDays: _allowedWithdrawalDays,
         latestInfo: _latestInfoController.text,
         webBaseUrl: _webBaseUrlController.text,
-
         enableMaxPulsaBonusLimit: _enableMaxPulsaBonusLimit,
         maxPulsaBonusCount:
             int.tryParse(_maxPulsaBonusCountController.text) ?? 1,
@@ -242,16 +255,22 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   @override
   void dispose() {
     _bonusR1Controller.dispose();
-    _bonusR2Controller.dispose();
+    _resellerCommissionController.dispose();
+    _distributorCommissionController.dispose();
     _pulsaBonusController.dispose();
     _minSalePulsaController.dispose();
-    _pulsaBonusR2Controller.dispose();
     _minPayoutController.dispose();
     _minPulsaWithdrawalController.dispose();
     _latestInfoController.dispose();
     _webBaseUrlController.dispose();
     _maxPulsaBonusCountController.dispose();
     _minCompletedSalesCountController.dispose();
+    _thresholdJagaddhitaMediumController.dispose();
+    _percentJagaddhitaMediumController.dispose();
+    _thresholdJagaddhitaHighController.dispose();
+    _percentJagaddhitaHighController.dispose();
+    _thresholdSibiController.dispose();
+    _percentSibiController.dispose();
     super.dispose();
   }
 
@@ -272,54 +291,64 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildSectionHeader(
-                  'Tampilan & Menu',
-                  Icons.dashboard_customize_rounded,
+                const SettingsSectionHeader(
+                  title: 'Tampilan & Menu',
+                  icon: Icons.dashboard_customize_rounded,
                 ),
                 AppearanceSettingsCard(
                   enableR1: _enableR1,
-                  enableR2: _enableR2,
                   onR1Changed: (val) => setState(() => _enableR1 = val),
-                  onR2Changed: (val) => setState(() => _enableR2 = val),
                 ),
                 const SizedBox(height: 24),
-                _buildSectionHeader(
-                  'Pengumuman & Link',
-                  Icons.campaign_rounded,
+                const SettingsSectionHeader(
+                  title: 'Pengumuman & Link',
+                  icon: Icons.campaign_rounded,
                 ),
                 AnnouncementSettingsCard(
                   latestInfoController: _latestInfoController,
                   webBaseUrlController: _webBaseUrlController,
                 ),
                 const SizedBox(height: 24),
-                _buildSectionHeader(
-                  'Komisi Penjualan (Tunai)',
-                  Icons.monetization_on_rounded,
+                const SettingsSectionHeader(
+                  title: 'Komisi Penjualan (Tunai)',
+                  icon: Icons.monetization_on_rounded,
                 ),
                 CommissionSettingsCard(
                   enableR1Commission: _enableR1Commission,
-                  enableR2Commission: _enableR2Commission,
                   bonusR1Controller: _bonusR1Controller,
-                  bonusR2Controller: _bonusR2Controller,
+                  resellerCommissionController: _resellerCommissionController,
+                  distributorCommissionController:
+                      _distributorCommissionController,
                   onR1CommissionChanged: (val) =>
                       setState(() => _enableR1Commission = val),
-                  onR2CommissionChanged: (val) =>
-                      setState(() => _enableR2Commission = val),
                 ),
                 const SizedBox(height: 24),
-                _buildSectionHeader(
-                  'Pengaturan Bonus Pulsa',
-                  Icons.phonelink_ring_rounded,
+                const SettingsSectionHeader(
+                  title: 'Diskon Progresif Buku',
+                  icon: Icons.trending_up_rounded,
+                ),
+                ProgressiveCommissionSettingsCard(
+                  thresholdJagaddhitaMediumController:
+                      _thresholdJagaddhitaMediumController,
+                  percentJagaddhitaMediumController:
+                      _percentJagaddhitaMediumController,
+                  thresholdJagaddhitaHighController:
+                      _thresholdJagaddhitaHighController,
+                  percentJagaddhitaHighController:
+                      _percentJagaddhitaHighController,
+                  thresholdSibiController: _thresholdSibiController,
+                  percentSibiController: _percentSibiController,
+                ),
+                const SizedBox(height: 24),
+                const SettingsSectionHeader(
+                  title: 'Pengaturan Bonus Pulsa',
+                  icon: Icons.phonelink_ring_rounded,
                 ),
                 BonusPulsaSettingsCard(
                   enableR1PulsaBonus: _enableR1PulsaBonus,
-                  enableR2PulsaBonus: _enableR2PulsaBonus,
                   pulsaBonusController: _pulsaBonusController,
-                  pulsaBonusR2Controller: _pulsaBonusR2Controller,
                   onR1PulsaBonusChanged: (val) =>
                       setState(() => _enableR1PulsaBonus = val),
-                  onR2PulsaBonusChanged: (val) =>
-                      setState(() => _enableR2PulsaBonus = val),
                   enableMinSalesLimit: _enableMinSalesLimit,
                   minSalePulsaController: _minSalePulsaController,
                   onMinSalesLimitChanged: (val) =>
@@ -335,9 +364,9 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                       setState(() => _enableMinCompletedSalesLimit = val),
                 ),
                 const SizedBox(height: 24),
-                _buildSectionHeader(
-                  'Penarikan Dana (Withdrawal)',
-                  Icons.account_balance_wallet_rounded,
+                const SettingsSectionHeader(
+                  title: 'Penarikan Dana (Withdrawal)',
+                  icon: Icons.account_balance_wallet_rounded,
                 ),
                 WithdrawalSettingsCard(
                   minPayoutController: _minPayoutController,
@@ -354,33 +383,14 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                   },
                 ),
                 const SizedBox(height: 32),
-                SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _saveSettings,
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: Colors.blue[700],
-                      foregroundColor: Colors.white,
-                      elevation: 2,
-                    ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'Simpan Perubahan',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                  ),
+                SettingsSaveButton(
+                  isLoading: _isLoading,
+                  onPressed: _saveSettings,
                 ),
                 const SizedBox(height: 48),
-                _buildSectionHeader(
-                  'Area Berbahaya',
-                  Icons.warning_rounded,
+                const SettingsSectionHeader(
+                  title: 'Area Berbahaya',
+                  icon: Icons.warning_rounded,
                   color: Colors.red,
                 ),
                 DangerZoneSettingsCard(
@@ -393,28 +403,6 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title, IconData icon, {Color? color}) {
-    final effectiveColor =
-        color ?? Theme.of(context).colorScheme.onSurface; // Colors.black87
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0, left: 4),
-      child: Row(
-        children: [
-          Icon(icon, color: effectiveColor),
-          const SizedBox(width: 10),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: effectiveColor,
-            ),
-          ),
-        ],
       ),
     );
   }

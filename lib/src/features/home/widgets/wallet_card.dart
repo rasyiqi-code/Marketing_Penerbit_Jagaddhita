@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 
 class WalletCard extends StatelessWidget {
   final UserModel user;

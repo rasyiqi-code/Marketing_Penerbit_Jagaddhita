@@ -1,0 +1,283 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+
+/// Displays the auto-calculated price breakdown for a sale order.
+class SalesCalculationCard extends StatelessWidget {
+  final Color color;
+  final String marketingCategory;
+  final double bruto;
+  final double discountPercent;
+  final double discountAmount;
+  final double netto;
+  final double commissionAmount;
+  final double pulsaBonusAmount;
+
+  const SalesCalculationCard({
+    super.key,
+    required this.color,
+    required this.marketingCategory,
+    required this.bruto,
+    required this.discountPercent,
+    required this.discountAmount,
+    required this.netto,
+    required this.commissionAmount,
+    required this.pulsaBonusAmount,
+  });
+
+  String get _categoryLabel {
+    if (marketingCategory == 'reseller') return 'Reseller';
+    if (marketingCategory == 'distributor') return 'Distributor';
+    return 'Marketing';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.08),
+            color.withValues(alpha: 0.03),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row
+          Row(
+            children: [
+              Icon(Icons.calculate_rounded, color: color, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Kalkulasi Otomatis',
+                style: GoogleFonts.outfit(
+                    fontWeight: FontWeight.bold, color: color),
+              ),
+              const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: color.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  _categoryLabel,
+                  style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: color),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Calculation rows
+          _CalcRow(
+            label: 'Total Bruto',
+            value: AppFormatters.currency(bruto),
+            isBold: false,
+          ),
+          const SizedBox(height: 8),
+          _CalcRow(
+            label: 'Diskon ${discountPercent.toStringAsFixed(0)}%',
+            value: '- ${AppFormatters.currency(discountAmount)}',
+            valueColor: Colors.red[700],
+          ),
+          const Divider(height: 24),
+          _CalcRow(
+            label: 'Total Netto (Dibayar Marketing)',
+            value: AppFormatters.currency(netto),
+            isBold: true,
+            valueColor: color,
+          ),
+          if (commissionAmount > 0) ...[
+            const SizedBox(height: 8),
+            _CalcRow(
+              label: 'Pendapatan Marketing',
+              value: AppFormatters.currency(commissionAmount),
+              valueColor: Colors.green[700],
+              isBold: true,
+            ),
+          ],
+          if (pulsaBonusAmount > 0) ...[
+            const Divider(height: 16),
+            _CalcRow(
+              label: '🎁 Bonus Pulsa',
+              value: AppFormatters.currency(pulsaBonusAmount),
+              valueColor: Colors.orange[700],
+              isBold: true,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CalcRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool isBold;
+  final Color? valueColor;
+
+  const _CalcRow({
+    required this.label,
+    required this.value,
+    this.isBold = false,
+    this.valueColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Flexible(
+          child: Text(
+            label,
+            style: GoogleFonts.outfit(
+              fontSize: 13,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          value,
+          style: GoogleFonts.outfit(
+            fontSize: isBold ? 16 : 13,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+            color:
+                valueColor ?? Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Banner showing agent name and marketing category.
+class SalesAgentBanner extends StatelessWidget {
+  final String agentName;
+  final String? category;
+
+  const SalesAgentBanner({
+    super.key,
+    required this.agentName,
+    this.category,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final catLabel = category == 'reseller'
+        ? 'Reseller'
+        : category == 'distributor'
+            ? 'Distributor'
+            : 'Marketing';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.blue.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.badge_outlined,
+              size: 20, color: Colors.blueAccent),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              '$agentName • $catLabel',
+              style: GoogleFonts.outfit(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bold section title for form sections.
+class SalesSectionTitle extends StatelessWidget {
+  final String title;
+  const SalesSectionTitle(this.title, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: GoogleFonts.outfit(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+    );
+  }
+}
+
+/// Payment status dropdown: DP or LUNAS.
+class SalesPaymentStatusDropdown extends StatelessWidget {
+  final String value;
+  final ValueChanged<String?> onChanged;
+
+  const SalesPaymentStatusDropdown({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      initialValue: value,
+      style: GoogleFonts.outfit(
+        color: Theme.of(context).colorScheme.onSurface,
+        fontSize: 16,
+      ),
+      decoration: InputDecoration(
+        labelText: 'Status Pembayaran',
+        labelStyle: GoogleFonts.outfit(
+            color: Theme.of(context).colorScheme.onSurfaceVariant),
+        prefixIcon: Icon(Icons.payment_outlined,
+            color: Theme.of(context).colorScheme.onSurfaceVariant),
+        border:
+            OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade300)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide:
+                const BorderSide(color: AppTheme.primaryColor, width: 2)),
+        filled: true,
+        fillColor: Theme.of(context).inputDecorationTheme.fillColor ??
+            Colors.grey[50],
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      ),
+      onChanged: onChanged,
+      isExpanded: true,
+      items: const [
+        DropdownMenuItem(value: 'DP', child: Text('DP (Uang Muka)')),
+        DropdownMenuItem(
+            value: 'LUNAS', child: Text('LUNAS (Bayar Penuh)')),
+      ],
+    );
+  }
+}

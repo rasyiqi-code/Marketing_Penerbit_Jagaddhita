@@ -16,6 +16,15 @@ class UserModel {
   final String? address;
   final String? phoneNumber;
   final Map<String, dynamic>? bankDetails;
+  final String? marketingCategory; // 'reseller', 'distributor', or null
+
+  // Custom Catalogs & Digital Business Card settings (New)
+  final bool showJagaddhitaCatalog;
+  final bool showSibiCatalog;
+  final String? whatsappNumber;
+  final String? instagramUrl;
+  final String? tiktokUrl;
+  final String? facebookUrl;
 
   UserModel({
     required this.id,
@@ -35,6 +44,13 @@ class UserModel {
     this.totalPulsaEarned = 0,
     this.createdAt,
     this.bankDetails,
+    this.marketingCategory,
+    this.showJagaddhitaCatalog = true,
+    this.showSibiCatalog = true,
+    this.whatsappNumber,
+    this.instagramUrl,
+    this.tiktokUrl,
+    this.facebookUrl,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> data, String id) {
@@ -60,6 +76,13 @@ class UserModel {
       bankDetails: data['bank_details'] != null
           ? Map<String, dynamic>.from(data['bank_details'])
           : null,
+      marketingCategory: data['marketing_category'],
+      showJagaddhitaCatalog: data['show_jagaddhita_catalog'] ?? true,
+      showSibiCatalog: data['show_sibi_catalog'] ?? true,
+      whatsappNumber: data['whatsapp_number'],
+      instagramUrl: data['instagram_url'],
+      tiktokUrl: data['tiktok_url'],
+      facebookUrl: data['facebook_url'],
     );
   }
 
@@ -81,6 +104,13 @@ class UserModel {
       'total_pulsa_earned': totalPulsaEarned,
       'created_at': createdAt,
       'bank_details': bankDetails,
+      'marketing_category': marketingCategory,
+      'show_jagaddhita_catalog': showJagaddhitaCatalog,
+      'show_sibi_catalog': showSibiCatalog,
+      'whatsapp_number': whatsappNumber,
+      'instagram_url': instagramUrl,
+      'tiktok_url': tiktokUrl,
+      'facebook_url': facebookUrl,
     };
   }
 }

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/services/salesService/sales_service.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/transaction_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction_card.dart';
 
 class AdminTransactionsScreen extends StatefulWidget {
-  final int houseType; // 1 for Penerbitan, 2 for Creator
-
-  const AdminTransactionsScreen({super.key, required this.houseType});
+  const AdminTransactionsScreen({super.key});
 
   @override
   State<AdminTransactionsScreen> createState() =>
@@ -22,8 +20,6 @@ class _AdminTransactionsScreenState extends State<AdminTransactionsScreen> {
   bool _isLoadingMore = false;
   String? _selectedStatus; // null = All
 
-  // ignore: unused_field
-  // ignore: unused_field
 
   @override
   void initState() {
@@ -56,17 +52,13 @@ class _AdminTransactionsScreenState extends State<AdminTransactionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.houseType == 1
-        ? 'Penerbitan (Buku)'
-        : 'KBM Creator (Mitra)';
+    final title = 'Daftar Transaksi';
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Keep previous fix
+        automaticallyImplyLeading: true,
         title: Text(title, style: GoogleFonts.outfit(color: Colors.white)),
-        backgroundColor: widget.houseType == 1
-            ? AppTheme.primaryColor
-            : Colors.deepPurple,
+        backgroundColor: AppTheme.primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           PopupMenuButton<String?>(
@@ -95,7 +87,7 @@ class _AdminTransactionsScreenState extends State<AdminTransactionsScreen> {
       ),
       body: StreamBuilder<List<SaleModel>>(
         stream: Provider.of<SalesService>(context).getSales(
-          houseType: widget.houseType,
+          houseType: 1, // Penerbitan
           status: _selectedStatus,
           limit: _limit,
         ),

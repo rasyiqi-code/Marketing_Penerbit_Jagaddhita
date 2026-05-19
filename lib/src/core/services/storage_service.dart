@@ -10,6 +10,9 @@ class StorageService {
   final String _bucketName;
   final String _endpoint;
   final String _region;
+  /// Public URL prefix, e.g. https://pub-xxx.r2.dev  OR  https://custom.domain.com
+  /// Baca dari R2_PUBLIC_URL_PREFIX di assets/env.
+  late final String _publicUrlPrefix;
 
   StorageService()
     : _bucketName = dotenv.env['R2_BUCKET_NAME'] ?? '',
@@ -20,8 +23,14 @@ class StorageService {
       accessKey: dotenv.env['R2_ACCESS_KEY'] ?? '',
       secretKey: dotenv.env['R2_SECRET_KEY'] ?? '',
       region: _region,
-      useSSL: true, // R2 requires SSL
+      useSSL: true,
     );
+
+    // Gunakan public URL prefix dari env; fallback ke endpoint S3 bucket path.
+    final envPrefix = dotenv.env['R2_PUBLIC_URL_PREFIX'];
+    _publicUrlPrefix = (envPrefix != null && envPrefix.isNotEmpty)
+        ? envPrefix.replaceAll(RegExp(r'/+$'), '') // hapus trailing slashes
+        : 'https://$_endpoint/$_bucketName';
   }
 
   /// Uploads a file to R2 and returns its public (or presigned) URL.
@@ -58,8 +67,7 @@ class StorageService {
     // Since I don't have the public domain prefix, I will assume presigned for now
     // or try to construct a URL if the user provides a public domain later.
 
-    // Return the permanent URL using the custom domain
-    return 'https://poster.librarypenerbitkbm.science/$objectName';
+    return '$_publicUrlPrefix/$objectName';
   }
 
   /// Uploads data directly (for web or memory bytes)
@@ -71,13 +79,10 @@ class StorageService {
     if (_bucketName.isEmpty) throw Exception('Bucket name not configured');
 
     final objectName = '$folder/$fileName';
-
-    // Note: putObject requires a Stream<Uint8List>.
     final stream = Stream<Uint8List>.value(bytes);
-
     await _minio.putObject(_bucketName, objectName, stream, size: bytes.length);
 
-    return 'https://poster.librarypenerbitkbm.science/$objectName';
+    return '$_publicUrlPrefix/$objectName';
   }
 
   Future<void> deleteFileByUrl(String url) async {
@@ -136,7 +141,7 @@ class StorageService {
           if (obj.key == null) return null;
 
           try {
-            final url = 'https://poster.librarypenerbitkbm.science/${obj.key!}';
+            final url = '$_publicUrlPrefix/${obj.key!}';
 
             return StorageItem(
               key: obj.key!,

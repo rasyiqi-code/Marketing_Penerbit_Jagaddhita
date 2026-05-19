@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:markating_kbm_app/src/core/models/product_model.dart';
-import 'package:markating_kbm_app/src/core/services/productService/product_service.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/admin_product_card.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/admin_product_empty_state.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_product_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_product_empty_state.dart';
 import 'package:provider/provider.dart';
 
 class ProductManagementScreen extends StatelessWidget {
@@ -10,32 +10,20 @@ class ProductManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Text('Manage Products'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Penerbitan Buku (B2C)'),
-              Tab(text: 'KBM Creator (B2B)'),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Kelola Produk'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.pushNamed(context, '/admin/products/add');
+            },
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                // Show dialog or navigate to add screen
-                Navigator.pushNamed(context, '/admin/products/add');
-              },
-            ),
-          ],
-        ),
-        body: const TabBarView(
-          children: [ProductList(houseType: 1), ProductList(houseType: 2)],
-        ),
+        ],
       ),
+      body: const ProductList(houseType: 1),
     );
   }
 }

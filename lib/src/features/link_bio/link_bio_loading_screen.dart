@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/models/link_bio_model.dart';
-import 'package:markating_kbm_app/src/core/services/linkBioService/link_bio_service.dart';
-import 'package:markating_kbm_app/src/features/link_bio/link_bio_preview_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/link_bio_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/link_bio_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/link_bio_preview_screen.dart';
 
 class LinkBioLoadingScreen extends StatelessWidget {
   final String userId;
@@ -13,10 +14,11 @@ class LinkBioLoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final linkBioService = Provider.of<LinkBioService>(context, listen: false);
+    final userService = Provider.of<UserService>(context, listen: false);
 
     return Scaffold(
       body: FutureBuilder<UserModel?>(
-        future: linkBioService.resolveUser(userId),
+        future: userService.resolveUser(userId),
         builder: (context, userSnapshot) {
           if (userSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

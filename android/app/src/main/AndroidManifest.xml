@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="Marketing KBM"
+        android:label="Penerbit Jagaddhita"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

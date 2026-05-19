@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/app_text_field.dart';
 
+/// Kartu pengaturan bonus pulsa untuk Penerbitan.
+/// Mengatur nominal bonus, aturan target penjualan, dan batasan frekuensi bulanan.
 class BonusPulsaSettingsCard extends StatelessWidget {
   final bool enableR1PulsaBonus;
-  final bool enableR2PulsaBonus;
   final TextEditingController pulsaBonusController;
-  final TextEditingController pulsaBonusR2Controller;
   final ValueChanged<bool> onR1PulsaBonusChanged;
-  final ValueChanged<bool> onR2PulsaBonusChanged;
 
   final bool enableMinSalesLimit;
   final TextEditingController minSalePulsaController;
@@ -24,11 +23,8 @@ class BonusPulsaSettingsCard extends StatelessWidget {
   const BonusPulsaSettingsCard({
     super.key,
     required this.enableR1PulsaBonus,
-    required this.enableR2PulsaBonus,
     required this.pulsaBonusController,
-    required this.pulsaBonusR2Controller,
     required this.onR1PulsaBonusChanged,
-    required this.onR2PulsaBonusChanged,
     required this.enableMinSalesLimit,
     required this.minSalePulsaController,
     required this.onMinSalesLimitChanged,
@@ -57,7 +53,7 @@ class BonusPulsaSettingsCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // R1 Card
+          // Bonus Pulsa Penerbitan
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -69,7 +65,7 @@ class BonusPulsaSettingsCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '1. Paket R1 (Penerbitan)',
+                  'Bonus Pulsa Penerbitan',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.blue,
@@ -77,7 +73,7 @@ class BonusPulsaSettingsCard extends StatelessWidget {
                   ),
                 ),
                 SwitchListTile(
-                  title: const Text('Aktifkan Bonus Pulsa R1'),
+                  title: const Text('Aktifkan Bonus Pulsa'),
                   value: enableR1PulsaBonus,
                   onChanged: onR1PulsaBonusChanged,
                   contentPadding: EdgeInsets.zero,
@@ -93,51 +89,16 @@ class BonusPulsaSettingsCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          // R2 Card
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '2. Paket R2 (KBM Creator)',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                    fontSize: 16,
-                  ),
-                ),
-                SwitchListTile(
-                  title: const Text('Aktifkan Bonus Pulsa R2'),
-                  value: enableR2PulsaBonus,
-                  onChanged: onR2PulsaBonusChanged,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                AppTextField(
-                  controller: pulsaBonusR2Controller,
-                  keyboardType: TextInputType.number,
-                  label: 'Nominal Bonus',
-                  icon: Icons.money,
-                  prefixText: 'Rp ',
-                  fillColor: Theme.of(context).cardColor,
-                ),
-              ],
-            ),
-          ),
+
           const SizedBox(height: 24),
+
           // Global Rules
           const Row(
             children: [
               Icon(Icons.gavel_rounded, size: 20, color: Colors.grey),
               SizedBox(width: 8),
               Text(
-                'Aturan & Batasan (Global)',
+                'Aturan & Batasan',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
             ],
@@ -159,8 +120,7 @@ class BonusPulsaSettingsCard extends StatelessWidget {
               label: 'Target Akumulasi Penjualan (Bulanan)',
               icon: Icons.track_changes,
               prefixText: 'Rp ',
-              helperText:
-                  'Min. total penjualan sebulan agar bonus cair (R1 & R2)',
+              helperText: 'Min. total penjualan sebulan agar bonus cair',
             ),
           const Divider(height: 32),
           SwitchListTile(

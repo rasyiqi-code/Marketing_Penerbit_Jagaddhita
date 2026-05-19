@@ -19,7 +19,7 @@ class PosterExportHelper {
       // ignore: deprecated_member_use
       await Share.shareXFiles([
         XFile.fromData(bytes, name: fileName, mimeType: 'image/png'),
-      ], text: 'Poster ini dibuat otomatis lewat KBM App');
+      ], text: 'Poster ini dibuat otomatis lewat Jagaddhita App');
     } else {
       // Mobile / Desktop logic
       try {
@@ -30,7 +30,7 @@ class PosterExportHelper {
         // ignore: deprecated_member_use
         await Share.shareXFiles([
           XFile(file.path),
-        ], text: 'Poster ini dibuat otomatis lewat KBM App');
+        ], text: 'Poster ini dibuat otomatis lewat Jagaddhita App');
       } catch (e) {
         debugPrint('Error exporting poster on mobile: $e');
         rethrow;

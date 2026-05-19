@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "marketing-kbm-app",
-    "prooduction": "marketing-kbm-app"
+    "default": "marketing-jagaddhitamp",
+    "prooduction": "marketing-jagaddhitamp"
   },
   "targets": {},
   "etags": {}

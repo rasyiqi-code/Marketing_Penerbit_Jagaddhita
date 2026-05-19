@@ -22,7 +22,7 @@ class AdminFabMenu extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Admin Quick Actions',
+            'Aksi Cepat Admin',
             style: GoogleFonts.outfit(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -35,20 +35,20 @@ class AdminFabMenu extends StatelessWidget {
               Expanded(
                 child: _buildFabOption(
                   context,
-                  'Trans Penerbitan',
+                  'Pemesanan Buku',
                   Icons.assignment_rounded,
                   Colors.blue,
-                  '/admin/transactions/r1',
+                  '/admin/transactions',
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: _buildFabOption(
                   context,
-                  'Trans Creator',
-                  Icons.assignment_ind_rounded,
-                  Colors.purple,
-                  '/admin/transactions/r2',
+                  'Kelola Agen',
+                  Icons.people_alt_rounded,
+                  Colors.teal,
+                  '/admin/users',
                 ),
               ),
             ],
@@ -59,20 +59,20 @@ class AdminFabMenu extends StatelessWidget {
               Expanded(
                 child: _buildFabOption(
                   context,
-                  'Manage Agents',
-                  Icons.people_alt_rounded,
-                  Colors.teal,
-                  '/admin/users',
+                  'Pencairan Komisi',
+                  Icons.account_balance_wallet_rounded,
+                  Colors.orange,
+                  '/admin/withdrawals',
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: _buildFabOption(
                   context,
-                  'Withdrawals',
-                  Icons.account_balance_wallet_rounded,
-                  Colors.orange,
-                  '/admin/withdrawals',
+                  'Pengaturan Global',
+                  Icons.settings_rounded,
+                  Colors.blueGrey,
+                  '/admin/settings',
                 ),
               ),
             ],

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:markating_kbm_app/src/core/models/sale_model.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/utils/network_image_web_helper.dart';
-import 'package:markating_kbm_app/src/features/sales/widgets/transaction_timeline.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_timeline.dart';
 
 class SaleDetailDialog extends StatelessWidget {
   final SaleModel sale;

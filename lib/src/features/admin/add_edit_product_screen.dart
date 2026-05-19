@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:markating_kbm_app/src/core/models/product_model.dart';
-import 'package:markating_kbm_app/src/core/services/productService/product_service.dart';
-import 'package:markating_kbm_app/src/core/services/storage_service.dart';
-import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
-import 'package:markating_kbm_app/src/core/utils/network_image_web_helper.dart';
-import 'package:markating_kbm_app/src/features/admin/image_management_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/storage_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/app_text_field.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/image_management_screen.dart';
 import 'package:provider/provider.dart';
 
 class AddEditProductScreen extends StatefulWidget {
@@ -111,19 +111,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
           key: _formKey,
           child: Column(
             children: [
-              DropdownButtonFormField<int>(
-                initialValue: _houseType,
-                decoration: const InputDecoration(labelText: 'House Type'),
-                items: const [
-                  DropdownMenuItem(
-                    value: 1,
-                    child: Text('Penerbitan Buku (B2C)'),
-                  ),
-                  DropdownMenuItem(value: 2, child: Text('KBM Creator (B2B)')),
-                ],
-                onChanged: (val) => setState(() => _houseType = val!),
-              ),
-              const SizedBox(height: 16),
+
               AppTextField(
                 controller: _nameController,
                 label: 'Product Name',

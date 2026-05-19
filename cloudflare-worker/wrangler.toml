@@ -1,0 +1,19 @@
+# Cloudflare Worker — R2 Storage Proxy untuk Marketing Jagaddhita
+# Docs: https://developers.cloudflare.com/workers/
+
+name = "marketing-jagaddhita-r2"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ── R2 Bucket Binding ─────────────────────────────────────────────────────────
+# "BUCKET" adalah nama variabel yang diakses via env.BUCKET di worker
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "marketing-jagaddhita"
+
+# ── Environment Variables ─────────────────────────────────────────────────────
+[vars]
+# '*' = izinkan semua origin (aman untuk internal app)
+# Bisa diubah ke domain spesifik, misal: "https://app.jagaddhita.com"
+ALLOWED_ORIGINS = "*"

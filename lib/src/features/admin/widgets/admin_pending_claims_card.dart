@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:markating_kbm_app/src/core/models/claim_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/wallet_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
 import 'package:provider/provider.dart';
-import 'package:markating_kbm_app/src/features/admin/admin_withdrawals_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/admin_withdrawals_screen.dart';
 
 class AdminPendingClaimsCard extends StatelessWidget {
   const AdminPendingClaimsCard({super.key});

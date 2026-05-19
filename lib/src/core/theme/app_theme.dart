@@ -3,22 +3,18 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Brand Colors - Jagaddhita
-  static const primaryColor = Color(0xFFE53935); // Jagaddhita Red
-  static const secondaryColor = Color(0xFF2E7D32); // Jagaddhita Green
-  static const accentColor = Color(0xFFFFEB3B); // Jagaddhita Yellow
+  static const primaryColor = Color(0xFF008A45); // Emerald Green dari Logo
+  static const secondaryColor = Color(0xFFE31B23); // Crimson Red dari Logo
+  static const accentColor = Color(0xFFFFED00); // Bright Yellow dari Logo
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFFE53935), Color(0xFFC62828)],
+    colors: [Color(0xFF008A45), Color(0xFF006B36)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient creatorGradient = LinearGradient(
-    colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+
 
   static const LinearGradient glassGradient = LinearGradient(
     colors: [Colors.white, Colors.white70],
@@ -95,7 +91,7 @@ class AppTheme {
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
-          vertical: 18,
+          vertical: 12,
         ),
         labelStyle: const TextStyle(color: lightTextSecondary),
         prefixIconColor: lightTextSecondary,
@@ -104,7 +100,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
-          minimumSize: const Size(88, 56), // Standard min width, fixed height
+          minimumSize: const Size(88, 48), // Compact & ergonomic
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -172,7 +168,7 @@ class AppTheme {
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
-          vertical: 18,
+          vertical: 12,
         ),
         labelStyle: const TextStyle(color: darkTextSecondary),
         prefixIconColor: darkTextSecondary,
@@ -181,7 +177,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
-          minimumSize: const Size(88, 56),
+          minimumSize: const Size(88, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

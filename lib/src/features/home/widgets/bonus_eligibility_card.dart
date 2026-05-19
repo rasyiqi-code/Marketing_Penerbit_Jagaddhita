@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:markating_kbm_app/src/core/models/global_settings_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/product_service.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/sales_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/global_settings_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
 import 'package:intl/intl.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/utils/app_formatters.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:provider/provider.dart';
 
 class BonusEligibilityCard extends StatefulWidget {

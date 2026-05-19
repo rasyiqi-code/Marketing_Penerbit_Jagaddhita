@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:markating_kbm_app/src/core/models/product_model.dart';
-import 'package:markating_kbm_app/src/core/services/productService/product_service.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/utils/network_image_web_helper.dart';
-import 'package:markating_kbm_app/src/features/admin/add_edit_product_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/add_edit_product_screen.dart';
 
 class AdminProductCard extends StatelessWidget {
   final ProductModel product;

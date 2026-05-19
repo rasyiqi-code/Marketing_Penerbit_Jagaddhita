@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:markating_kbm_app/src/core/services/auth_service.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/notification_service.dart';
-import 'package:markating_kbm_app/src/core/models/notification_model.dart';
-import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/app_text_field.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -114,12 +114,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   Text(
                     'Gabung dengan Tim',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     'Buat akun marketing Anda',
                     style: Theme.of(
@@ -127,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 18),
 
                   TextFormField(
                     controller: _usernameController,
@@ -147,16 +147,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   AppTextField(
                     controller: _emailController,
                     label: 'Alamat Email',
                     icon: Icons.email_outlined,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) =>
-                        value!.isEmpty ? 'Harap masukkan email Anda' : null,
+                      value!.isEmpty ? 'Harap masukkan email Anda' : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   AppTextField(
                     controller: _passwordController,
                     label: 'Kata Sandi',
@@ -184,7 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   AppTextField(
                     controller: _confirmPasswordController,
                     label: 'Konfirmasi Kata Sandi',
@@ -197,10 +197,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
                   SizedBox(
-                    height: 50,
+                    height: 48,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _handleRegister,
                       child: _isLoading

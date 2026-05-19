@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:markating_kbm_app/src/core/models/notification_model.dart';
-import 'package:markating_kbm_app/src/core/services/notificationService/notification_service.dart';
-import 'package:markating_kbm_app/src/core/services/notification_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/notification_service.dart';
 
 class NotificationController extends ChangeNotifier {
   final AppNotificationService _notificationService;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/app_text_field.dart';
 
 class WithdrawalSettingsCard extends StatelessWidget {
   final TextEditingController minPayoutController;

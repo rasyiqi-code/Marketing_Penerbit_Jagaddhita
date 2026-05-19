@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:markating_kbm_app/src/features/notifications/notification_controller.dart';
-import 'package:markating_kbm_app/src/features/notifications/notification_list_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_list_screen.dart';
 
 // New Widgets
-import 'package:markating_kbm_app/src/features/admin/widgets/admin_pending_claims_card.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/admin_total_agents_card.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/admin_top_agents_list.dart';
-import 'package:markating_kbm_app/src/features/admin/widgets/admin_recent_transactions_list.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_pending_claims_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_total_agents_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_top_agents_list.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_recent_transactions_list.dart';
 
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class AdminHomeScreen extends StatelessWidget {
@@ -46,7 +47,7 @@ class AdminHomeScreen extends StatelessWidget {
                       right: 8,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: AppTheme.primaryColor,
                           shape: BoxShape.circle,
                         ),

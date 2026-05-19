@@ -41,54 +41,51 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBppwhf7FtkD7R6d61cRYN5s3NOtrPGw1E',
-    appId: '1:556031650608:web:739b24ab5c58cf7b6cb6f5',
-    messagingSenderId: '556031650608',
-    projectId: 'marketing-kbm-app',
-    authDomain: 'marketing-kbm-app.firebaseapp.com',
-    databaseURL: 'https://marketing-kbm-app-default-rtdb.firebaseio.com',
-    storageBucket: 'marketing-kbm-app.firebasestorage.app',
+    apiKey: 'AIzaSyA733Ot4yK95HLjauIeE2Qi-9m3zxIsmio',
+    appId: '1:55240641303:web:566ab6a1404f67d38e4552',
+    messagingSenderId: '55240641303',
+    projectId: 'marketing-jagaddhitamp',
+    authDomain: 'marketing-jagaddhitamp.firebaseapp.com',
+    storageBucket: 'marketing-jagaddhitamp.firebasestorage.app',
+    measurementId: 'G-G1R1L5PZ2T',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBJkOyKdd-G6FzagS53WHvbEqnnUI5T3Vk',
-    appId: '1:556031650608:android:8080279ae7da0b826cb6f5',
-    messagingSenderId: '556031650608',
-    projectId: 'marketing-kbm-app',
-    databaseURL: 'https://marketing-kbm-app-default-rtdb.firebaseio.com',
-    storageBucket: 'marketing-kbm-app.firebasestorage.app',
+    apiKey: 'AIzaSyCD3BImWXut4Kp4pxRjXuk8K8WF0KUQP_o',
+    appId: '1:55240641303:android:81f7c0d3eb826e768e4552',
+    messagingSenderId: '55240641303',
+    projectId: 'marketing-jagaddhitamp',
+    storageBucket: 'marketing-jagaddhitamp.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDJD_YwC3DMoB9m9DNWX3zZkJjcz8AlDr8',
-    appId: '1:556031650608:ios:1ba632eafdcc58a96cb6f5',
-    messagingSenderId: '556031650608',
-    projectId: 'marketing-kbm-app',
-    databaseURL: 'https://marketing-kbm-app-default-rtdb.firebaseio.com',
-    storageBucket: 'marketing-kbm-app.firebasestorage.app',
-    iosClientId: '556031650608-0m5073mtf14vsdeib04f5sirqootdhbh.apps.googleusercontent.com',
-    iosBundleId: 'com.kbmgroup.marketing',
+    apiKey: 'AIzaSyBMjr0iKIVwGRkDO2G0NS25-pF2MxBxex8',
+    appId: '1:55240641303:ios:bd24bdc0173070688e4552',
+    messagingSenderId: '55240641303',
+    projectId: 'marketing-jagaddhitamp',
+    storageBucket: 'marketing-jagaddhitamp.firebasestorage.app',
+    iosBundleId: 'com.jagaddhitagroup.marketing',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyBppwhf7FtkD7R6d61cRYN5s3NOtrPGw1E',
     appId: '1:556031650608:web:9575c9ac562c5e036cb6f5',
     messagingSenderId: '556031650608',
-    projectId: 'marketing-kbm-app',
-    authDomain: 'marketing-kbm-app.firebaseapp.com',
-    databaseURL: 'https://marketing-kbm-app-default-rtdb.firebaseio.com',
-    storageBucket: 'marketing-kbm-app.firebasestorage.app',
+    projectId: 'marketing-jagaddhitamp',
+    authDomain: 'marketing-jagaddhitamp.firebaseapp.com',
+    databaseURL: 'https://marketing-jagaddhitamp-default-rtdb.firebaseio.com',
+    storageBucket: 'marketing-jagaddhitamp.firebasestorage.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDJD_YwC3DMoB9m9DNWX3zZkJjcz8AlDr8',
     appId: '1:556031650608:ios:7cc3bdea1103a76f6cb6f5',
     messagingSenderId: '556031650608',
-    projectId: 'marketing-kbm-app',
-    databaseURL: 'https://marketing-kbm-app-default-rtdb.firebaseio.com',
-    storageBucket: 'marketing-kbm-app.firebasestorage.app',
+    projectId: 'marketing-jagaddhitamp',
+    databaseURL: 'https://marketing-jagaddhitamp-default-rtdb.firebaseio.com',
+    storageBucket: 'marketing-jagaddhitamp.firebasestorage.app',
     iosClientId: '556031650608-8ckg1654u797nlrdjm0kfg1kcqkdc3au.apps.googleusercontent.com',
-    iosBundleId: 'com.example.markatingKbmApp',
+    iosBundleId: 'com.example.marketingPenerbitJagaddhita',
   );
 
 }

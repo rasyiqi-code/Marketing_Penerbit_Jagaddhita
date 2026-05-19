@@ -1,11 +1,11 @@
-# Marketing KBM App
+# Marketing Penerbit Jagaddhita App
 
-Marketing KBM is a comprehensive specialized application for **KBM Indonesia Group**, designed to facilitate marketing operations, sales entries, and administrative management for **Penerbitan** (Red) and **KBM Creator** (Blue).
+Marketing Penerbit Jagaddhita is a comprehensive specialized application for **Penerbit Jagaddhita Group**, designed to facilitate marketing operations, sales entries, and administrative management for **Penerbitan** (Red) and **Jagaddhita Creator** (Blue).
 
 ## 🚀 Features
 
 ### for Marketing Agents (Users)
-*   **Quick Sales Entry**: Dedicated forms for **Penerbitan** (Sales R1) and **KBM Creator** (Sales R2).
+*   **Quick Sales Entry**: Dedicated forms for **Penerbitan** (Sales R1) and **Jagaddhita Creator** (Sales R2).
 *   **Dual-Brand Catalog**: Browse products / packages with a dynamic UI that adapts to the selected category (Red/Blue theme).
 *   **Link Bio**: Create and manage a professional "Digital Card" / Link in Bio to share with customers.
 *   **Wallet & Withdrawals**: Track commissions, pulsa balance, and request withdrawals.
@@ -31,8 +31,8 @@ Marketing KBM is a comprehensive specialized application for **KBM Indonesia Gro
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/Start-KBM-Indonesia/marketing_kbm_app.git
-    cd marketing_kbm_app
+    git clone https://github.com/crediblemark/Marketing_Penerbit_Jagaddhita.git
+    cd Marketing_Penerbit_Jagaddhita
     ```
 
 2.  **Install Dependencies**
@@ -42,14 +42,14 @@ Marketing KBM is a comprehensive specialized application for **KBM Indonesia Gro
 
 3.  **Run Locally**
     ```bash
-    flutter run -d chrome
+    flutter run -d chrome --web-port=5000
     ```
 
 ## 🚀 Deployment
 
 The application is deployed on Firebase Hosting.
 
-**Live URL**: [https://marketing-kbm-app.web.app](https://marketing-kbm-app.web.app)
+**Live URL**: [https://marketing-jagaddhitamp.web.app](https://marketing-jagaddhitamp.web.app)
 
 To deploy updates:
 ```bash
@@ -60,8 +60,8 @@ firebase deploy --only hosting
 ## 🔑 Google Sign-In Configuration
 
 For Google Sign-In to work, the hosting domain requires specific configuration in Google Cloud Console:
-*   **Console**: [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-*   **Authorized Redirect URI**: `https://marketing-kbm-app.web.app/__/auth/handler`
+*   **Console**: [Google Cloud Console](https://console.cloud.google.com/apis/credentials?project=marketing-jagaddhitamp)
+*   **Authorized Redirect URI**: `https://marketing-jagaddhitamp.web.app/__/auth/handler`
 
 ---
-© 2025 KBM Indonesia Group
+© 2025 Penerbit Jagaddhita Group

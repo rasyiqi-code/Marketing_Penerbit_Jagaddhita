@@ -33,9 +33,14 @@ service cloud.firestore {
 
     // Sales collection
     match /sales/{saleId} {
-      allow read: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow read: if isAdmin() || (request.auth != null && resource.data.user_id == request.auth.uid);
       allow create: if request.auth != null;
-      allow update, delete: if isAdmin();
+      allow update: if isAdmin() || (
+        request.auth != null &&
+        resource.data.user_id == request.auth.uid &&
+        request.resource.data.payment_status == 'LUNAS'
+      );
+      allow delete: if isAdmin();
     }
 
     // Link Bio collection
@@ -65,12 +70,12 @@ service cloud.firestore {
 
     // Wallet & Claims
     match /wallet_history/{historyId} {
-      allow read: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow read: if isAdmin() || (request.auth != null && resource.data.user_id == request.auth.uid);
       allow write: if isAdmin();
     }
 
     match /claims/{claimId} {
-      allow read: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow read: if isAdmin() || (request.auth != null && resource.data.user_id == request.auth.uid);
       allow create: if request.auth != null;
       allow update: if isAdmin();
     }

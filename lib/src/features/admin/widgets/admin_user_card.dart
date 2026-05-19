@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:markating_kbm_app/src/core/models/user_model.dart';
-import 'package:markating_kbm_app/src/core/services/firestore/user_service.dart';
-import 'package:markating_kbm_app/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_user_card_components.dart';
 
 class AdminUserCard extends StatelessWidget {
   final UserModel user;
@@ -14,12 +11,6 @@ class AdminUserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: 'Rp ',
-      decimalDigits: 0,
-    );
-    final numberFormat = NumberFormat('#,###');
     final totalUnpaid = user.commissionBalance + user.pulsaBalance;
 
     return Card(
@@ -32,145 +23,24 @@ class AdminUserCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header: Name & Role Badge
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    (user.name?.isNotEmpty == true)
-                                        ? user.name!
-                                        : user.email.split('@')[0],
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.edit,
-                                    size: 16,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                  ),
-                                  onPressed: () => _showEditNameDialog(context),
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                  splashRadius: 20,
-                                ),
-                              ],
-                            ),
-                            Text(
-                              user.email,
-                              style: TextStyle(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                _buildRoleBadge(user.role),
-              ],
+            AdminUserHeaderSection(
+              user: user,
+              onEdit: () => _showEditAgentDialog(context),
             ),
             const Divider(height: 24),
 
-            // Info Grid (Bank & Phone)
+            // Info Grid (Bank Details)
             if (user.bankDetails != null) ...[
-              _buildBankInfo(context, user.bankDetails!),
+              AdminUserBankInfoSection(bank: user.bankDetails!),
               const SizedBox(height: 16),
             ],
 
             // Stats Grid
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Theme.of(context).dividerColor),
-              ),
-              child: Row(
-                children: [
-                  _buildStatItem(
-                    context,
-                    'Total Sales',
-                    numberFormat.format(user.totalSalesCount),
-                    Icons.shopping_bag_outlined,
-                    Colors.blue,
-                  ),
-                  _buildVerticalDivider(),
-                  _buildStatItem(
-                    context,
-                    'All-Time Earned',
-                    currencyFormat.format(
-                      user.totalCommissionEarned + user.totalPulsaEarned,
-                    ),
-                    Icons.monetization_on_outlined,
-                    Colors.green,
-                    isCurrency: true,
-                  ),
-                ],
-              ),
-            ),
+            AdminUserStatsSection(user: user),
             const SizedBox(height: 12),
 
             // Unpaid Balance Alert
-            if (totalUnpaid > 0)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Colors.orange.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.account_balance_wallet_outlined,
-                      color: Colors.orange,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Wait WD Balance:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.orange,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      currencyFormat.format(totalUnpaid),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepOrange,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
+            AdminUserBalanceAlertSection(totalUnpaid: totalUnpaid),
             const SizedBox(height: 16),
 
             // Actions
@@ -201,160 +71,87 @@ class AdminUserCard extends StatelessWidget {
     );
   }
 
-  Widget _buildVerticalDivider() {
-    return Container(
-      height: 40,
-      width: 1,
-      color: Colors.grey[300],
-      margin: const EdgeInsets.symmetric(horizontal: 12),
-    );
-  }
-
-  Widget _buildStatItem(
-    BuildContext context,
-    String label,
-    String value,
-    IconData icon,
-    Color color, {
-    bool isCurrency = false,
-  }) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 14, color: color),
-              const SizedBox(width: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: GoogleFonts.outfit(
-              fontSize: isCurrency ? 14 : 18,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBankInfo(BuildContext context, Map<String, dynamic> bank) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.blue.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Icon(Icons.credit_card, size: 16, color: Colors.blue),
-              SizedBox(width: 8),
-              Text(
-                'Banking Details',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${bank['bank_name']} - ${bank['account_number']}',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          Text(
-            'A/N ${bank['account_holder']}',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 13,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRoleBadge(String role) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.2)),
-      ),
-      child: Text(
-        role.toUpperCase(),
-        style: const TextStyle(
-          color: AppTheme.primaryColor,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  void _showEditNameDialog(BuildContext context) {
+  void _showEditAgentDialog(BuildContext context) {
     final nameController = TextEditingController(text: user.name);
+    String? selectedCategory = user.marketingCategory;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Agent Name'),
-        content: TextField(
-          controller: nameController,
-          decoration: const InputDecoration(
-            labelText: 'Full Name',
-            border: OutlineInputBorder(),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Edit Agent Info'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Full Name',
+                  border: OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.words,
+              ),
+              if (user.role == 'marketing') ...[
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String?>(
+                  initialValue: selectedCategory,
+                  decoration: const InputDecoration(
+                    labelText: 'Kategori Marketing',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text('Belum Dikelompokkan'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'reseller',
+                      child: Text('Reseller (20%)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'distributor',
+                      child: Text('Distributor (35%)'),
+                    ),
+                  ],
+                  onChanged: (val) {
+                    setState(() {
+                      selectedCategory = val;
+                    });
+                  },
+                ),
+              ],
+            ],
           ),
-          textCapitalization: TextCapitalization.words,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                try {
+                  await userService.updateAdminUser(user.id, {
+                    'name': nameController.text.trim(),
+                    'marketing_category': selectedCategory,
+                  });
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('Agent info updated')));
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                  }
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                await userService.updateAdminUser(user.id, {
-                  'name': nameController.text.trim(),
-                });
-                if (context.mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Name updated')));
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('Error: $e')));
-                }
-              }
-            },
-            child: const Text('Save'),
-          ),
-        ],
       ),
     );
   }

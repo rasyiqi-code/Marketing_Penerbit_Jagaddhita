@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:markating_kbm_app/src/core/models/user_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -83,31 +83,48 @@ class AuthService {
     return cred;
   }
 
-  // Single instance to avoid "multiple times" warning on Web
-  late final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: kIsWeb
-        ? '556031650608-7tbf6vq65ud8894ni08npv134a02ohsj.apps.googleusercontent.com'
-        : null,
-    serverClientId: kIsWeb
-        ? null
-        : '556031650608-7tbf6vq65ud8894ni08npv134a02ohsj.apps.googleusercontent.com',
-  );
+  bool _googleSignInInitialized = false;
+
+  Future<void> _ensureGoogleSignInInitialized() async {
+    if (_googleSignInInitialized) return;
+    await GoogleSignIn.instance.initialize(
+      clientId: kIsWeb
+          ? '55240641303-hpr2olfa9i3jfpou3gqo1lvqlibjprna.apps.googleusercontent.com'
+          : null,
+      serverClientId: kIsWeb
+          ? null
+          : '55240641303-hpr2olfa9i3jfpou3gqo1lvqlibjprna.apps.googleusercontent.com',
+    );
+    _googleSignInInitialized = true;
+  }
 
   Future<UserCredential?> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    try {
+      UserCredential userCredential;
+      
+      if (kIsWeb) {
+        // Use Firebase Auth's built-in popup for Web (GIS compliant)
+        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        userCredential = await _auth.signInWithPopup(googleProvider);
+      } else {
+        // Use google_sign_in package for Android/iOS
+        await _ensureGoogleSignInInitialized();
+        final googleUser = await GoogleSignIn.instance.authenticate();
 
-    if (googleUser != null) {
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+        final googleAuth = googleUser.authentication;
+        final authorizedUser = await googleUser.authorizationClient.authorizeScopes([
+          'email',
+          'profile',
+        ]);
+        final accessToken = authorizedUser.accessToken;
 
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: accessToken,
+          idToken: googleAuth.idToken,
+        );
 
-      final UserCredential userCredential = await _auth.signInWithCredential(
-        credential,
-      );
+        userCredential = await _auth.signInWithCredential(credential);
+      }
 
       // Check/Create User Doc
       if (userCredential.user != null) {
@@ -131,8 +148,10 @@ class AuthService {
         }
       }
       return userCredential;
+    } catch (e) {
+      debugPrint('Google Sign-In failed or canceled: $e');
+      throw Exception('Google Sign-In failed: $e');
     }
-    return null; // Canceled
   }
 
   Future<void> resetPassword(String email) async {

@@ -1,6 +1,6 @@
 class ProductModel {
   final String id;
-  final int houseType; // 1 = Penerbit KBM, 2 = KBM Kreator
+  final int houseType; // 1 = Penerbit Jagaddhita
   final String name;
   final String category;
   final double price;
@@ -56,4 +56,13 @@ class ProductModel {
 
   @override
   int get hashCode => id.hashCode;
+
+  /// Produk SIBI Nonteks Kemendikbud — mendapat aturan diskon berbeda.
+  bool get isSibi =>
+      category.toLowerCase().contains('sibi') ||
+      category.toLowerCase().contains('kemendikbud') ||
+      name.toLowerCase().contains('sibi');
+
+  /// Produk Jagaddhita Media Pustaka (Buku Paket & Buku Cerita).
+  bool get isJagaddhita => !isSibi;
 }

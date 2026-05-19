@@ -1,5 +1,9 @@
 R2_ENDPOINT=6345dc5d51a7c38803936924993405cd.r2.cloudflarestorage.com
-R2_ACCESS_KEY=e2d243e20574b490985e9972d2e30328
-R2_SECRET_KEY=246d829f6cf94e4106111e262c42de19996c0800acc8be89def6d825591b6ccf
-R2_BUCKET_NAME=marketing-kbm-app
+R2_ACCESS_KEY=b53b8dc66fe78dc4994888976d669199
+R2_SECRET_KEY=5871491bd1e9dd00d41479e4a69dac2bdea990f4f2c1b662485c56e8bbde7f85
+R2_BUCKET_NAME=marketing-jagaddhita
 R2_REGION=auto
+# Public Development URL dari Cloudflare R2 (tidak perlu custom domain)
+# Aktifkan di: R2 Dashboard → bucket → Settings → Public Development URL → Enable
+# Lalu ganti URL di bawah dengan URL pub-xxx.r2.dev yang diberikan Cloudflare
+R2_PUBLIC_URL_PREFIX=https://marketing-jagaddhita-r2.retaslintasbatas.workers.dev

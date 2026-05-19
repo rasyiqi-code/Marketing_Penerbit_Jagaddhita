@@ -1,4 +1,4 @@
 class AppConstants {
-  static const String appName = 'KBM Marketing App';
+  static const String appName = 'Penerbit Jagaddhita';
   static const String fontFamily = 'Outfit';
 }

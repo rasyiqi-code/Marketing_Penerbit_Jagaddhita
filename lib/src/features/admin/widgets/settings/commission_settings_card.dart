@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:markating_kbm_app/src/core/widgets/app_text_field.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/app_text_field.dart';
 
+/// Kartu pengaturan komisi untuk Penerbitan (R1).
+/// Mendukung komisi flat (per kategori: Reseller, Distributor) dan toggle aktif/nonaktif.
 class CommissionSettingsCard extends StatelessWidget {
   final bool enableR1Commission;
-  final bool enableR2Commission;
   final TextEditingController bonusR1Controller;
-  final TextEditingController bonusR2Controller;
+  final TextEditingController resellerCommissionController;
+  final TextEditingController distributorCommissionController;
   final ValueChanged<bool> onR1CommissionChanged;
-  final ValueChanged<bool> onR2CommissionChanged;
 
   const CommissionSettingsCard({
     super.key,
     required this.enableR1Commission,
-    required this.enableR2Commission,
     required this.bonusR1Controller,
-    required this.bonusR2Controller,
+    required this.resellerCommissionController,
+    required this.distributorCommissionController,
     required this.onR1CommissionChanged,
-    required this.onR2CommissionChanged,
   });
 
   @override
@@ -38,36 +38,41 @@ class CommissionSettingsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SwitchListTile(
-            title: const Text('Aktifkan Komisi Tunai R1'),
+            title: const Text('Aktifkan Komisi Tunai (Penerbitan)'),
             value: enableR1Commission,
             onChanged: onR1CommissionChanged,
           ),
-          if (enableR1Commission)
+          if (enableR1Commission) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: AppTextField(
                 controller: bonusR1Controller,
                 keyboardType: TextInputType.number,
-                label: 'Persentase Komisi R1',
+                label: 'Persentase Komisi Penulis (%)',
                 icon: Icons.percent,
               ),
             ),
-          const Divider(),
-          SwitchListTile(
-            title: const Text('Aktifkan Komisi Tunai R2'),
-            value: enableR2Commission,
-            onChanged: onR2CommissionChanged,
-          ),
-          if (enableR2Commission)
+            const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: AppTextField(
-                controller: bonusR2Controller,
+                controller: resellerCommissionController,
                 keyboardType: TextInputType.number,
-                label: 'Persentase Komisi R2',
+                label: 'Persentase Komisi Reseller (%)',
                 icon: Icons.percent,
               ),
             ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: AppTextField(
+                controller: distributorCommissionController,
+                keyboardType: TextInputType.number,
+                label: 'Persentase Komisi Distributor (%)',
+                icon: Icons.percent,
+              ),
+            ),
+          ],
         ],
       ),
     );

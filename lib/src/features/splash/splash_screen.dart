@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,7 +13,6 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
-  Timer? _timer;
 
   @override
   void initState() {
@@ -28,10 +28,15 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate after delay using Timer
-    _timer = Timer(const Duration(seconds: 3), () {
-      _checkAuthAndNavigate();
-    });
+    // Start delay and navigation flow
+    _initAppAndNavigate();
+  }
+
+  Future<void> _initAppAndNavigate() async {
+    // 1. Wait for 2 seconds for a smooth splash UX
+    await Future.delayed(const Duration(seconds: 2));
+
+    _checkAuthAndNavigate();
   }
 
   Future<void> _checkAuthAndNavigate() async {
@@ -48,7 +53,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    _timer?.cancel(); // Cancel timer to prevent unwanted redirect
     _controller.dispose();
     super.dispose();
   }
@@ -81,8 +85,8 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
                   const SizedBox(height: 50),
-                  const CircularProgressIndicator(
-                    color: Color(0xFFE53935), // Jagaddhita Red
+                  CircularProgressIndicator(
+                    color: AppTheme.primaryColor,
                   ),
                 ],
               ),
@@ -101,6 +105,18 @@ class _SplashScreenState extends State<SplashScreen>
                   fontWeight: FontWeight.w500,
                 ),
               ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Row(
+              children: [
+                Expanded(flex: 3, child: Container(height: 6, color: AppTheme.primaryColor)),
+                Expanded(flex: 1, child: Container(height: 6, color: AppTheme.accentColor)),
+                Expanded(flex: 2, child: Container(height: 6, color: AppTheme.secondaryColor)),
+              ],
             ),
           ),
         ],

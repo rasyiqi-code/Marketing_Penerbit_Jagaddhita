@@ -27,7 +27,7 @@ class NetworkImageWeb extends StatelessWidget {
         if (segments.length > 1) {
           // Skip bucket name, get the rest
           final objectPath = segments.sublist(1).join('/').split('?').first;
-          finalUrl = 'https://poster.librarypenerbitkbm.science/$objectPath';
+          finalUrl = 'https://poster.librarypenerbitjagaddhita.science/$objectPath';
         }
       } catch (_) {
         // Fallback to original
