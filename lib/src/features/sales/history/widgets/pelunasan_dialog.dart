@@ -43,7 +43,7 @@ class _PelunasanDialogState extends State<PelunasanDialog> {
           const SizedBox(height: 16),
           if (_imageFile != null) ...[
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
               child: kIsWeb
                   ? Image.network(_imageFile!.path,
                       height: 150, fit: BoxFit.cover)

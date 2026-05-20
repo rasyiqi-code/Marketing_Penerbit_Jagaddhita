@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 
 class TransactionTimeline extends StatelessWidget {
   final List<SaleHistoryItem> history;
@@ -66,7 +67,7 @@ class TransactionTimeline extends StatelessWidget {
                         Expanded(
                           child: Container(
                             width: 2,
-                            color: Colors.grey[300],
+                            color: Theme.of(context).dividerColor,
                             margin: const EdgeInsets.symmetric(vertical: 4),
                           ),
                         ),
@@ -87,7 +88,7 @@ class TransactionTimeline extends StatelessWidget {
                                 item.status,
                                 style: GoogleFonts.outfit(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
                               Text(
@@ -96,7 +97,7 @@ class TransactionTimeline extends StatelessWidget {
                                 ).format(item.timestamp),
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey[500],
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                                 ),
                               ),
                             ],
@@ -106,7 +107,7 @@ class TransactionTimeline extends StatelessWidget {
                             'Updated by: ${item.actor}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ),
                           if (item.note != null && item.note!.isNotEmpty) ...[
@@ -114,16 +115,20 @@ class TransactionTimeline extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.grey[200]!),
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.white.withValues(alpha: 0.15)
+                                      : Colors.black.withValues(alpha: 0.1),
+                                ),
                               ),
                               child: Text(
                                 item.note!,
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontStyle: FontStyle.italic,
-                                  color: Colors.black87,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -142,10 +147,10 @@ class TransactionTimeline extends StatelessWidget {
   }
 
   Color _getStatusColor(String status) {
-    if (status == SaleModel.statusComplete) return Colors.purple;
-    if (status == SaleModel.statusLunas) return Colors.green;
-    if (status == SaleModel.statusDp) return Colors.blue;
-    if (status == SaleModel.statusProblem) return Colors.red;
-    return Colors.orange; // Pending
+    if (status == SaleModel.statusComplete) return AppTheme.primaryColor;
+    if (status == SaleModel.statusLunas) return AppTheme.primaryColor;
+    if (status == SaleModel.statusDp) return AppTheme.accentColor;
+    if (status == SaleModel.statusProblem) return AppTheme.secondaryColor;
+    return AppTheme.accentColor; // Pending
   }
 }

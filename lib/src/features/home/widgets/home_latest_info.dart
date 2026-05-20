@@ -15,9 +15,8 @@ class HomeLatestInfo extends StatelessWidget {
         listen: false,
       ).getGlobalSettings(),
       builder: (context, settingsSnapshot) {
-        final infoText =
-            settingsSnapshot.data?.latestInfo ??
-            'Batas klaim pulsa bulan ini: Tgl 25.';
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final infoText = settingsSnapshot.data?.latestInfo ?? 'Batas klaim pulsa bulan ini: Tgl 25.';
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,24 +31,28 @@ class HomeLatestInfo extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(16),
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
+                  color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
                 ),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.notifications_active, color: Colors.grey[600]),
+                  Icon(
+                    Icons.notifications_active,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       infoText,
                       style: GoogleFonts.outfit(
                         color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 14,
+                        fontSize: 13,
                       ),
                     ),
                   ),

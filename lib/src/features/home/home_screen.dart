@@ -60,12 +60,12 @@ class _HomeScreenState extends State<HomeScreen> {
         final user = _currentUser!;
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               HomeHeader(user: user),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               WalletCard(
                 user: user,
                 onClaimTap: () {
@@ -92,16 +92,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               MarketingCategoryCard(user: user),
               BonusEligibilityCard(userId: user.id),
               DashboardStats(userId: user.id),
-              const SizedBox(height: 24),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               RecentSalesList(userId: user.id),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               TopMarketersList(currentUserId: user.id),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
               const HomeLatestInfo(),
               const SizedBox(height: 120),
             ],

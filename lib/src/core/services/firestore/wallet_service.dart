@@ -57,9 +57,9 @@ class WalletService extends BaseFirestoreService {
       final userDoc = await transaction.get(userRef);
       if (!userDoc.exists) throw Exception('User not found');
 
-      final commBalance = (userDoc.data()?['commission_balance'] ?? 0) as int;
-      final markupBalance = (userDoc.data()?['markup_balance'] ?? 0) as int;
-      final pulsaBalance = (userDoc.data()?['pulsa_balance'] ?? 0) as int;
+      final commBalance = ((userDoc.data()?['commission_balance'] ?? 0) as num).toInt();
+      final markupBalance = ((userDoc.data()?['markup_balance'] ?? 0) as num).toInt();
+      final pulsaBalance = ((userDoc.data()?['pulsa_balance'] ?? 0) as num).toInt();
 
       int deductedCommission = 0;
       int deductedMarkup = 0;

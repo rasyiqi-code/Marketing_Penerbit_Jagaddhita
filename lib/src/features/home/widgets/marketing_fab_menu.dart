@@ -8,14 +8,14 @@ class MarketingFabMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-        24,
-        24,
-        24,
-        24 + MediaQuery.of(context).padding.bottom,
+        16,
+        16,
+        16,
+        16 + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -24,12 +24,12 @@ class MarketingFabMenu extends StatelessWidget {
           Text(
             'Menu Pemasaran',
             style: GoogleFonts.outfit(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -41,7 +41,7 @@ class MarketingFabMenu extends StatelessWidget {
                   '/sales/penerbitan',
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildFabOption(
                   context,
@@ -70,14 +70,14 @@ class MarketingFabMenu extends StatelessWidget {
         Navigator.pop(context);
         Navigator.pushNamed(context, route);
       },
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(10),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark
               ? color.shade900.withValues(alpha: 0.3)
               : color.shade50,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: Theme.of(context).brightness == Brightness.dark
                 ? color.shade700
@@ -86,7 +86,7 @@ class MarketingFabMenu extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, color: color.shade700, size: 32),
+            Icon(icon, color: color.shade700, size: 28),
             const SizedBox(height: 8),
             Text(
               title,
@@ -95,6 +95,7 @@ class MarketingFabMenu extends StatelessWidget {
                     ? color.shade100
                     : color.shade900,
                 fontWeight: FontWeight.bold,
+                fontSize: 13,
               ),
             ),
           ],

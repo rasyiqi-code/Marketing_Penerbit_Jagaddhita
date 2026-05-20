@@ -47,7 +47,7 @@ class DashboardStats extends StatelessWidget {
         }
 
         return SizedBox(
-          height: 120,
+          height: 110,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.zero,
@@ -64,7 +64,7 @@ class DashboardStats extends StatelessWidget {
                 ),
                 isCurrency: true,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               _buildStatCard(
                 title: 'Komisi Pending',
                 value: pendingRevenue,
@@ -76,7 +76,7 @@ class DashboardStats extends StatelessWidget {
                 ),
                 isCurrency: true,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               _buildStatCard(
                 title: 'Potensi Bonus',
                 value: potentialRevenue,
@@ -88,7 +88,7 @@ class DashboardStats extends StatelessWidget {
                 ),
                 isCurrency: true,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               _buildStatCard(
                 title: 'Jumlah Penjualan',
                 value: salesCount.toDouble(),
@@ -117,16 +117,16 @@ class DashboardStats extends StatelessWidget {
     // Used AppFormatters instead
 
     return Container(
-      width: 150,
-      padding: const EdgeInsets.all(16),
+      width: 140,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: gradient,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: gradient.colors.first.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 8),
+            color: gradient.colors.first.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -135,12 +135,12 @@ class DashboardStats extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: Colors.white, size: 20),
+            child: Icon(icon, color: Colors.white, size: 16),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,18 +148,18 @@ class DashboardStats extends StatelessWidget {
               Text(
                 title,
                 style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  color: Colors.white.withValues(alpha: 0.9),
+                  fontSize: 11,
+                  color: Colors.white.withOpacity(0.9),
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
                 isCurrency
                     ? AppFormatters.currency(value)
                     : value.toInt().toString(),
                 style: GoogleFonts.outfit(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),

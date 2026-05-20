@@ -57,6 +57,7 @@ class AppTextField extends StatelessWidget {
   }
 
   InputDecoration _inputDecoration(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InputDecoration(
       labelText: label,
       labelStyle: GoogleFonts.outfit(
@@ -74,22 +75,22 @@ class AppTextField extends StatelessWidget {
       ),
       suffixIcon: suffixIcon,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2),
       ),
       filled: true,
       fillColor: fillColor ??
           Theme.of(context).inputDecorationTheme.fillColor ??
-          Colors.grey[50],
-      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          (isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9)),
+      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
     );
   }
 }

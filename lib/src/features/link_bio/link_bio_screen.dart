@@ -149,8 +149,10 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
     final linkBioService = Provider.of<LinkBioService>(context);
     final productService = Provider.of<ProductService>(context, listen: false);
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: StreamBuilder<List<LinkBioModel>>(
         stream: linkBioService.getLinks(_currentUser!.id),
         builder: (context, snapshot) {
@@ -164,11 +166,11 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
           final links = snapshot.data!;
 
           return ListView(
-            padding: const EdgeInsets.only(top: 24),
+            padding: const EdgeInsets.only(top: 16),
             children: [
               // ── Header Card ───────────────────────────────────────────────
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: StreamBuilder<GlobalSettingsModel>(
                   stream: productService.getGlobalSettings(),
                   builder: (context, settingsSnapshot) {
@@ -189,97 +191,93 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
               ),
 
               // ── Main Content Area ─────────────────────────────────────────
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(32),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      )
+                    ],
+                    border: Border.all(
+                      color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+                    ),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, -5),
-                    )
-                  ],
-                ),
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    // ── Social & Catalogs Form ──────────────────────────────
-                    LinkBioSocialForm(
-                      formKey: _socialFormKey,
-                      showJagaddhita: _showJagaddhita,
-                      showSibi: _showSibi,
-                      isSavingSocial: _isSavingSocial,
-                      whatsappController: _whatsappController,
-                      instagramController: _instagramController,
-                      tiktokController: _tiktokController,
-                      facebookController: _facebookController,
-                      onShowJagaddhitaChanged: (val) {
-                        setState(() => _showJagaddhita = val);
-                      },
-                      onShowSibiChanged: (val) {
-                        setState(() => _showSibi = val);
-                      },
-                      onSave: _saveSocialSettings,
-                    ),
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    children: [
+                      // ── Social & Catalogs Form ──────────────────────────────
+                      LinkBioSocialForm(
+                        formKey: _socialFormKey,
+                        showJagaddhita: _showJagaddhita,
+                        showSibi: _showSibi,
+                        isSavingSocial: _isSavingSocial,
+                        whatsappController: _whatsappController,
+                        instagramController: _instagramController,
+                        tiktokController: _tiktokController,
+                        facebookController: _facebookController,
+                        onShowJagaddhitaChanged: (val) {
+                          setState(() => _showJagaddhita = val);
+                        },
+                        onShowSibiChanged: (val) {
+                          setState(() => _showSibi = val);
+                        },
+                        onSave: _saveSocialSettings,
+                      ),
 
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 16),
 
-                    // ── Custom Links Header Button ──────────────────────────
-                    Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.only(bottom: 24),
-                      child: OutlinedButton.icon(
-                        onPressed: () => _showAddEditDialog(),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          side: BorderSide(
-                            color: AppTheme.primaryColor.withValues(alpha: 0.5),
-                            width: 1.5,
+                      // ── Custom Links Header Button ──────────────────────────
+                      Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: OutlinedButton.icon(
+                          onPressed: () => _showAddEditDialog(),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            side: BorderSide(
+                              color: AppTheme.primaryColor.withOpacity(0.5),
+                              width: 1.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            backgroundColor: AppTheme.primaryColor.withOpacity(0.05),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          backgroundColor: AppTheme.primaryColor.withValues(
-                            alpha: 0.05,
-                          ),
-                        ),
-                        icon: const Icon(Icons.add_circle_outline),
-                        label: Text(
-                          'Tambah Link Custom Baru',
-                          style: GoogleFonts.outfit(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
+                          icon: const Icon(Icons.add_circle_outline, size: 18),
+                          label: Text(
+                            'Tambah Link Custom Baru',
+                            style: GoogleFonts.outfit(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    // ── Custom Links List ───────────────────────────────────
-                    ...links.map(
-                      (link) => LinkBioCustomLinkCard(
-                        link: link,
-                        onToggleActive: (val) => _toggleActive(link, val),
-                        onEdit: () => _showAddEditDialog(link),
-                        onDelete: () => _deleteLink(link.id),
+                      // ── Custom Links List ───────────────────────────────────
+                      ...links.map(
+                        (link) => LinkBioCustomLinkCard(
+                          link: link,
+                          onToggleActive: (val) => _toggleActive(link, val),
+                          onEdit: () => _showAddEditDialog(link),
+                          onDelete: () => _deleteLink(link.id),
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 120),
-                  ],
+                      const SizedBox(height: 80),
+                    ],
+                  ),
                 ),
               ),
             ],
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'add_link_fab',
-        onPressed: () => _showAddEditDialog(),
-        backgroundColor: AppTheme.primaryColor,
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

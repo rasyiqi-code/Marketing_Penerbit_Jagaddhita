@@ -25,7 +25,7 @@ class SaleDetailDialog extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor, // Colors.white
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,23 +59,17 @@ class SaleDetailDialog extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: sale.paymentStatus == SaleModel.statusComplete
-                      ? Colors.purple.withValues(
-                          alpha: 0.1,
-                        ) // Colors.purple[50]
+                      ? AppTheme.primaryColor.withValues(alpha: 0.1)
                       : (sale.paymentStatus == 'LUNAS'
-                            ? Colors.green.withValues(
-                                alpha: 0.1,
-                              ) // Colors.green[50]
-                            : Colors.orange.withValues(
-                                alpha: 0.1,
-                              )), // Colors.orange[50]
+                            ? AppTheme.primaryColor.withValues(alpha: 0.1)
+                            : AppTheme.accentColor.withValues(alpha: 0.15)),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: sale.paymentStatus == SaleModel.statusComplete
-                        ? Colors.purple
+                        ? AppTheme.primaryColor
                         : (sale.paymentStatus == 'LUNAS'
-                              ? Colors.green
-                              : Colors.orange),
+                              ? AppTheme.primaryColor
+                              : AppTheme.accentColor),
                   ),
                 ),
                 child: Text(
@@ -83,12 +77,10 @@ class SaleDetailDialog extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: sale.paymentStatus == SaleModel.statusComplete
-                        ? Colors
-                              .purpleAccent // Colors.purple
+                        ? AppTheme.primaryColor
                         : (sale.paymentStatus == 'LUNAS'
-                              ? Colors
-                                    .greenAccent // Colors.green
-                              : Colors.orangeAccent), // Colors.orange
+                              ? AppTheme.primaryColor
+                              : AppTheme.accentColor),
                   ),
                 ),
               ),
@@ -187,11 +179,11 @@ class SaleDetailDialog extends StatelessWidget {
                         width: double.infinity,
                         fit: BoxFit.cover,
                         errorWidget: Container(
-                          color: Colors.grey[200],
-                          child: const Center(
+                          color: Theme.of(context).cardColor,
+                          child: Center(
                             child: Icon(
                               Icons.broken_image_rounded,
-                              color: Colors.grey,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ),
@@ -251,7 +243,7 @@ class SaleDetailDialog extends StatelessWidget {
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: const Text('Tutup'),

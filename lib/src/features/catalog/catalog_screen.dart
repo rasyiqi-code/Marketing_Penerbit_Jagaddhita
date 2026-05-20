@@ -14,17 +14,16 @@ class CatalogScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text(
+        title: Text(
           'Katalog Produk',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.primaryGradient,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
         ),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
       ),
       body: const CatalogList(houseType: 1),
@@ -40,6 +39,7 @@ class CatalogList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productService = Provider.of<ProductService>(context, listen: false);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return StreamBuilder<List<ProductModel>>(
       stream: productService.getProducts(houseType),
@@ -48,13 +48,13 @@ class CatalogList extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.search_off, size: 48, color: Colors.grey),
-                SizedBox(height: 16),
-                Text('Belum ada produk tersedia.'),
+                Icon(Icons.search_off, size: 48, color: AppTheme.secondaryColor.withValues(alpha: 0.5)),
+                const SizedBox(height: 16),
+                const Text('Belum ada produk tersedia.'),
               ],
             ),
           );
@@ -62,30 +62,30 @@ class CatalogList extends StatelessWidget {
 
         final products = snapshot.data!;
         return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
           itemCount: products.length,
           itemBuilder: (context, index) {
             final product = products[index];
             return Container(
-              margin: const EdgeInsets.only(bottom: 16),
+              margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
-                  color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
+                  color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
                 ),
               ),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(10),
                   onTap: () {
                     Navigator.pushNamed(
                       context,
@@ -94,23 +94,22 @@ class CatalogList extends StatelessWidget {
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(12.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             Container(
-                              width: 60,
-                              height: 60,
-                              padding: const EdgeInsets.all(12),
+                              width: 48,
+                              height: 48,
+                              padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color:
-                                    (houseType == 1
-                                            ? AppTheme.primaryColor
-                                            : AppTheme.secondaryColor)
-                                        .withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(16),
+                                color: (houseType == 1
+                                        ? AppTheme.primaryColor
+                                        : AppTheme.secondaryColor)
+                                    .withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: Icon(
                                 houseType == 1
@@ -119,10 +118,10 @@ class CatalogList extends StatelessWidget {
                                 color: houseType == 1
                                     ? AppTheme.primaryColor
                                     : AppTheme.secondaryColor,
-                                size: 28,
+                                size: 22,
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,21 +129,21 @@ class CatalogList extends StatelessWidget {
                                   Text(
                                     product.name,
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.onSurface,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: 2),
                                   Text(
                                     product.category,
                                     style: TextStyle(
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.onSurfaceVariant,
-                                      fontSize: 14,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ],
@@ -153,14 +152,14 @@ class CatalogList extends StatelessWidget {
                             Text(
                               AppFormatters.currency(product.price),
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: AppTheme.primaryColor,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 10),
                         Text(
                           product.description,
                           maxLines: 2,
@@ -169,22 +168,22 @@ class CatalogList extends StatelessWidget {
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurfaceVariant,
-                            fontSize: 14,
-                            height: 1.5,
+                            fontSize: 12,
+                            height: 1.4,
                           ),
                         ),
                         if (product.marketingKitUrl != null) ...[
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 10),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                              horizontal: 10,
+                              vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
-                              borderRadius: BorderRadius.circular(8),
+                              color: AppTheme.primaryColor.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(6),
                               border: Border.all(
-                                color: Colors.grey.withValues(alpha: 0.2),
+                                color: AppTheme.primaryColor.withValues(alpha: 0.25),
                               ),
                             ),
                             child: Row(
@@ -192,16 +191,16 @@ class CatalogList extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Icons.download_rounded,
-                                  size: 16,
-                                  color: Colors.grey,
+                                  size: 14,
+                                  color: AppTheme.primaryColor,
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 6),
                                 const Text(
                                   'Tersedia Marketing Kit',
                                   style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
+                                    color: AppTheme.primaryColor,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],

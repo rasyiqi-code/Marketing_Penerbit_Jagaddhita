@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 
 /// Card ringkasan transaksi penjualan di halaman riwayat.
 class SaleCard extends StatelessWidget {
@@ -31,10 +32,10 @@ class SaleCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
       shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -111,15 +112,15 @@ class SaleCard extends StatelessWidget {
                           fontSize: 12,
                           color: isComplete
                               ? Theme.of(context).colorScheme.onSurfaceVariant
-                              : Colors.orange[800],
+                              : AppTheme.accentColor,
                         ),
                       ),
                       Text(
                         'Komisi: ${AppFormatters.currency(sale.commissionAmount)}',
                         style: GoogleFonts.outfit(
                           color: isComplete
-                              ? Colors.green[700]
-                              : Colors.orange[800],
+                              ? AppTheme.primaryColor
+                              : AppTheme.accentColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -129,8 +130,8 @@ class SaleCard extends StatelessWidget {
                           'Bonus: ${AppFormatters.currency(sale.pulsaBonusAmount)}',
                           style: GoogleFonts.outfit(
                             color: isComplete
-                                ? Colors.blue[700]
-                                : Colors.orange[800],
+                                ? AppTheme.primaryColor
+                                : AppTheme.accentColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
@@ -148,13 +149,13 @@ class SaleCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Keuntungan Markup',
+                    const Text('Keuntungan Markup',
                         style:
-                            TextStyle(fontSize: 12, color: Colors.green[700])),
+                            TextStyle(fontSize: 12, color: AppTheme.primaryColor)),
                     Text(
                       AppFormatters.currency(sale.totalMarkup ?? 0),
                       style: GoogleFonts.outfit(
-                        color: Colors.green[700],
+                        color: AppTheme.primaryColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
@@ -169,19 +170,19 @@ class SaleCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppTheme.accentColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     children: [
                       const Icon(Icons.info_outline,
-                          size: 16, color: Colors.blueAccent),
+                          size: 16, color: AppTheme.accentColor),
                       const SizedBox(width: 8),
                       Text(
                         'DP Terbayar: ${AppFormatters.currency(sale.paidAmount)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 13,
-                          color: Colors.blue[700],
+                          color: AppTheme.accentColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -197,7 +198,7 @@ class SaleCard extends StatelessWidget {
                       icon: const Icon(Icons.payment, size: 18),
                       label: const Text('Lunasi Sekarang & Upload Bukti'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: AppTheme.primaryColor,
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -219,12 +220,12 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isLunas ? Colors.green : Colors.orange;
+    final color = isLunas ? AppTheme.primaryColor : AppTheme.accentColor;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: color),
       ),
       child: Text(
@@ -232,7 +233,7 @@ class _StatusBadge extends StatelessWidget {
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: isLunas ? Colors.green[700] : Colors.orange[700],
+          color: color,
         ),
       ),
     );

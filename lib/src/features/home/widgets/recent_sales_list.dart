@@ -13,6 +13,7 @@ class RecentSalesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         Row(
@@ -21,8 +22,9 @@ class RecentSalesList extends StatelessWidget {
             Text(
               'Aktifitas Terkini',
               style: GoogleFonts.outfit(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             TextButton(
@@ -32,11 +34,16 @@ class RecentSalesList extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const SalesHistoryScreen()),
                 );
               },
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
               child: const Text('Lihat Semua'),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
         StreamBuilder<List<SaleModel>>(
           stream: Provider.of<SalesService>(
             context,
@@ -51,14 +58,12 @@ class RecentSalesList extends StatelessWidget {
             if (sales.isEmpty) {
               return Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: Theme.of(
-                      context,
-                    ).dividerColor.withValues(alpha: 0.2),
+                    color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
                   ),
                 ),
                 child: Center(
@@ -66,6 +71,7 @@ class RecentSalesList extends StatelessWidget {
                     'Belum ada transaksi terbaru.',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 13,
                     ),
                   ),
                 ),
@@ -99,20 +105,18 @@ class RecentSalesList extends StatelessWidget {
                 }
 
                 return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: Theme.of(
-                        context,
-                      ).dividerColor.withValues(alpha: 0.1),
+                      color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.03),
-                        blurRadius: 8,
+                        color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                        blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
                     ],
@@ -121,14 +125,14 @@ class RecentSalesList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: statusColor.withValues(alpha: 0.1),
+                          color: statusColor.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(statusIcon, color: statusColor, size: 20),
+                        child: Icon(statusIcon, color: statusColor, size: 16),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,23 +141,23 @@ class RecentSalesList extends StatelessWidget {
                               sale.details['product_name'] ?? 'Produk',
                               style: GoogleFonts.outfit(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                                fontSize: 13,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 2),
                             Text(
                               '${AppFormatters.currency(sale.totalPrice)} • ${sale.paymentStatus}',
                               style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 12,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                fontSize: 11,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             Text(
                               AppFormatters.timeAgo(sale.createdAt),
                               style: TextStyle(
-                                color: Colors.grey[400],
+                                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                                 fontSize: 10,
                               ),
                             ),

@@ -151,120 +151,126 @@ class _AddEditLinkDialogState extends State<AddEditLinkDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                widget.link == null ? 'Tambah Link Baru' : 'Edit Link',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _labelController,
-                decoration: InputDecoration(
-                  labelText: 'Label (cth: Portfolio Saya)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  widget.link == null ? 'Tambah Link Baru' : 'Edit Link',
+                  style: GoogleFonts.outfit(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  prefixIcon: const Icon(Icons.label_outline),
+                  textAlign: TextAlign.center,
                 ),
-                validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _urlController,
-                decoration: InputDecoration(
-                  labelText: _getHintText(),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _labelController,
+                  decoration: InputDecoration(
+                    labelText: 'Label (cth: Portfolio Saya)',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    prefixIcon: const Icon(Icons.label_outline),
                   ),
-                  prefixIcon: const Icon(Icons.link),
-                  helperText: 'Format akan disesuaikan otomatis saat disimpan',
+                  validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
                 ),
-                keyboardType:
-                    _selectedIcon == 'whatsapp' || _selectedIcon == 'phone'
-                    ? TextInputType.phone
-                    : (_selectedIcon == 'email'
-                          ? TextInputType.emailAddress
-                          : TextInputType.url),
-                validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Pilih Ikon',
-                style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                alignment: WrapAlignment.center,
-                children: _icons.map((item) {
-                  final isSelected = _selectedIcon == item['id'];
-                  return InkWell(
-                    onTap: () => setState(() => _selectedIcon = item['id']),
-                    borderRadius: BorderRadius.circular(12),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppTheme.primaryColor
-                            : Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _urlController,
+                  decoration: InputDecoration(
+                    labelText: _getHintText(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    prefixIcon: const Icon(Icons.link),
+                    helperText: 'Format akan disesuaikan otomatis saat disimpan',
+                    helperStyle: const TextStyle(fontSize: 10),
+                  ),
+                  keyboardType:
+                      _selectedIcon == 'whatsapp' || _selectedIcon == 'phone'
+                      ? TextInputType.phone
+                      : (_selectedIcon == 'email'
+                            ? TextInputType.emailAddress
+                            : TextInputType.url),
+                  validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Pilih Ikon',
+                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: _icons.map((item) {
+                    final isSelected = _selectedIcon == item['id'];
+                    return InkWell(
+                      onTap: () => setState(() => _selectedIcon = item['id']),
+                      borderRadius: BorderRadius.circular(10),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
                           color: isSelected
                               ? AppTheme.primaryColor
-                              : Colors.transparent,
+                              : Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isSelected
+                                ? AppTheme.primaryColor
+                                : Colors.white.withValues(alpha: 0.15),
+                          ),
+                        ),
+                        child: Icon(
+                          item['icon'],
+                          color: isSelected
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          size: 20,
                         ),
                       ),
-                      child: Icon(
-                        item['icon'],
-                        color: isSelected ? Colors.white : Colors.grey.shade600,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _saveLink,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    );
+                  }).toList(),
                 ),
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _saveLink,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          'Simpan Link',
+                          style: GoogleFonts.outfit(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      )
-                    : Text(
-                        'Simpan Link',
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

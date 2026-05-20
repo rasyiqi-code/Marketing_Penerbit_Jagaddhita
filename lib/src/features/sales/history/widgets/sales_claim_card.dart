@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 
 /// Card untuk menampilkan satu record klaim (komisi / pulsa / markup).
 class SalesClaimCard extends StatelessWidget {
@@ -17,15 +18,15 @@ class SalesClaimCard extends StatelessWidget {
 
     switch (claim.status) {
       case ClaimModel.statusPaid:
-        statusColor = Colors.green;
+        statusColor = AppTheme.primaryColor;
         statusText = 'BERHASIL';
         break;
       case ClaimModel.statusRejected:
-        statusColor = Colors.red;
+        statusColor = AppTheme.secondaryColor;
         statusText = 'DITOLAK';
         break;
       default:
-        statusColor = Colors.orange;
+        statusColor = AppTheme.accentColor;
         statusText = 'DIPROSES';
     }
 
@@ -34,7 +35,7 @@ class SalesClaimCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -43,10 +44,10 @@ class SalesClaimCard extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isPulsa
-                    ? Colors.orange.shade50
+                    ? AppTheme.accentColor.withValues(alpha: 0.15)
                     : isMarkup
-                        ? Colors.green.shade50
-                        : Colors.blue.shade50,
+                        ? AppTheme.primaryColor.withValues(alpha: 0.1)
+                        : AppTheme.secondaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -56,10 +57,10 @@ class SalesClaimCard extends StatelessWidget {
                         ? Icons.trending_up_rounded
                         : Icons.account_balance_rounded,
                 color: isPulsa
-                    ? Colors.orange
+                    ? AppTheme.accentColor
                     : isMarkup
-                        ? Colors.green
-                        : Colors.blue,
+                        ? AppTheme.primaryColor
+                        : AppTheme.secondaryColor,
               ),
             ),
             const SizedBox(width: 16),
@@ -103,7 +104,7 @@ class SalesClaimCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: statusColor.withValues(alpha: 0.5),
                     ),

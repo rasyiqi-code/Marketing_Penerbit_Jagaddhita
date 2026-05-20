@@ -372,7 +372,7 @@ class _SalesEntryPenerbitanScreenState
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
@@ -470,21 +470,21 @@ class _SalesEntryPenerbitanScreenState
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                        color: Colors.green.withValues(alpha: 0.3)),
+                        color: AppTheme.primaryColor.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
                       const Icon(Icons.check_circle,
-                          color: Colors.green, size: 20),
+                          color: AppTheme.primaryColor, size: 20),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'Pembayaran LUNAS. Komisi dihitung otomatis.',
                           style: GoogleFonts.outfit(
-                              color: Colors.green[700], fontSize: 13),
+                              color: AppTheme.primaryColor, fontSize: 13),
                         ),
                       ),
                     ],
@@ -513,7 +513,7 @@ class _SalesEntryPenerbitanScreenState
                   style: ElevatedButton.styleFrom(
                     backgroundColor: color,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
+                        borderRadius: BorderRadius.circular(10)),
                     elevation: 4,
                     shadowColor: color.withValues(alpha: 0.4),
                   ),

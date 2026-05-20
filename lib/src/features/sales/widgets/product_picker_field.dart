@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Public widget — drop‑in replacement for the old ProductPickerField.
@@ -60,7 +61,7 @@ class ProductPickerField extends StatelessWidget {
 
     return InkWell(
       onTap: () => _showCatalogModal(context),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(10),
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: 'Pilih Buku',
@@ -69,14 +70,14 @@ class ProductPickerField extends StatelessWidget {
           suffixIcon:
               Icon(Icons.grid_view_rounded, color: themeColor),
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(10)),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             borderSide:
                 BorderSide(color: themeColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: themeColor, width: 2),
           ),
           filled: true,
@@ -258,7 +259,7 @@ class _CatalogModalState extends State<_CatalogModal> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade400,
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -311,7 +312,7 @@ class _CatalogModalState extends State<_CatalogModal> {
                                         decoration: BoxDecoration(
                                           color: widget.color,
                                           borderRadius:
-                                              BorderRadius.circular(6),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Text(
                                           'PILIH BANYAK',
@@ -397,9 +398,9 @@ class _CatalogModalState extends State<_CatalogModal> {
                     filled: true,
                     fillColor: isDark
                         ? Colors.white10
-                        : Colors.grey.shade100,
+                        : Colors.black.withValues(alpha: 0.04),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
                     ),
                     contentPadding:
@@ -434,8 +435,8 @@ class _CatalogModalState extends State<_CatalogModal> {
                               ? widget.color
                               : (isDark
                                   ? Colors.white12
-                                  : Colors.grey.shade100),
-                          borderRadius: BorderRadius.circular(20),
+                                  : Colors.black.withValues(alpha: 0.04)),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           cat,
@@ -467,13 +468,19 @@ class _CatalogModalState extends State<_CatalogModal> {
                           children: [
                             Icon(Icons.search_off_rounded,
                                 size: 60,
-                                color: Colors.grey
-                                    .withValues(alpha: 0.4)),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.3)),
                             const SizedBox(height: 12),
                             Text(
                               'Produk tidak ditemukan',
                               style: GoogleFonts.outfit(
-                                  color: Colors.grey, fontSize: 16),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.5),
+                                  fontSize: 16),
                             ),
                           ],
                         ),
@@ -656,10 +663,10 @@ class _ConfirmBar extends StatelessWidget {
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    pickedCount == 0 ? Colors.grey : color,
+                    pickedCount == 0 ? Theme.of(context).disabledColor : color,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(10)),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20),
               ),
@@ -719,13 +726,13 @@ class _ProductCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isSelected
                 ? color
                 : (isDark
                     ? Colors.white12
-                    : Colors.grey.shade200),
+                    : Colors.black.withValues(alpha: 0.08)),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -754,7 +761,7 @@ class _ProductCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(15)),
+                        top: Radius.circular(9)),
                     child: product.imageUrl != null &&
                             product.imageUrl!.isNotEmpty
                         ? Image.network(
@@ -782,7 +789,9 @@ class _ProductCard extends StatelessWidget {
                           border: Border.all(
                               color: isSelected
                                   ? color
-                                  : Colors.grey.shade400,
+                                  : (isDark
+                                      ? Colors.white.withValues(alpha: 0.4)
+                                      : Colors.black.withValues(alpha: 0.3)),
                               width: 2),
                           boxShadow: [
                             BoxShadow(
@@ -833,7 +842,7 @@ class _ProductCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color:
                               Colors.black.withValues(alpha: 0.55),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           product.category,
@@ -882,7 +891,7 @@ class _ProductCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: isSelected
                             ? color
-                            : Colors.green.shade600,
+                            : AppTheme.primaryColor,
                       ),
                     ),
                   ],
@@ -948,7 +957,7 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(

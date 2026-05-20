@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/currency_input_formatter.dart';
 
 class MarkupInputField extends StatefulWidget {
@@ -57,9 +58,9 @@ class _MarkupInputFieldState extends State<MarkupInputField> {
           decoration: InputDecoration(
             labelText: 'Markup Harga (Per Item)',
             hintText: '0',
-            prefixIcon: const Icon(Icons.show_chart, color: Colors.green),
+            prefixIcon: const Icon(Icons.show_chart, color: AppTheme.primaryColor),
             suffixText: '/ item',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             filled: true,
             fillColor: Theme.of(context).cardColor,
           ),
@@ -89,7 +90,7 @@ class _MarkupInputFieldState extends State<MarkupInputField> {
                         ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: AppTheme.primaryColor,
                         ),
                       ),
                       TextSpan(text: ' (${widget.quantity} item)'),

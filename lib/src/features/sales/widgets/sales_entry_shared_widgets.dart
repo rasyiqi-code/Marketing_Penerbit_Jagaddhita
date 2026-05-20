@@ -35,7 +35,7 @@ class SalesCalculationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -45,7 +45,7 @@ class SalesCalculationCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
@@ -67,7 +67,7 @@ class SalesCalculationCard extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: color.withValues(alpha: 0.3)),
                 ),
                 child: Text(
@@ -92,7 +92,7 @@ class SalesCalculationCard extends StatelessWidget {
           _CalcRow(
             label: 'Diskon ${discountPercent.toStringAsFixed(0)}%',
             value: '- ${AppFormatters.currency(discountAmount)}',
-            valueColor: Colors.red[700],
+            valueColor: AppTheme.secondaryColor,
           ),
           const Divider(height: 24),
           _CalcRow(
@@ -106,7 +106,7 @@ class SalesCalculationCard extends StatelessWidget {
             _CalcRow(
               label: 'Pendapatan Marketing',
               value: AppFormatters.currency(commissionAmount),
-              valueColor: Colors.green[700],
+              valueColor: AppTheme.primaryColor,
               isBold: true,
             ),
           ],
@@ -115,7 +115,7 @@ class SalesCalculationCard extends StatelessWidget {
             _CalcRow(
               label: '🎁 Bonus Pulsa',
               value: AppFormatters.currency(pulsaBonusAmount),
-              valueColor: Colors.orange[700],
+              valueColor: AppTheme.accentColor,
               isBold: true,
             ),
           ],
@@ -190,21 +190,21 @@ class SalesAgentBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.blue.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue.withValues(alpha: 0.25)),
+        color: AppTheme.primaryColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.25)),
       ),
       child: Row(
         children: [
           const Icon(Icons.badge_outlined,
-              size: 20, color: Colors.blueAccent),
+              size: 20, color: AppTheme.primaryColor),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               '$agentName • $catLabel',
               style: GoogleFonts.outfit(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent),
+                  color: AppTheme.primaryColor),
             ),
           ),
         ],
@@ -257,17 +257,20 @@ class SalesPaymentStatusDropdown extends StatelessWidget {
         prefixIcon: Icon(Icons.payment_outlined,
             color: Theme.of(context).colorScheme.onSurfaceVariant),
         border:
-            OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300)),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white.withValues(alpha: 0.15)
+                  : Colors.black.withValues(alpha: 0.1),
+            )),
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             borderSide:
                 const BorderSide(color: AppTheme.primaryColor, width: 2)),
         filled: true,
-        fillColor: Theme.of(context).inputDecorationTheme.fillColor ??
-            Colors.grey[50],
+        fillColor: Theme.of(context).cardColor,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       ),

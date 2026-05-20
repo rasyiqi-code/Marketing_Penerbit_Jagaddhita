@@ -75,19 +75,19 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
         final bool isBonusLimitReached =
             _userMonthlyBonusCount >= settings.maxPulsaBonusCount;
 
+        final bool isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
-          margin: const EdgeInsets.only(bottom: 24),
+          margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
+                color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
               ),
             ],
-            // border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,28 +95,28 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
               // Header Status
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
+                  horizontal: 12,
+                  vertical: 10,
                 ),
                 decoration: BoxDecoration(
                   color: isEligible && !isBonusLimitReached
-                      ? Colors.green.withValues(alpha: 0.1)
-                      : AppTheme.primaryColor.withValues(alpha: 0.05),
+                      ? Colors.green.withOpacity(0.1)
+                      : AppTheme.primaryColor.withOpacity(0.05),
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
                   ),
                 ),
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? const Color(0xFF1E293B) : Colors.white,
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
+                            color: Colors.black.withOpacity(0.05),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -129,10 +129,10 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                         color: isEligible && !isBonusLimitReached
                             ? Colors.green
                             : AppTheme.primaryColor,
-                        size: 20,
+                        size: 18,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,25 +140,25 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                           Text(
                             'Status Kelayakan Bonus',
                             style: GoogleFonts.outfit(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           Text(
                             'Periode: ${DateFormat('MMMM yyyy', 'id_ID').format(DateTime.now())}',
                             style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              color: Colors.grey[600],
+                              fontSize: 11,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           if (isBonusLimitReached)
                             Text(
                               'Bonus bulan ini sudah diterima',
                               style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: Colors.orange[800],
+                                fontSize: 11,
+                                color: isDark ? Colors.orange[300] : Colors.orange[800],
                                 fontWeight: FontWeight.w500,
                               ),
                             )
@@ -166,8 +166,8 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                             Text(
                               'Selamat! Anda berhak klaim bonus.',
                               style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: Colors.green[700],
+                                fontSize: 11,
+                                color: isDark ? Colors.green[300] : Colors.green[700],
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -179,7 +179,7 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
               ),
 
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   children: [
                     if (settings.enableMinSalesLimit) ...[
@@ -190,9 +190,10 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                         target: settings.minSaleForPulsa.toDouble(),
                         isCurrency: true,
                         isMet: isTargetMet,
-                        accentColor: Colors.blue,
+                        accentColor: AppTheme.primaryColor,
+                        context: context,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 12),
                     ],
                     if (settings.enableMinCompletedSalesLimit) ...[
                       _buildProgressItem(
@@ -202,70 +203,73 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                         target: settings.minCompletedSalesCount.toDouble(),
                         isCurrency: false,
                         isMet: isCountMet,
-                        accentColor: Colors.purple,
+                        accentColor: AppTheme.secondaryColor,
+                        context: context,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                     ],
                     if (!settings.enableMinSalesLimit &&
                         !settings.enableMinCompletedSalesLimit)
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade300),
+                          color: isDark ? const Color(0xFF1E293B) : Colors.black.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withValues(alpha: 0.08),
+                          ),
                         ),
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.block_rounded,
-                              color: Colors.grey,
-                              size: 30,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                              size: 24,
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             Text(
                               'Program Bonus Sedang Nonaktif',
                               style: GoogleFonts.outfit(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey[600],
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
                             Text(
                               'Saat ini belum ada target bonus yang aktif.',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: Colors.grey[500],
+                                fontSize: 11,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                               ),
                             ),
                           ],
                         ),
                       ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: BorderRadius.circular(12),
+                        color: isDark ? const Color(0xFF1E293B) : Colors.black.withValues(alpha: 0.02),
+                        borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: Colors.grey.withValues(alpha: 0.2),
+                          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withValues(alpha: 0.05),
                         ),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             Icons.info_outline_rounded,
-                            size: 16,
-                            color: Colors.grey[600],
+                            size: 14,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               'Capai salah satu target di atas untuk klaim bonus pulsa ${AppFormatters.currency(settings.pulsaBonusAmount)}.',
                               style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: Colors.grey[600],
+                                fontSize: 11,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -290,23 +294,25 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
     required bool isCurrency,
     required bool isMet,
     required Color accentColor,
+    required BuildContext context,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     double progress = (current / target).clamp(0.0, 1.0);
-    final color = isMet ? Colors.green : accentColor;
+    final color = isMet ? AppTheme.primaryColor : accentColor;
 
     return Column(
       children: [
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
               ),
-              child: Icon(icon, color: color, size: 18),
+              child: Icon(icon, color: color, size: 16),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,9 +320,9 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                   Text(
                     label,
                     style: GoogleFonts.outfit(
-                      fontSize: 13,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -325,25 +331,25 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                         ? '${AppFormatters.currency(current)} / ${AppFormatters.currency(target)}'
                         : '${current.toInt()} / ${target.toInt()} Transaksi',
                     style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                      fontSize: 11,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
             ),
             if (isMet)
-              const Icon(Icons.check_circle, color: Colors.green, size: 20),
+              const Icon(Icons.check_circle, color: AppTheme.primaryColor, size: 18),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: Colors.grey[100],
+            backgroundColor: isDark ? const Color(0xFF334155) : Colors.black.withValues(alpha: 0.05),
             color: color,
-            minHeight: 8,
+            minHeight: 6,
           ),
         ),
       ],

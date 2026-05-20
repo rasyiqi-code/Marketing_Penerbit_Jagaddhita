@@ -22,7 +22,7 @@ class DigitalBusinessCard extends StatelessWidget {
       width: 450,
       height: 275,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
         gradient: const LinearGradient(
           colors: [
             Color(0xFF1B5E20), // Dark forest green
@@ -53,7 +53,7 @@ class DigitalBusinessCard extends StatelessWidget {
                 color: AppTheme.secondaryColor.withValues(alpha: 0.9), // Crimson Red Accent
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(120),
-                  topRight: Radius.circular(20),
+                  topRight: Radius.circular(10),
                 ),
               ),
             ),
@@ -397,7 +397,7 @@ void showDigitalBusinessCardDialog({
                     elevation: 4,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
@@ -410,7 +410,7 @@ void showDigitalBusinessCardDialog({
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                       side: const BorderSide(color: Colors.white54),
                     ),
                   ),

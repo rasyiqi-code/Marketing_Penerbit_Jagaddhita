@@ -31,12 +31,12 @@ class ProductDetailImage extends StatelessWidget {
                 fit: BoxFit.fitWidth,
                 errorWidget: Container(
                   height: 200,
-                  color: Colors.grey[200],
-                  child: const Center(
+                  color: Theme.of(context).cardColor,
+                  child: Center(
                     child: Icon(
                       Icons.broken_image_rounded,
                       size: 64,
-                      color: Colors.grey,
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
@@ -48,12 +48,12 @@ class ProductDetailImage extends StatelessWidget {
                     fit: BoxFit.fitWidth,
                     errorWidget: Container(
                       height: 200,
-                      color: Colors.grey[200],
-                      child: const Center(
+                      color: Theme.of(context).cardColor,
+                      child: Center(
                         child: Icon(
                           Icons.broken_image_rounded,
                           size: 64,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                         ),
                       ),
                     ),
@@ -97,9 +97,9 @@ class ProductDetailHeader extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: 0.1),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1)),
               ),
               child: Text(
                 product.category,
@@ -214,12 +214,12 @@ class ProductDetailMarketingKit extends StatelessWidget {
                 }
               }
             },
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(10),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border.all(color: Theme.of(context).dividerColor),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(10),
                 color: Theme.of(context).cardColor,
               ),
               child: Row(
@@ -228,7 +228,7 @@ class ProductDetailMarketingKit extends StatelessWidget {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(
                       Icons.image_outlined,
@@ -251,7 +251,7 @@ class ProductDetailMarketingKit extends StatelessWidget {
                           'Tap untuk melihat atau download gambar',
                           style: GoogleFonts.outfit(
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -279,7 +279,7 @@ class ProductDetailMarketingKit extends StatelessWidget {
               elevation: 0,
               minimumSize: const Size(double.infinity, 50),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(10),
                 side: const BorderSide(color: AppTheme.primaryColor),
               ),
             ),
@@ -293,7 +293,7 @@ class ProductDetailMarketingKit extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).inputDecorationTheme.fillColor,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: Column(
@@ -309,7 +309,7 @@ class ProductDetailMarketingKit extends StatelessWidget {
                           const Icon(
                             Icons.copy_all_rounded,
                             size: 20,
-                            color: Colors.grey,
+                            color: Colors.white24, // Translucent white to perfectly match brand guideline
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -317,7 +317,7 @@ class ProductDetailMarketingKit extends StatelessWidget {
                             style: GoogleFonts.outfit(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
-                              color: Colors.grey[700],
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                             ),
                           ),
                         ],

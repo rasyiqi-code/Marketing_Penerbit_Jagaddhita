@@ -46,7 +46,9 @@ class HomeHeader extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.grey.withValues(alpha: 0.2),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white.withValues(alpha: 0.15)
+                          : Colors.black.withValues(alpha: 0.1),
                     ),
                     color: Theme.of(context).cardColor,
                   ),
@@ -54,6 +56,9 @@ class HomeHeader extends StatelessWidget {
                     alignment: Alignment.center,
                     children: [
                       IconButton(
+                        iconSize: 20,
+                        padding: const EdgeInsets.all(8),
+                        constraints: const BoxConstraints(),
                         icon: Icon(
                           Icons.notifications_outlined,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -69,23 +74,28 @@ class HomeHeader extends StatelessWidget {
                       ),
                       if (controller.unreadCount > 0)
                         Positioned(
-                          top: 8,
-                          right: 8,
+                          top: 0,
+                          right: 0,
                           child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
+                            padding: const EdgeInsets.all(3),
+                            decoration: const BoxDecoration(
                               color: Colors.red,
                               shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 14,
+                              minHeight: 14,
                             ),
                             child: Text(
                               controller.unreadCount > 9
                                   ? '9+'
                                   : controller.unreadCount.toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 10,
+                                fontSize: 8,
                                 fontWeight: FontWeight.bold,
                               ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
@@ -98,10 +108,17 @@ class HomeHeader extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white.withValues(alpha: 0.15)
+                      : Colors.black.withValues(alpha: 0.1),
+                ),
                 color: Theme.of(context).cardColor,
               ),
               child: IconButton(
+                iconSize: 20,
+                padding: const EdgeInsets.all(8),
+                constraints: const BoxConstraints(),
                 icon: const Icon(Icons.logout_rounded, color: Colors.red),
                 onPressed: () {
                   Provider.of<AuthService>(context, listen: false).signOut();

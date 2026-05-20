@@ -34,20 +34,20 @@ class LinkBioHeaderCard extends StatelessWidget {
     final activeCount = links.where((l) => l.isActive).length;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryColor.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            color: AppTheme.primaryColor.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -58,9 +58,9 @@ class LinkBioHeaderCard extends StatelessWidget {
             children: [
               const CircleAvatar(
                 backgroundColor: Colors.white24,
-                child: Icon(Icons.public, color: Colors.white),
+                child: Icon(Icons.public, color: Colors.white, size: 20),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +70,7 @@ class LinkBioHeaderCard extends StatelessWidget {
                       style: GoogleFonts.outfit(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 15,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -78,7 +78,7 @@ class LinkBioHeaderCard extends StatelessWidget {
                       '$activeCount Link Aktif',
                       style: GoogleFonts.outfit(
                         color: Colors.white70,
-                        fontSize: 13,
+                        fontSize: 12,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -102,6 +102,7 @@ class LinkBioHeaderCard extends StatelessWidget {
                     icon: const Icon(
                       Icons.share,
                       color: Colors.white,
+                      size: 20,
                     ),
                     tooltip: 'Bagikan Bio',
                   ),
@@ -110,12 +111,14 @@ class LinkBioHeaderCard extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: AppTheme.primaryColor,
-                      shape: const StadiumBorder(),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
+                        horizontal: 12,
                       ),
-                      minimumSize: const Size(0, 36),
+                      minimumSize: const Size(0, 32),
                     ),
                     onPressed: () {
                       Navigator.push(
@@ -128,22 +131,22 @@ class LinkBioHeaderCard extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text('Pratinjau'),
+                    child: const Text('Pratinjau', style: TextStyle(fontSize: 12)),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           // Copy Link Box
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 8,
+              horizontal: 10,
+              vertical: 6,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
@@ -152,7 +155,7 @@ class LinkBioHeaderCard extends StatelessWidget {
                     bioUrl,
                     style: GoogleFonts.outfit(
                       color: Colors.white,
-                      fontSize: 12,
+                      fontSize: 11,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -174,7 +177,7 @@ class LinkBioHeaderCard extends StatelessWidget {
                   child: const Icon(
                     Icons.copy,
                     color: Colors.white,
-                    size: 18,
+                    size: 16,
                   ),
                 ),
               ],
@@ -217,6 +220,8 @@ class LinkBioSocialForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Form(
       key: formKey,
       child: Column(
@@ -232,39 +237,39 @@ class LinkBioSocialForm extends StatelessWidget {
               Text(
                 'Kartu Nama & Katalog Digital',
                 style: GoogleFonts.outfit(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
+              color: AppTheme.primaryColor.withOpacity(isDark ? 0.15 : 0.05),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                color: AppTheme.primaryColor.withOpacity(isDark ? 0.3 : 0.15),
               ),
             ),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                    color: AppTheme.primaryColor.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.badge,
                     color: AppTheme.primaryColor,
-                    size: 24,
+                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,17 +277,17 @@ class LinkBioSocialForm extends StatelessWidget {
                       Text(
                         'Kartu Nama Digital Premium Anda Siap!',
                         style: GoogleFonts.outfit(
-                          fontSize: 13,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: AppTheme.primaryColor,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         'Buka menu "Pratinjau" di atas untuk melihat dan mengunduh Kartu Nama Digital eksklusif Anda sebagai gambar berkualitas tinggi.',
                         style: GoogleFonts.outfit(
                           fontSize: 11,
-                          color: Colors.black54,
+                          color: isDark ? Colors.grey[300] : Colors.black54,
                         ),
                       ),
                     ],
@@ -297,13 +302,14 @@ class LinkBioSocialForm extends StatelessWidget {
             title: Text(
               'Katalog Jagaddhita Media Pustaka',
               style: GoogleFonts.outfit(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            subtitle: const Text(
+            subtitle: Text(
               'Menampilkan buku anak & PAUD berkualitas',
-              style: TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
             ),
             value: showJagaddhita,
             onChanged: onShowJagaddhitaChanged,
@@ -314,88 +320,113 @@ class LinkBioSocialForm extends StatelessWidget {
             title: Text(
               'Katalog SIBI Kemendikbudristek',
               style: GoogleFonts.outfit(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            subtitle: const Text(
+            subtitle: Text(
               'Menampilkan buku teks kurikulum nasional SIBI',
-              style: TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
             ),
             value: showSibi,
             onChanged: onShowSibiChanged,
             activeThumbColor: AppTheme.primaryColor,
           ),
-          const Divider(height: 24),
+          const Divider(height: 16),
           Text(
             'Kontak & Media Sosial Mitra',
             style: GoogleFonts.outfit(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
+              color: isDark ? Colors.grey[300] : Colors.grey[800],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           // Social Media Inputs
           TextFormField(
             controller: whatsappController,
             keyboardType: TextInputType.phone,
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               labelText: 'Nomor WhatsApp (Contoh: 628123456789)',
-              prefixIcon: const Icon(Icons.chat_rounded, color: Colors.green),
+              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
+              prefixIcon: const Icon(Icons.chat_rounded, color: Colors.green, size: 20),
+              filled: true,
+              fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
               ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           TextFormField(
             controller: instagramController,
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               labelText: 'Username Instagram (Tanpa @)',
-              prefixIcon: const Icon(Icons.camera_alt, color: Colors.pink),
+              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
+              prefixIcon: const Icon(Icons.camera_alt, color: Colors.pink, size: 20),
+              filled: true,
+              fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
               ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           TextFormField(
             controller: tiktokController,
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               labelText: 'Username TikTok (Tanpa @)',
-              prefixIcon: const Icon(Icons.music_note, color: Colors.black),
+              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
+              prefixIcon: Icon(Icons.music_note, color: isDark ? Colors.white : Colors.black, size: 20),
+              filled: true,
+              fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
               ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           TextFormField(
             controller: facebookController,
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               labelText: 'Username / Profil Facebook',
-              prefixIcon: const Icon(Icons.facebook, color: Colors.blue),
+              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
+              prefixIcon: const Icon(Icons.facebook, color: Colors.blue, size: 20),
+              filled: true,
+              fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
               ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: isSavingSocial ? null : onSave,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
             child: isSavingSocial
                 ? const SizedBox(
-                    height: 20,
-                    width: 20,
+                    height: 18,
+                    width: 18,
                     child: CircularProgressIndicator(
                       color: Colors.white,
                       strokeWidth: 2,
@@ -405,7 +436,7 @@ class LinkBioSocialForm extends StatelessWidget {
                     'Simpan Profil & Katalog',
                     style: GoogleFonts.outfit(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 13,
                     ),
                   ),
           ),
@@ -432,6 +463,7 @@ class LinkBioCustomLinkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     IconData icon;
     switch (link.icon) {
       case 'instagram':
@@ -457,29 +489,42 @@ class LinkBioCustomLinkCard extends StatelessWidget {
     }
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: isDark ? 0 : 2,
+      color: Theme.of(context).cardColor,
       shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(
+          color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+        ),
+      ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         leading: Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+            color: AppTheme.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: AppTheme.primaryColor),
+          child: Icon(icon, color: AppTheme.primaryColor, size: 20),
         ),
         title: Text(
           link.label,
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+          style: GoogleFonts.outfit(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 14,
+          ),
         ),
         subtitle: Text(
           link.url,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: Colors.grey[500], fontSize: 12),
+          style: TextStyle(
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
+            fontSize: 11,
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -489,30 +534,30 @@ class LinkBioCustomLinkCard extends StatelessWidget {
               activeThumbColor: AppTheme.primaryColor,
               onChanged: onToggleActive,
             ),
-            PopupMenuButton(
-              icon: Icon(Icons.more_vert, color: Colors.grey[600]),
+            PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert, color: isDark ? Colors.grey[400] : Colors.grey[600]),
               onSelected: (val) {
                 if (val == 'edit') onEdit();
                 if (val == 'delete') onDelete();
               },
               itemBuilder: (context) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'edit',
                   child: Row(
                     children: [
-                      Icon(Icons.edit, size: 20),
-                      SizedBox(width: 8),
-                      Text('Edit'),
+                      Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.onSurface),
+                      const SizedBox(width: 8),
+                      Text('Edit', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                     ],
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'delete',
                   child: Row(
                     children: [
-                      Icon(Icons.delete, color: Colors.red, size: 20),
-                      SizedBox(width: 8),
-                      Text('Hapus', style: TextStyle(color: Colors.red)),
+                      const Icon(Icons.delete, color: Colors.red, size: 20),
+                      const SizedBox(width: 8),
+                      const Text('Hapus', style: TextStyle(color: Colors.red)),
                     ],
                   ),
                 ),

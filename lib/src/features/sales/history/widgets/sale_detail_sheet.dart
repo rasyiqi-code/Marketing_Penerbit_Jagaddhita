@@ -29,7 +29,7 @@ class SaleDetailSheet extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
       ),
       child: Column(
         children: [
@@ -104,7 +104,7 @@ class SaleDetailSheet extends StatelessWidget {
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                       child: NetworkImageWeb(
                         imageUrl: sale.transactionProofUrl!,
                         height: 200,
@@ -141,8 +141,8 @@ class SaleDetailSheet extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isComplete
                           ? AppTheme.primaryColor.withValues(alpha: 0.1)
-                          : Colors.orange.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+                          : AppTheme.accentColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,21 +157,21 @@ class SaleDetailSheet extends StatelessWidget {
                           'Komisi Penjualan',
                           sale.commissionAmount,
                           isComplete: isComplete,
-                          color: Colors.green,
+                          color: AppTheme.primaryColor,
                         ),
                         if (sale.pulsaBonusAmount > 0)
                           _SummaryRow(
                             'Bonus Tambahan',
                             sale.pulsaBonusAmount,
                             isComplete: isComplete,
-                            color: Colors.blue,
+                            color: AppTheme.secondaryColor,
                           ),
                         if ((sale.totalMarkup ?? 0) > 0)
                           _SummaryRow(
                             'Keuntungan Markup',
                             (sale.totalMarkup ?? 0).toDouble(),
                             isComplete: isComplete,
-                            color: Colors.purple,
+                            color: AppTheme.primaryColor,
                           ),
                         const Divider(),
                         Row(
@@ -192,7 +192,7 @@ class SaleDetailSheet extends StatelessWidget {
                                 fontSize: 18,
                                 color: isComplete
                                     ? AppTheme.primaryColor
-                                    : Colors.orange[800],
+                                    : AppTheme.accentColor,
                               ),
                             ),
                           ],
@@ -268,7 +268,7 @@ class _SummaryRow extends StatelessWidget {
             AppFormatters.currency(amount),
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: isComplete ? color : Colors.orange[800],
+              color: isComplete ? color : AppTheme.accentColor,
               fontSize: 14,
             ),
           ),

@@ -19,12 +19,12 @@ class WithdrawalAllowedDayWarning extends StatelessWidget {
     if (isAllowedDay) return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.red.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+        color: Colors.red.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.red.withOpacity(0.2)),
       ),
       child: Row(
         children: [
@@ -34,7 +34,9 @@ class WithdrawalAllowedDayWarning extends StatelessWidget {
             child: Text(
               'Penarikan tidak tersedia hari ini ($dayName). Silakan cek jadwal operasional.',
               style: GoogleFonts.outfit(
-                color: Colors.red[800],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.red[300]
+                    : Colors.red[800],
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -59,7 +61,7 @@ class WithdrawalBalanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isBank
@@ -68,12 +70,12 @@ class WithdrawalBalanceCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: (isBank ? Colors.blue : Colors.orange).withValues(alpha: 0.3),
-            offset: const Offset(0, 8),
-            blurRadius: 16,
+            color: (isBank ? Colors.blue : Colors.orange).withOpacity(0.2),
+            offset: const Offset(0, 4),
+            blurRadius: 10,
           ),
         ],
       ),
@@ -86,12 +88,12 @@ class WithdrawalBalanceCard extends StatelessWidget {
               fontSize: 14,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             AppFormatters.currency(balance),
             style: GoogleFonts.outfit(
               color: Colors.white,
-              fontSize: 32,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -128,6 +130,7 @@ class WithdrawalForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -136,31 +139,49 @@ class WithdrawalForm extends StatelessWidget {
               ? 'Dana akan ditransfer ke rekening bank Anda.'
               : 'Pulsa akan dikirim ke nomor HP Anda.',
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey[600]),
+          style: TextStyle(
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
+            fontSize: 13,
+          ),
         ),
         if (minWithdrawalAmount > 0)
           Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            padding: const EdgeInsets.only(top: 6.0, bottom: 6.0),
             child: Text(
               'Minimal penarikan: ${AppFormatters.currency(minWithdrawalAmount)}',
               textAlign: TextAlign.center,
               style: GoogleFonts.outfit(
-                color: Colors.red[700],
+                color: isDark ? Colors.red[300] : Colors.red[700],
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
 
         // Nominal Input Field
         TextField(
           controller: amountController,
           keyboardType: TextInputType.number,
           enabled: isAllowedDay,
+          style: GoogleFonts.outfit(),
           decoration: InputDecoration(
             labelText: 'Nominal Penarikan',
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2),
+            ),
+            filled: true,
+            fillColor: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             prefixText: 'Rp ',
             suffixIcon: TextButton(
               onPressed: isAllowedDay ? onTarikSemua : null,
@@ -168,24 +189,38 @@ class WithdrawalForm extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // Banking/Phone Info (Read-only) Field
         TextField(
           controller: infoController,
           readOnly: true,
           enabled: isAllowedDay,
+          style: GoogleFonts.outfit(),
           decoration: InputDecoration(
             labelText: isBank ? 'Bank & No. Rekening' : 'Nomor HP',
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2),
+            ),
             hintText: 'Belum diset',
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
+            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             helperText: infoController.text.isNotEmpty
                 ? 'Data dikunci. Ubah via Profile.'
                 : 'Mohon lengkapi data di menu Profile.',
             helperStyle: TextStyle(
-              color: infoController.text.isEmpty ? Colors.red : null,
+              color: infoController.text.isEmpty ? Colors.red : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              fontSize: 11,
             ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.edit_rounded, size: 18),
@@ -201,11 +236,11 @@ class WithdrawalForm extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 20),
 
         // Submission Button
         SizedBox(
-          height: 50,
+          height: 46,
           child: ElevatedButton(
             onPressed: (isLoading || infoController.text.isEmpty || !isAllowedDay)
                 ? null
@@ -214,10 +249,10 @@ class WithdrawalForm extends StatelessWidget {
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
-              elevation: 2,
-              disabledBackgroundColor: Colors.grey[300],
+              elevation: 0,
+              disabledBackgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
             ),
             child: isLoading
                 ? const SizedBox(
@@ -231,7 +266,7 @@ class WithdrawalForm extends StatelessWidget {
                 : const Text(
                     'Kirim Permintaan',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

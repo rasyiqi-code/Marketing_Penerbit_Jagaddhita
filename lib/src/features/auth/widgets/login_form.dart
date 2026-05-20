@@ -28,19 +28,23 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(24),
+        color: isDark
+            ? Theme.of(context).cardColor.withValues(alpha: 0.95)
+            : Colors.white.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       child: Form(
         key: formKey,
         child: Column(
@@ -48,7 +52,7 @@ class LoginForm extends StatelessWidget {
           children: [
             Text(
               'Selamat Datang Kembali',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.primaryColor,
                   ),
@@ -58,7 +62,10 @@ class LoginForm extends StatelessWidget {
             Text(
               'Masuk untuk mengakses dashboard Anda',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[600], fontSize: 13),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                fontSize: 13,
+              ),
             ),
             const SizedBox(height: 20),
 
@@ -119,7 +126,7 @@ class LoginForm extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   elevation: 8,
                   shadowColor: AppTheme.primaryColor.withValues(alpha: 0.5),
@@ -148,7 +155,9 @@ class LoginForm extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Divider(color: Colors.grey[300]),
+                  child: Divider(
+                    color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -157,14 +166,16 @@ class LoginForm extends StatelessWidget {
                   child: Text(
                     'ATAU',
                     style: TextStyle(
-                      color: Colors.grey[500],
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
                   ),
                 ),
                 Expanded(
-                  child: Divider(color: Colors.grey[300]),
+                  child: Divider(
+                    color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                  ),
                 ),
               ],
             ),
@@ -176,21 +187,23 @@ class LoginForm extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                   vertical: 12,
                 ),
-                side: BorderSide(color: Colors.grey.shade300),
+                side: BorderSide(
+                  color: isDark ? Colors.white.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.15),
+                ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               icon: Image.asset(
                 'assets/google_logo.png',
                 height: 24,
               ),
-              label: const Text(
+              label: Text(
                 'Masuk dengan Google',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
             ),

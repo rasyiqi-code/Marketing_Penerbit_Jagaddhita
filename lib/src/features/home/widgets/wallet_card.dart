@@ -22,15 +22,15 @@ class WalletCard extends StatelessWidget {
     // Used AppFormatters instead
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFF1E1E1E), // Dark card for contrast
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -53,7 +53,7 @@ class WalletCard extends StatelessWidget {
                             Text(
                               'Saldo Tunai',
                               style: GoogleFonts.outfit(
-                                color: Colors.grey[400],
+                                color: Colors.white.withValues(alpha: 0.6),
                                 fontSize: 13,
                               ),
                             ),
@@ -63,7 +63,7 @@ class WalletCard extends StatelessWidget {
                               child: Icon(
                                 Icons.info_outline_rounded,
                                 size: 14,
-                                color: Colors.grey[600],
+                                color: Colors.white.withValues(alpha: 0.4),
                               ),
                             ),
                           ],
@@ -76,24 +76,24 @@ class WalletCard extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                            fontSize: 22,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                         if (user.markupBalance > 0)
                           Padding(
-                            padding: const EdgeInsets.only(top: 4),
+                            padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               '(Termasuk Markup ${AppFormatters.currency(user.markupBalance)})',
                               style: GoogleFonts.outfit(
                                 color: Colors.greenAccent,
-                                fontSize: 11,
+                                fontSize: 10,
                               ),
                             ),
                           ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     ElevatedButton.icon(
                       onPressed: onClaimTap,
                       style: ElevatedButton.styleFrom(
@@ -101,17 +101,17 @@ class WalletCard extends StatelessWidget {
                         foregroundColor: Colors.white,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                          horizontal: 12,
+                          vertical: 6,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       label: const Text('Tarik'),
                       icon: const Icon(
                         Icons.account_balance_wallet_rounded,
-                        size: 16,
+                        size: 14,
                       ),
                     ),
                   ],
@@ -130,7 +130,7 @@ class WalletCard extends StatelessWidget {
                             Text(
                               'Saldo Tunai',
                               style: GoogleFonts.outfit(
-                                color: Colors.grey[400],
+                                color: Colors.white.withValues(alpha: 0.6),
                                 fontSize: 13,
                               ),
                             ),
@@ -140,7 +140,7 @@ class WalletCard extends StatelessWidget {
                               child: Icon(
                                 Icons.info_outline_rounded,
                                 size: 14,
-                                color: Colors.grey[600],
+                                color: Colors.white.withValues(alpha: 0.4),
                               ),
                             ),
                           ],
@@ -153,18 +153,18 @@ class WalletCard extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                            fontSize: 22,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                         if (user.markupBalance > 0)
                           Padding(
-                            padding: const EdgeInsets.only(top: 4),
+                            padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               '(Termasuk Markup ${AppFormatters.currency(user.markupBalance)})',
                               style: GoogleFonts.outfit(
                                 color: Colors.greenAccent,
-                                fontSize: 11,
+                                fontSize: 10,
                               ),
                             ),
                           ),
@@ -179,17 +179,17 @@ class WalletCard extends StatelessWidget {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+                        horizontal: 12,
+                        vertical: 6,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     label: const Text('Tarik'),
                     icon: const Icon(
                       Icons.account_balance_wallet_rounded,
-                      size: 16,
+                      size: 14,
                     ),
                   ),
                 ],
@@ -197,7 +197,7 @@ class WalletCard extends StatelessWidget {
             },
           ),
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.0),
+            padding: EdgeInsets.symmetric(vertical: 10.0),
             child: Divider(color: Colors.white12),
           ),
 
@@ -209,8 +209,8 @@ class WalletCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.phone_android_rounded,
-                    color: Colors.blue[300],
-                    size: 20,
+                    color: AppTheme.accentColor,
+                    size: 18,
                   ),
                   const SizedBox(width: 8),
                   Column(
@@ -219,16 +219,16 @@ class WalletCard extends StatelessWidget {
                       Text(
                         'Saldo Pulsa',
                         style: GoogleFonts.outfit(
-                          color: Colors.grey[400],
-                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 11,
                         ),
                       ),
                       Text(
                         AppFormatters.currency(user.pulsaBalance),
                         style: GoogleFonts.outfit(
-                          color: Colors.blue[100],
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: 15,
                         ),
                       ),
                     ],
@@ -237,7 +237,12 @@ class WalletCard extends StatelessWidget {
               ),
               TextButton(
                 onPressed: onClaimPulsaTap,
-                style: TextButton.styleFrom(foregroundColor: Colors.blue[200]),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppTheme.accentColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
                 child: const Text('Klaim Pulsa'),
               ),
             ],
