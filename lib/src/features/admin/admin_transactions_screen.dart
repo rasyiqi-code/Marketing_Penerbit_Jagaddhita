@@ -140,7 +140,7 @@ class _AdminTransactionsScreenState extends State<AdminTransactionsScreen> {
 
           return ListView.builder(
             controller: _scrollController,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             itemCount: sales.length + 1, // +1 for loading indicator at bottom
             itemBuilder: (context, index) {
               if (index == sales.length) {

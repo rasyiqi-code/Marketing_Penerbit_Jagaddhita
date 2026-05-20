@@ -30,41 +30,41 @@ class TransactionDetailModal extends StatelessWidget {
     final dateFormat = DateFormat('dd MMM yyyy, HH:mm');
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
-      padding: const EdgeInsets.all(24),
+      height: MediaQuery.of(context).size.height * 0.65,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
             child: Container(
-              width: 40,
-              height: 4,
+              width: 32,
+              height: 3,
               decoration: BoxDecoration(
                 color: Theme.of(context).dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
                 child: Text(
                   'Detail Transaksi',
                   style: GoogleFonts.outfit(
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
+                  horizontal: 10,
+                  vertical: 4,
                 ),
                 decoration: BoxDecoration(
                   color: sale.paymentStatus == SaleModel.statusComplete
@@ -84,6 +84,7 @@ class TransactionDetailModal extends StatelessWidget {
                 child: Text(
                   sale.paymentStatus,
                   style: TextStyle(
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: sale.paymentStatus == SaleModel.statusComplete
                         ? Colors.purple
@@ -95,7 +96,7 @@ class TransactionDetailModal extends StatelessWidget {
               ),
             ],
           ),
-          const Divider(height: 32),
+          const Divider(height: 12),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -340,20 +341,20 @@ class TransactionDetailModal extends StatelessWidget {
                         : 'Potensi Bonus Pulsa',
                     currencyFormat.format(sale.pulsaBonusAmount),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   const Text(
                     'Agen Lokal (Mitra)',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   _buildDetailRow(context, 'Agent ID', sale.userId),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 10),
                   TransactionTimeline(history: sale.history),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -361,12 +362,12 @@ class TransactionDetailModal extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Tutup'),
+              child: const Text('Tutup', style: TextStyle(fontSize: 13)),
             ),
           ),
         ],
@@ -376,7 +377,7 @@ class TransactionDetailModal extends StatelessWidget {
 
   Widget _buildDetailRow(BuildContext context, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -385,6 +386,7 @@ class TransactionDetailModal extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
+                fontSize: 12,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
@@ -392,7 +394,7 @@ class TransactionDetailModal extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
             ),
           ),
         ],

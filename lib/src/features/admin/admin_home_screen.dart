@@ -20,10 +20,18 @@ class AdminHomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          'Admin Dashboard',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Admin Dashboard',
+            style: GoogleFonts.outfit(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
         ),
+        centerTitle: false,
         actions: [
           Consumer<NotificationController>(
             builder: (context, controller, child) {

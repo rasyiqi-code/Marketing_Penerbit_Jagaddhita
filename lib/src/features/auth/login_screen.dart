@@ -110,32 +110,36 @@ class _LoginScreenState extends State<LoginScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Web Configuration Error'),
+        titlePadding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        actionsPadding: const EdgeInsets.only(right: 12, bottom: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        title: const Text('Web Configuration Error', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'This error usually happens when "Email Enumeration Protection" is enabled in Firebase Console but not fully configured for Web.',
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(fontSize: 13),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             const Text(
               'Please go to Firebase Console > Authentication > Settings and UNCHECK "Email Enumeration Protection".',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             const Text(
               'Error Details:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
             ),
-            SelectableText(message, style: const TextStyle(color: Colors.red)),
+            SelectableText(message, style: const TextStyle(color: Colors.red, fontSize: 12)),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: const Text('OK', style: TextStyle(fontSize: 13)),
           ),
         ],
       ),
@@ -146,12 +150,19 @@ class _LoginScreenState extends State<LoginScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reset Password'),
-        content: Text('Send password reset email to ${_emailController.text}?'),
+        titlePadding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        actionsPadding: const EdgeInsets.only(right: 12, bottom: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        title: const Text('Reset Password', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        content: Text(
+          'Send password reset email to ${_emailController.text}?',
+          style: const TextStyle(fontSize: 13),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(fontSize: 13)),
           ),
           TextButton(
             onPressed: () async {
@@ -180,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen>
                 );
               }
             },
-            child: const Text('Send'),
+            child: const Text('Send', style: TextStyle(fontSize: 13)),
           ),
         ],
       ),

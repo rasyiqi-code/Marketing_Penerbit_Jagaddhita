@@ -15,11 +15,18 @@ class AdminUserListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(
-          'Manage Marketing Agents',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Manage Marketing Agents',
+            style: GoogleFonts.outfit(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
         ),
-        centerTitle: true,
+        centerTitle: false,
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
@@ -42,7 +49,7 @@ class AdminUserListScreen extends StatelessWidget {
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             itemCount: users.length,
             itemBuilder: (context, index) {
               final user = users[index];

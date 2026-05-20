@@ -58,37 +58,37 @@ class AdminClaimCard extends StatelessWidget {
     final accHolder = claim.bankDetails['account_holder'];
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         children: [
           // Header: Type & Date
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
+                    horizontal: 8,
+                    vertical: 4,
                   ),
                   decoration: BoxDecoration(
                     color: isPulsa
                         ? Colors.blue.shade50
                         : Colors.purple.shade50,
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     children: [
@@ -96,14 +96,14 @@ class AdminClaimCard extends StatelessWidget {
                         isPulsa
                             ? Icons.phone_android_rounded
                             : Icons.account_balance_rounded,
-                        size: 14,
+                        size: 12,
                         color: isPulsa ? Colors.blue : Colors.purple,
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 4),
                       Text(
                         isPulsa ? 'PULSA' : 'TRANSFER BANK',
                         style: GoogleFonts.outfit(
-                          fontSize: 12,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: isPulsa
                               ? Colors.blue.shade700
@@ -116,7 +116,7 @@ class AdminClaimCard extends StatelessWidget {
                 Text(
                   DateFormat('dd MMM yyyy, HH:mm').format(claim.createdAt),
                   style: GoogleFonts.outfit(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: Colors.grey[500],
                   ),
                 ),
@@ -127,7 +127,7 @@ class AdminClaimCard extends StatelessWidget {
 
           // Body: Amount & Details
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -140,39 +140,39 @@ class AdminClaimCard extends StatelessWidget {
                       Text(
                         'Total Penarikan',
                         style: GoogleFonts.outfit(
-                          fontSize: 12,
+                          fontSize: 11,
                           color: Colors.grey[500],
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         currencyFormat.format(claim.amount),
                         style: GoogleFonts.outfit(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
                       ),
                       if (isHistory) ...[
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
+                            horizontal: 8,
+                            vertical: 3,
                           ),
                           decoration: BoxDecoration(
                             color: statusColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(statusIcon, size: 14, color: statusColor),
-                              const SizedBox(width: 6),
+                              Icon(statusIcon, size: 12, color: statusColor),
+                              const SizedBox(width: 4),
                               Text(
                                 statusText,
                                 style: GoogleFonts.outfit(
-                                  fontSize: 12,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: statusColor,
                                 ),
@@ -194,11 +194,11 @@ class AdminClaimCard extends StatelessWidget {
                       Text(
                         'Tujuan Transfer',
                         style: GoogleFonts.outfit(
-                          fontSize: 12,
+                          fontSize: 11,
                           color: Colors.grey[500],
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       _buildCopyableText(
                         context,
                         bankName,
@@ -219,7 +219,7 @@ class AdminClaimCard extends StatelessWidget {
                           accHolder.toUpperCase(),
                           textAlign: TextAlign.end,
                           style: GoogleFonts.outfit(
-                            fontSize: 11,
+                            fontSize: 10,
                             fontWeight: FontWeight.w600,
                             color: Colors.grey[500],
                           ),
@@ -234,7 +234,7 @@ class AdminClaimCard extends StatelessWidget {
           // Actions (Only for Requests)
           if (!isHistory) ...[
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
               child: Row(
                 children: [
                   Expanded(
@@ -261,19 +261,21 @@ class AdminClaimCard extends StatelessWidget {
                         },
                         Colors.red,
                       ),
-                      icon: const Icon(Icons.close_rounded, size: 18),
+                      icon: const Icon(Icons.close_rounded, size: 16),
                       label: const Text('Tolak'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.red,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         side: BorderSide(color: Colors.red.shade200),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () => _confirmAction(
@@ -298,16 +300,18 @@ class AdminClaimCard extends StatelessWidget {
                         },
                         Colors.green,
                       ),
-                      icon: const Icon(Icons.check_rounded, size: 18),
+                      icon: const Icon(Icons.check_rounded, size: 16),
                       label: const Text('Bayar'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryColor,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ),
                   ),
@@ -369,12 +373,16 @@ class AdminClaimCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('$action Request'),
-        content: Text(message),
+        titlePadding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        actionsPadding: const EdgeInsets.only(right: 12, bottom: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        title: Text('$action Request', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        content: Text(message, style: const TextStyle(fontSize: 13)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(fontSize: 13)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -401,8 +409,14 @@ class AdminClaimCard extends StatelessWidget {
                 }
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: color),
-            child: Text('Confirm', style: const TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: color,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 13)),
           ),
         ],
       ),

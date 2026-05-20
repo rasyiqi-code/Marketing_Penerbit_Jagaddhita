@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_claim_card.dart';
 import 'package:provider/provider.dart';
 
@@ -15,13 +16,35 @@ class AdminWithdrawalsScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            'Withdrawal Management',
-            style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 0,
+          title: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Withdrawal Management',
+              style: GoogleFonts.outfit(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
           ),
-          centerTitle: true,
-          bottom: const TabBar(
-            tabs: [
+          centerTitle: false,
+          bottom: TabBar(
+            indicatorColor: AppTheme.primaryColor,
+            indicatorWeight: 3,
+            indicatorSize: TabBarIndicatorSize.label,
+            labelColor: AppTheme.primaryColor,
+            unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+            labelStyle: GoogleFonts.outfit(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+            unselectedLabelStyle: GoogleFonts.outfit(
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+            tabs: const [
               Tab(text: 'Requests'),
               Tab(text: 'History'),
             ],
@@ -74,7 +97,7 @@ class _RequestsTab extends StatelessWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           itemCount: claims.length,
           itemBuilder: (context, index) {
             return AdminClaimCard(
@@ -126,7 +149,7 @@ class _HistoryTab extends StatelessWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           itemCount: claims.length,
           itemBuilder: (context, index) {
             return AdminClaimCard(

@@ -162,7 +162,11 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Perbarui Transaksi'),
+      titlePadding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      actionsPadding: const EdgeInsets.only(right: 12, bottom: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      title: const Text('Perbarui Transaksi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
       scrollable: true,
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -171,14 +175,14 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
           // Proof Section
           if (_hasProof && _currentProofUrl != null) ...[
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               child: NetworkImageWeb(
                 imageUrl: _currentProofUrl!,
-                height: 150,
+                height: 120,
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             TextButton.icon(
               onPressed: () async {
                 final newUrl = await _uploadProofForSale(
@@ -192,15 +196,20 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
                   });
                 }
               },
-              icon: const Icon(Icons.edit),
-              label: const Text('Ubah Bukti Transaksi'),
+              icon: const Icon(Icons.edit, size: 14),
+              label: const Text('Ubah Bukti Transaksi', style: TextStyle(fontSize: 12)),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
             ),
           ] else ...[
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.red.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
               ),
               child: Column(
@@ -208,28 +217,29 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
                   const Icon(
                     Icons.warning_amber_rounded,
                     color: Colors.red,
-                    size: 32,
+                    size: 24,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   const Text(
                     'Bukti Pembayaran Belum Ada',
                     style: TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
+                      fontSize: 12,
                     ),
                   ),
                   Text(
                     'Wajib upload bukti sebelum update ke DP/LUNAS.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             ElevatedButton.icon(
               onPressed: () async {
                 final newUrl = await _uploadProofForSale(
@@ -243,15 +253,18 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
                   });
                 }
               },
-              icon: const Icon(Icons.upload_file),
-              label: const Text('Upload Bukti Sekarang'),
+              icon: const Icon(Icons.upload_file, size: 14),
+              label: const Text('Upload Bukti Sekarang', style: TextStyle(fontSize: 12)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
           ],
-          const Divider(height: 32),
+          const Divider(height: 16),
 
           TextField(
             controller: _noteController,
@@ -259,17 +272,25 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
               labelText: 'Catatan / Alasan (Opsional)',
               hintText: 'Contoh: Pembayaran oke...',
               border: OutlineInputBorder(),
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              labelStyle: TextStyle(fontSize: 12),
+              hintStyle: TextStyle(fontSize: 12),
             ),
+            style: const TextStyle(fontSize: 13),
             maxLines: 2,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           if (widget.sale.paymentStatus == SaleModel.statusPending)
             ListTile(
-              title: const Text('Tandai sebagai DP'),
+              dense: true,
+              visualDensity: VisualDensity.compact,
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Tandai sebagai DP', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
               subtitle: !_hasProof
                   ? const Text(
                       'Wajib bukti foto!',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: Colors.red, fontSize: 11),
                     )
                   : null,
               enabled: _hasProof,
@@ -284,20 +305,25 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
             ),
           if (widget.sale.paymentStatus == SaleModel.statusPending ||
               widget.sale.paymentStatus == SaleModel.statusDp) ...[
-            const Divider(),
+            const Divider(height: 8),
             ListTile(
-              title: const Text('Tandai LUNAS'),
+              dense: true,
+              visualDensity: VisualDensity.compact,
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Tandai LUNAS', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
               subtitle: Text(
                 !_hasProof
                     ? 'Wajib bukti foto!'
                     : 'Status LUNAS belum mencairkan bonus. Bonus cair saat status COMPLETE.',
                 style: TextStyle(
                   color: !_hasProof ? Colors.red : Colors.grey[600],
+                  fontSize: 11,
                 ),
               ),
               trailing: Icon(
                 Icons.check_circle,
                 color: _hasProof ? Colors.green : Colors.grey,
+                size: 20,
               ),
               enabled: _hasProof,
               onTap: () {
@@ -311,11 +337,14 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
             ),
           ],
           if (widget.sale.paymentStatus == SaleModel.statusLunas) ...[
-            const Divider(),
+            const Divider(height: 8),
             ListTile(
-              title: const Text('Tandai SELESAI (COMPLETE)'),
-              subtitle: const Text('Pesanan diterima/selesai.'),
-              trailing: const Icon(Icons.done_all, color: Colors.purple),
+              dense: true,
+              visualDensity: VisualDensity.compact,
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Tandai SELESAI (COMPLETE)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              subtitle: const Text('Pesanan diterima/selesai.', style: TextStyle(fontSize: 11)),
+              trailing: const Icon(Icons.done_all, color: Colors.purple, size: 20),
               onTap: () {
                 Navigator.pop(context);
                 _updateStatus(
@@ -326,11 +355,14 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
               },
             ),
           ],
-          const Divider(),
+          const Divider(height: 8),
           ListTile(
-            title: const Text('Tandai BERMASALAH'),
-            subtitle: const Text('Ada masalah pembayaran/pesanan.'),
-            trailing: const Icon(Icons.report_problem, color: Colors.red),
+            dense: true,
+            visualDensity: VisualDensity.compact,
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Tandai BERMASALAH', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.red)),
+            subtitle: const Text('Ada masalah pembayaran/pesanan.', style: TextStyle(fontSize: 11)),
+            trailing: const Icon(Icons.report_problem, color: Colors.red, size: 20),
             textColor: Colors.red,
             onTap: () {
               if (_noteController.text.isEmpty) {
@@ -351,6 +383,12 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
           ),
         ],
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Batal', style: TextStyle(fontSize: 13)),
+        ),
+      ],
     );
   }
 }
