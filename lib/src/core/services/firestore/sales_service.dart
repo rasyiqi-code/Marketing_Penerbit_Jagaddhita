@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/wallet_history_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/global_settings_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/base_firestore_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
 
@@ -120,6 +121,9 @@ class SalesService extends BaseFirestoreService {
 
       if (newStatus == SaleModel.statusComplete &&
           currentStatus != SaleModel.statusComplete) {
+        final settingsDoc = await transaction.get(db.collection('global_settings').doc('config'));
+        final settings = settingsDoc.exists ? GlobalSettingsModel.fromMap(settingsDoc.data()!) : GlobalSettingsModel(bonusPercentR1: 0, minPayout: 0);
+        
         _applyCompleteTransaction(
           transaction,
           saleRef: saleRef,
@@ -128,6 +132,7 @@ class SalesService extends BaseFirestoreService {
           sale: sale,
           historyItem: historyItem,
           extraData: extraData,
+          settings: settings,
         );
       } else if (currentStatus == SaleModel.statusComplete &&
           newStatus != SaleModel.statusComplete) {
@@ -164,24 +169,27 @@ class SalesService extends BaseFirestoreService {
     required SaleModel sale,
     required SaleHistoryItem historyItem,
     required Map<String, dynamic>? extraData,
+    required GlobalSettingsModel settings,
   }) {
     double finalBonusAmount = sale.pulsaBonusAmount;
     final Map<String, dynamic> userUpdates = {};
 
     if (finalBonusAmount > 0) {
       final data = userDoc.data() as Map<String, dynamic>?;
-      final lastBonusTimestamp = data?['last_pulsa_bonus_at'];
-      DateTime? lastBonus;
-      if (lastBonusTimestamp is Timestamp) {
-        lastBonus = lastBonusTimestamp.toDate();
+      final now = DateTime.now();
+      final currentMonthStr = '${now.year}-${now.month}';
+      final userMonthStr = data?['pulsa_bonus_month'] as String?;
+      
+      int currentCount = 0;
+      if (userMonthStr == currentMonthStr) {
+        currentCount = (data?['pulsa_bonus_count'] ?? 0) as int;
       }
 
-      final now = DateTime.now();
-      if (lastBonus != null &&
-          lastBonus.year == now.year &&
-          lastBonus.month == now.month) {
+      if (settings.enableMaxPulsaBonusLimit && currentCount >= settings.maxPulsaBonusCount) {
         finalBonusAmount = 0;
       } else {
+        userUpdates['pulsa_bonus_month'] = currentMonthStr;
+        userUpdates['pulsa_bonus_count'] = currentCount + 1;
         userUpdates['last_pulsa_bonus_at'] = FieldValue.serverTimestamp();
       }
     }
@@ -311,6 +319,7 @@ class SalesService extends BaseFirestoreService {
       transaction.update(userRef, {
         'pulsa_balance': FieldValue.increment(-pulsaBonusAmount.toInt()),
         'last_pulsa_bonus_at': FieldValue.delete(),
+        'pulsa_bonus_count': FieldValue.increment(-1),
       });
       final pulsaHistoryRef = db.collection('wallet_history').doc();
       transaction.set(
@@ -417,28 +426,18 @@ class SalesService extends BaseFirestoreService {
   }
 
   Future<int> getUserBonusCountThisMonth(String userId) async {
+    final userDoc = await db.collection('users').doc(userId).get();
+    final data = userDoc.data();
+    if (data == null) return 0;
+
     final now = DateTime.now();
-    final startOfMonth = DateTime(now.year, now.month, 1);
-    final nextMonth = DateTime(now.year, now.month + 1, 1);
+    final currentMonthStr = '${now.year}-${now.month}';
+    final userMonthStr = data['pulsa_bonus_month'] as String?;
 
-    final snapshot = await db
-        .collection('sales')
-        .where('user_id', isEqualTo: userId)
-        .where('created_at', isGreaterThanOrEqualTo: startOfMonth)
-        .where('created_at', isLessThan: nextMonth)
-        .get();
-
-    int count = 0;
-    for (var doc in snapshot.docs) {
-      final data = doc.data();
-      final pb = (data['pulsa_bonus_amount'] ?? 0) as num;
-      final status = data['payment_status'];
-
-      if (pb > 0 && status != SaleModel.statusCanceled) {
-        count++;
-      }
+    if (userMonthStr == currentMonthStr) {
+      return (data['pulsa_bonus_count'] ?? 0) as int;
     }
-    return count;
+    return 0;
   }
 
   Future<int> getUserCompletedSalesCount(String userId) async {
@@ -457,24 +456,28 @@ class SalesService extends BaseFirestoreService {
     final startOfMonth = DateTime(now.year, now.month, 1);
     final nextMonth = DateTime(now.year, now.month + 1, 1);
 
-    final snapshot = await db
+    final query = db
         .collection('sales')
         .where('user_id', isEqualTo: userId)
         .where('created_at', isGreaterThanOrEqualTo: startOfMonth)
-        .where('created_at', isLessThan: nextMonth)
-        .get();
+        .where('created_at', isLessThan: nextMonth);
 
-    int count = 0;
-    double total = 0;
+    try {
+      final snapshot = await query.get();
+      int count = 0;
+      double total = 0;
 
-    for (var doc in snapshot.docs) {
-      final data = doc.data();
-      if (data['payment_status'] != SaleModel.statusCanceled) {
-        count++;
-        total += (data['total_price'] ?? 0) as num;
+      for (var doc in snapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        if (data['payment_status'] != SaleModel.statusCanceled) {
+          count++;
+          total += (data['total_price'] ?? 0) as num;
+        }
       }
+      return {'count': count, 'total': total};
+    } catch (e) {
+      return {'count': 0, 'total': 0};
     }
-    return {'count': count, 'total': total};
   }
 
   Future<SaleModel?> getSale(String saleId) async {

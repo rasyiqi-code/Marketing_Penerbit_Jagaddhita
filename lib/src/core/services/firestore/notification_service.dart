@@ -41,7 +41,7 @@ class AppNotificationService extends BaseFirestoreService {
   }
 
   Future<void> cleanupOldNotifications(String userId) async {
-    final cutoffDate = DateTime.now().subtract(const Duration(hours: 24));
+    final cutoffDate = DateTime.now().subtract(const Duration(days: 30));
 
     final snapshot = await db
         .collection('notifications')

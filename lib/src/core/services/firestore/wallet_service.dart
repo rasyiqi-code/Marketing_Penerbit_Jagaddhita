@@ -90,6 +90,9 @@ class WalletService extends BaseFirestoreService {
         }
 
         if (remaining > 0) {
+          if (markupBalance < remaining) {
+            throw Exception('Saldo markup tidak cukup akibat perubahan data (race condition).');
+          }
           deductedMarkup = remaining;
           transaction.update(userRef, {
             'markup_balance': FieldValue.increment(-remaining),

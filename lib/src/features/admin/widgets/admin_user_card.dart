@@ -224,7 +224,7 @@ class AdminUserCard extends StatelessWidget {
             onPressed: () async {
               Navigator.pop(context);
               try {
-                await userService.deleteUser(user.id);
+                await userService.updateAdminUser(user.id, {'role': 'banned'});
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

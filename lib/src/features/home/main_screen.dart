@@ -78,6 +78,32 @@ class _MainScreenState extends State<MainScreen> {
         }
 
         final userModel = snapshot.data!;
+        
+        if (userModel.role == 'banned') {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.block, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Akun Anda Ditangguhkan',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('Silakan hubungi administrator.'),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => FirebaseAuth.instance.signOut(),
+                    child: const Text('Keluar'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
         final isAdmin = userModel.role == 'admin';
 
         // Initialize Notification Listener

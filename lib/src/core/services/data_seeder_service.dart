@@ -215,6 +215,8 @@ class DataSeederService {
         'total_sales_count': 0,
         'total_commission_earned': 0,
         'total_pulsa_earned': 0,
+        'pulsa_bonus_count': 0,
+        'pulsa_bonus_month': '',
       });
     }
 

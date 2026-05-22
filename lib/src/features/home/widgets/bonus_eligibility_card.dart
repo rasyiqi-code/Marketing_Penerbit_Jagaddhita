@@ -63,17 +63,15 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
         if (!settings.enableR1PulsaBonus) return const SizedBox.shrink();
 
         // Calculate eligibility based on ENABLED rules only
-        final bool isTargetMet =
-            settings.enableMinSalesLimit &&
-            (_monthlySalesTotal >= settings.minSaleForPulsa);
-        final bool isCountMet =
-            settings.enableMinCompletedSalesLimit &&
-            (_monthlySalesCount >= settings.minCompletedSalesCount);
+        final bool isTargetMet = _monthlySalesTotal >= settings.minSaleForPulsa;
+        final bool isCountMet = _monthlySalesCount >= settings.minCompletedSalesCount;
         
-        // Final eligibility: Must meet at least one ENABLED target
-        final bool isEligible = (isTargetMet || isCountMet);
+        // Final eligibility: Must meet all ENABLED targets. If none enabled, eligible by default (handled by enableR1PulsaBonus above)
+        final bool isEligible = (!settings.enableMinSalesLimit || isTargetMet) &&
+                                (!settings.enableMinCompletedSalesLimit || isCountMet);
+        
         final bool isBonusLimitReached =
-            _userMonthlyBonusCount >= settings.maxPulsaBonusCount;
+            settings.enableMaxPulsaBonusLimit && _userMonthlyBonusCount >= settings.maxPulsaBonusCount;
 
         final bool isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
