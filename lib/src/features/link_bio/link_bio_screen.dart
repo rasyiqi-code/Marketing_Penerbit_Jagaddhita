@@ -166,113 +166,124 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
           final links = snapshot.data!;
 
           return ListView(
-            padding: const EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             children: [
               // ── Header Card ───────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: StreamBuilder<GlobalSettingsModel>(
-                  stream: productService.getGlobalSettings(),
-                  builder: (context, settingsSnapshot) {
-                    String baseUrl;
-                    if (kIsWeb) {
-                      baseUrl = Uri.base.origin;
-                    } else {
-                      baseUrl = settingsSnapshot.data?.webBaseUrl ??
-                          'https://marketing-jagaddhitamp.web.app';
-                    }
-                    return LinkBioHeaderCard(
-                      user: _currentUser!,
-                      links: links,
-                      webBaseUrl: baseUrl,
-                    );
-                  },
-                ),
+              StreamBuilder<GlobalSettingsModel>(
+                stream: productService.getGlobalSettings(),
+                builder: (context, settingsSnapshot) {
+                  String baseUrl;
+                  if (kIsWeb) {
+                    baseUrl = Uri.base.origin;
+                  } else {
+                    baseUrl = settingsSnapshot.data?.webBaseUrl ??
+                        'https://marketing-jagaddhitamp.web.app';
+                  }
+                  return LinkBioHeaderCard(
+                    user: _currentUser!,
+                    links: links,
+                    webBaseUrl: baseUrl,
+                  );
+                },
               ),
 
+              const SizedBox(height: 8),
+
               // ── Main Content Area ─────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      )
-                    ],
-                    border: Border.all(
-                      color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    )
+                  ],
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+                  ),
+                ),
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    // ── Social & Catalogs Form ──────────────────────────────
+                    LinkBioSocialForm(
+                      formKey: _socialFormKey,
+                      showJagaddhita: _showJagaddhita,
+                      showSibi: _showSibi,
+                      isSavingSocial: _isSavingSocial,
+                      whatsappController: _whatsappController,
+                      instagramController: _instagramController,
+                      tiktokController: _tiktokController,
+                      facebookController: _facebookController,
+                      onShowJagaddhitaChanged: (val) {
+                        setState(() => _showJagaddhita = val);
+                      },
+                      onShowSibiChanged: (val) {
+                        setState(() => _showSibi = val);
+                      },
+                      onSave: _saveSocialSettings,
                     ),
-                  ),
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    children: [
-                      // ── Social & Catalogs Form ──────────────────────────────
-                      LinkBioSocialForm(
-                        formKey: _socialFormKey,
-                        showJagaddhita: _showJagaddhita,
-                        showSibi: _showSibi,
-                        isSavingSocial: _isSavingSocial,
-                        whatsappController: _whatsappController,
-                        instagramController: _instagramController,
-                        tiktokController: _tiktokController,
-                        facebookController: _facebookController,
-                        onShowJagaddhitaChanged: (val) {
-                          setState(() => _showJagaddhita = val);
-                        },
-                        onShowSibiChanged: (val) {
-                          setState(() => _showSibi = val);
-                        },
-                        onSave: _saveSocialSettings,
-                      ),
 
-                      const SizedBox(height: 16),
+                    const SizedBox(height: 12),
 
-                      // ── Custom Links Header Button ──────────────────────────
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(bottom: 12),
-                        child: OutlinedButton.icon(
-                          onPressed: () => _showAddEditDialog(),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            side: BorderSide(
-                              color: AppTheme.primaryColor.withOpacity(0.5),
-                              width: 1.5,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            backgroundColor: AppTheme.primaryColor.withOpacity(0.05),
-                          ),
-                          icon: const Icon(Icons.add_circle_outline, size: 18),
-                          label: Text(
-                            'Tambah Link Custom Baru',
-                            style: GoogleFonts.outfit(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
+                    // ── Custom Links Header ─────────────────────────────────
+                    if (links.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          'Link Custom',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
 
-                      // ── Custom Links List ───────────────────────────────────
-                      ...links.map(
-                        (link) => LinkBioCustomLinkCard(
-                          link: link,
-                          onToggleActive: (val) => _toggleActive(link, val),
-                          onEdit: () => _showAddEditDialog(link),
-                          onDelete: () => _deleteLink(link.id),
+                    // ── Custom Links List ───────────────────────────────────
+                    ...links.map(
+                      (link) => LinkBioCustomLinkCard(
+                        link: link,
+                        onToggleActive: (val) => _toggleActive(link, val),
+                        onEdit: () => _showAddEditDialog(link),
+                        onDelete: () => _deleteLink(link.id),
+                      ),
+                    ),
+
+                    // ── Add New Link Button ─────────────────────────────────
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showAddEditDialog(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          side: BorderSide(
+                            color: AppTheme.primaryColor.withOpacity(0.5),
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: AppTheme.primaryColor.withOpacity(0.05),
+                        ),
+                        icon: const Icon(Icons.add_circle_outline, size: 16),
+                        label: Text(
+                          'Tambah Link Custom Baru',
+                          style: GoogleFonts.outfit(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
+                    ),
 
-                      const SizedBox(height: 80),
-                    ],
-                  ),
+                    const SizedBox(height: 120),
+                  ],
                 ),
               ),
             ],

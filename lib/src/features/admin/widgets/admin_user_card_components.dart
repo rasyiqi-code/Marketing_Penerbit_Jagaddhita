@@ -14,12 +14,15 @@ class AdminCategoryBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final String label;
     final Color color;
-    if (category == 'reseller') {
-      label = 'RESELLER';
-      color = Colors.blue;
-    } else if (category == 'distributor') {
-      label = 'DISTRIBUTOR';
-      color = Colors.green;
+    if (category == 'gold') {
+      label = 'RESELLER GOLD';
+      color = Colors.amber.shade700;
+    } else if (category == 'platinum') {
+      label = 'RESELLER PLATINUM';
+      color = Colors.blueGrey.shade600;
+    } else if (category == 'premium') {
+      label = 'RESELLER PREMIUM';
+      color = Colors.grey.shade900;
     } else {
       label = 'BELUM DIKELOMPOKKAN';
       color = Colors.orange;
@@ -102,7 +105,7 @@ class AdminUserHeaderSection extends StatelessWidget {
                                 ? user.name!
                                 : user.email.split('@')[0],
                             style: GoogleFonts.outfit(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -111,13 +114,13 @@ class AdminUserHeaderSection extends StatelessWidget {
                         IconButton(
                           icon: Icon(
                             Icons.edit,
-                            size: 16,
+                            size: 14,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           onPressed: onEdit,
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
-                          splashRadius: 20,
+                          splashRadius: 16,
                         ),
                       ],
                     ),
@@ -125,7 +128,7 @@ class AdminUserHeaderSection extends StatelessWidget {
                       user.email,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -159,10 +162,10 @@ class AdminUserBankInfoSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.blue.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
       ),
       child: Column(
@@ -170,19 +173,19 @@ class AdminUserBankInfoSection extends StatelessWidget {
         children: [
           const Row(
             children: [
-              Icon(Icons.credit_card, size: 16, color: Colors.blue),
-              SizedBox(width: 8),
+              Icon(Icons.credit_card, size: 14, color: Colors.blue),
+              SizedBox(width: 6),
               Text(
                 'Banking Details',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.blueAccent,
-                  fontSize: 12,
+                  fontSize: 11,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             '${bank['bank_name']} - ${bank['account_number']}',
             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -208,10 +211,10 @@ class AdminUserStatsSection extends StatelessWidget {
 
   Widget _buildVerticalDivider() {
     return Container(
-      height: 40,
+      height: 32,
       width: 1,
       color: Colors.grey[300],
-      margin: const EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
     );
   }
 
@@ -240,11 +243,11 @@ class AdminUserStatsSection extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             value,
             style: GoogleFonts.outfit(
-              fontSize: isCurrency ? 14 : 18,
+              fontSize: isCurrency ? 13 : 16,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface,
             ),
@@ -266,10 +269,10 @@ class AdminUserStatsSection extends StatelessWidget {
     final numberFormat = NumberFormat('#,###');
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
@@ -316,12 +319,12 @@ class AdminUserBalanceAlertSection extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        vertical: 8,
-        horizontal: 12,
+        vertical: 6,
+        horizontal: 10,
       ),
       decoration: BoxDecoration(
         color: Colors.orange.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(
           color: Colors.orange.withValues(alpha: 0.3),
         ),

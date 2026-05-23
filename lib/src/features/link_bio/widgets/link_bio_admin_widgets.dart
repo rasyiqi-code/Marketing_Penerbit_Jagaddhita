@@ -34,20 +34,20 @@ class LinkBioHeaderCard extends StatelessWidget {
     final activeCount = links.where((l) => l.isActive).length;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: AppTheme.primaryColor.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -137,16 +137,16 @@ class LinkBioHeaderCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           // Copy Link Box
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 6,
+              horizontal: 8,
+              vertical: 4,
             ),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Row(
               children: [
@@ -244,13 +244,13 @@ class LinkBioSocialForm extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Container(
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(8),
+            margin: const EdgeInsets.only(bottom: 8),
             decoration: BoxDecoration(
               color: AppTheme.primaryColor.withOpacity(isDark ? 0.15 : 0.05),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: AppTheme.primaryColor.withOpacity(isDark ? 0.3 : 0.15),
               ),
@@ -298,6 +298,7 @@ class LinkBioSocialForm extends StatelessWidget {
           ),
           // Catalog Toggles
           SwitchListTile(
+            dense: true,
             contentPadding: EdgeInsets.zero,
             title: Text(
               'Katalog Jagaddhita Media Pustaka',
@@ -316,6 +317,7 @@ class LinkBioSocialForm extends StatelessWidget {
             activeThumbColor: AppTheme.primaryColor,
           ),
           SwitchListTile(
+            dense: true,
             contentPadding: EdgeInsets.zero,
             title: Text(
               'Katalog SIBI Kemendikbudristek',
@@ -333,7 +335,7 @@ class LinkBioSocialForm extends StatelessWidget {
             onChanged: onShowSibiChanged,
             activeThumbColor: AppTheme.primaryColor,
           ),
-          const Divider(height: 16),
+          const Divider(height: 12),
           Text(
             'Kontak & Media Sosial Mitra',
             style: GoogleFonts.outfit(
@@ -342,7 +344,7 @@ class LinkBioSocialForm extends StatelessWidget {
               color: isDark ? Colors.grey[300] : Colors.grey[800],
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           // Social Media Inputs
           TextFormField(
             controller: whatsappController,
@@ -350,77 +352,77 @@ class LinkBioSocialForm extends StatelessWidget {
             style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               labelText: 'Nomor WhatsApp (Contoh: 628123456789)',
-              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
-              prefixIcon: const Icon(Icons.chat_rounded, color: Colors.green, size: 20),
+              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 12),
+              prefixIcon: const Icon(Icons.chat_rounded, color: Colors.green, size: 18),
               filled: true,
               fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           TextFormField(
             controller: instagramController,
             style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               labelText: 'Username Instagram (Tanpa @)',
-              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
-              prefixIcon: const Icon(Icons.camera_alt, color: Colors.pink, size: 20),
+              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 12),
+              prefixIcon: const Icon(Icons.camera_alt, color: Colors.pink, size: 18),
               filled: true,
               fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           TextFormField(
             controller: tiktokController,
             style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               labelText: 'Username TikTok (Tanpa @)',
-              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
-              prefixIcon: Icon(Icons.music_note, color: isDark ? Colors.white : Colors.black, size: 20),
+              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 12),
+              prefixIcon: Icon(Icons.music_note, color: isDark ? Colors.white : Colors.black, size: 18),
               filled: true,
               fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           TextFormField(
             controller: facebookController,
             style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               labelText: 'Username / Profil Facebook',
-              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
-              prefixIcon: const Icon(Icons.facebook, color: Colors.blue, size: 20),
+              labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 12),
+              prefixIcon: const Icon(Icons.facebook, color: Colors.blue, size: 18),
               filled: true,
               fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           ElevatedButton(
             onPressed: isSavingSocial ? null : onSave,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
             child: isSavingSocial
@@ -489,32 +491,32 @@ class LinkBioCustomLinkCard extends StatelessWidget {
     }
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 8),
       elevation: isDark ? 0 : 2,
       color: Theme.of(context).cardColor,
       shadowColor: Colors.black12,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         side: BorderSide(
           color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
         ),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
         leading: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             color: AppTheme.primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(6),
           ),
-          child: Icon(icon, color: AppTheme.primaryColor, size: 20),
+          child: Icon(icon, color: AppTheme.primaryColor, size: 18),
         ),
         title: Text(
           link.label,
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
         subtitle: Text(

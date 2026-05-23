@@ -178,11 +178,27 @@ class SalesService extends BaseFirestoreService {
       final data = userDoc.data() as Map<String, dynamic>?;
       final now = DateTime.now();
       final currentMonthStr = '${now.year}-${now.month}';
-      final userMonthStr = data?['pulsa_bonus_month'] as String?;
+      String? userMonthStr = data?['pulsa_bonus_month'] as String?;
       
       int currentCount = 0;
+      if (userMonthStr == null && data?['last_pulsa_bonus_at'] != null) {
+        final lastBonusAtRaw = data?['last_pulsa_bonus_at'];
+        DateTime? lastBonusAt;
+        if (lastBonusAtRaw is Timestamp) {
+          lastBonusAt = lastBonusAtRaw.toDate();
+        } else if (lastBonusAtRaw is DateTime) {
+          lastBonusAt = lastBonusAtRaw;
+        }
+        if (lastBonusAt != null &&
+            lastBonusAt.year == now.year &&
+            lastBonusAt.month == now.month) {
+          userMonthStr = currentMonthStr;
+          currentCount = 1;
+        }
+      }
+      
       if (userMonthStr == currentMonthStr) {
-        currentCount = (data?['pulsa_bonus_count'] ?? 0) as int;
+        currentCount = (data?['pulsa_bonus_count'] ?? (currentCount > 0 ? currentCount : 0)) as int;
       }
 
       if (settings.enableMaxPulsaBonusLimit && currentCount >= settings.maxPulsaBonusCount) {
@@ -432,10 +448,27 @@ class SalesService extends BaseFirestoreService {
 
     final now = DateTime.now();
     final currentMonthStr = '${now.year}-${now.month}';
-    final userMonthStr = data['pulsa_bonus_month'] as String?;
+    String? userMonthStr = data['pulsa_bonus_month'] as String?;
+    int currentCount = 0;
+
+    if (userMonthStr == null && data['last_pulsa_bonus_at'] != null) {
+      final lastBonusAtRaw = data['last_pulsa_bonus_at'];
+      DateTime? lastBonusAt;
+      if (lastBonusAtRaw is Timestamp) {
+        lastBonusAt = lastBonusAtRaw.toDate();
+      } else if (lastBonusAtRaw is DateTime) {
+        lastBonusAt = lastBonusAtRaw;
+      }
+      if (lastBonusAt != null &&
+          lastBonusAt.year == now.year &&
+          lastBonusAt.month == now.month) {
+        userMonthStr = currentMonthStr;
+        currentCount = 1;
+      }
+    }
 
     if (userMonthStr == currentMonthStr) {
-      return (data['pulsa_bonus_count'] ?? 0) as int;
+      return (data['pulsa_bonus_count'] ?? (currentCount > 0 ? currentCount : 0)) as int;
     }
     return 0;
   }

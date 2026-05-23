@@ -17,9 +17,9 @@ class AdminUserCard extends StatelessWidget {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -28,21 +28,21 @@ class AdminUserCard extends StatelessWidget {
               user: user,
               onEdit: () => _showEditAgentDialog(context),
             ),
-            const Divider(height: 12, thickness: 0.5),
+            const Divider(height: 10, thickness: 0.5),
 
             // Info Grid (Bank Details)
             if (user.bankDetails != null) ...[
               AdminUserBankInfoSection(bank: user.bankDetails!),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
             ],
 
             // Stats Grid
             AdminUserStatsSection(user: user),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
 
             // Unpaid Balance Alert
             AdminUserBalanceAlertSection(totalUnpaid: totalUnpaid),
-            if (totalUnpaid > 0) const SizedBox(height: 6),
+            if (totalUnpaid > 0) const SizedBox(height: 4),
 
             // Actions
             Row(
@@ -125,12 +125,16 @@ class AdminUserCard extends StatelessWidget {
                       child: Text('Belum Dikelompokkan', style: TextStyle(fontSize: 13)),
                     ),
                     DropdownMenuItem(
-                      value: 'reseller',
-                      child: Text('Reseller (20%)', style: TextStyle(fontSize: 13)),
+                      value: 'gold',
+                      child: Text('Reseller Gold', style: TextStyle(fontSize: 13)),
                     ),
                     DropdownMenuItem(
-                      value: 'distributor',
-                      child: Text('Distributor (35%)', style: TextStyle(fontSize: 13)),
+                      value: 'platinum',
+                      child: Text('Reseller Platinum', style: TextStyle(fontSize: 13)),
+                    ),
+                    DropdownMenuItem(
+                      value: 'premium',
+                      child: Text('Reseller Premium', style: TextStyle(fontSize: 13)),
                     ),
                   ],
                   onChanged: (val) {

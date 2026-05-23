@@ -172,11 +172,11 @@ class _LinkBioPreviewScreenState extends State<LinkBioPreviewScreen> {
                                   displayName, professionalTitle),
                         ),
 
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
 
                         Padding(
                           padding:
-                              const EdgeInsets.symmetric(horizontal: 24),
+                              const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             children: [
                               // ── Book Catalog ──────────────────────
@@ -186,7 +186,7 @@ class _LinkBioPreviewScreenState extends State<LinkBioPreviewScreen> {
                                   user: widget.user,
                                   onSendWhatsApp: _sendWhatsAppMessage,
                                 ),
-                                const SizedBox(height: 32),
+                                const SizedBox(height: 20),
                               ],
 
                               // ── Custom Links ──────────────────────
@@ -195,11 +195,11 @@ class _LinkBioPreviewScreenState extends State<LinkBioPreviewScreen> {
                                   alignment: Alignment.centerLeft,
                                   child: Padding(
                                     padding: const EdgeInsets.only(
-                                        bottom: 12.0),
+                                        bottom: 10.0),
                                     child: Text(
                                       'Tautan Lainnya',
                                       style: GoogleFonts.outfit(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black87,
                                       ),
@@ -209,19 +209,19 @@ class _LinkBioPreviewScreenState extends State<LinkBioPreviewScreen> {
                                 ..._contentLinks.map(
                                   (link) => Padding(
                                     padding:
-                                        const EdgeInsets.only(bottom: 16),
+                                        const EdgeInsets.only(bottom: 12),
                                     child: LinkBioModernLinkButton(
                                       link: link,
                                       onTap: () => _launchUrl(link.url),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 40),
+                                const SizedBox(height: 24),
                               ],
 
                               // ── Branding Footer ───────────────────
                               _BrandingFooter(),
-                              const SizedBox(height: 40),
+                              const SizedBox(height: 24),
                             ],
                           ),
                         ),

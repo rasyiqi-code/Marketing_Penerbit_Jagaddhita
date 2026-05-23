@@ -26,7 +26,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/link_bio_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/notification_service.dart' as local;
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/sales_entry_penerbitan_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/sales_entry_book_screen.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/link_bio_loading_screen.dart';
 import 'firebase_options.dart';
 
@@ -87,9 +87,10 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const MainScreen(),
         '/sales': (context) => const MainScreen(), // alias — web back button after submit sales
-        '/sales/penerbitan': (context) => const SalesEntryPenerbitanScreen(),
+        '/sales/book': (context) => const SalesEntryBookScreen(),
         '/catalog': (context) => const CatalogScreen(),
         '/catalog/detail': (context) => const ProductDetailScreen(),
+        '/admin': (context) => const MainScreen(),
         '/admin/products': (context) => const ProductManagementScreen(),
         '/admin/products/add': (context) => const AddEditProductScreen(),
         '/admin/settings': (context) => const GlobalSettingsScreen(),

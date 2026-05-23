@@ -5,6 +5,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:provider/provider.dart';
 
 /// Dynamic book catalog section for the link bio preview page.
@@ -126,26 +127,44 @@ class _BooksGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 1,
-        mainAxisSpacing: 1,
-        childAspectRatio: 0.54,
-      ),
-      itemCount: books.length,
-      itemBuilder: (context, index) => _BookCard(
-        book: books[index],
-        whatsappNumber: whatsappNumber,
-        onSendWhatsApp: onSendWhatsApp,
-      ),
-    );
+    // Use a column of rows (2 per row) so cards auto-size to content — no dead space.
+    final rows = <Widget>[];
+    for (int i = 0; i < books.length; i += 2) {
+      final left = books[i];
+      final right = (i + 1 < books.length) ? books[i + 1] : null;
+      rows.add(
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: _BookCard(
+                  book: left,
+                  whatsappNumber: whatsappNumber,
+                  onSendWhatsApp: onSendWhatsApp,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: right != null
+                    ? _BookCard(
+                        book: right,
+                        whatsappNumber: whatsappNumber,
+                        onSendWhatsApp: onSendWhatsApp,
+                      )
+                    : const SizedBox(),
+              ),
+            ],
+          ),
+        ),
+      );
+      if (i + 2 < books.length) rows.add(const SizedBox(height: 10));
+    }
+    return Column(children: rows);
   }
 }
 
-class _BookCard extends StatelessWidget {
+class _BookCard extends StatefulWidget {
   final ProductModel book;
   final String? whatsappNumber;
   final void Function(String? number, String message) onSendWhatsApp;
@@ -157,110 +176,90 @@ class _BookCard extends StatelessWidget {
   });
 
   @override
+  State<_BookCard> createState() => _BookCardState();
+}
+
+class _BookCardState extends State<_BookCard> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Cover
-          Container(
-            height: 100,
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.06),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(10)),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.book,
-                size: 36,
-                color: AppTheme.primaryColor.withValues(alpha: 0.5),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => widget.onSendWhatsApp(
+          widget.whatsappNumber,
+          'Halo Kak, saya tertarik untuk memesan buku "${widget.book.name}" dari katalog digital Anda.',
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: _hovered ? 0.14 : 0.06),
+                blurRadius: _hovered ? 16 : 8,
+                offset: Offset(0, _hovered ? 6 : 2),
               ),
+            ],
+            border: Border.all(
+              color: _hovered
+                  ? const Color(0xFF25D366).withValues(alpha: 0.4)
+                  : Colors.grey.withValues(alpha: 0.08),
             ),
           ),
-          // Info
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Cover image with hover overlay
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                child: AspectRatio(
+                  aspectRatio: 3 / 4,
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      Text(
-                        book.category.toUpperCase(),
-                        style: GoogleFonts.outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        book.name,
-                        style: GoogleFonts.outfit(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppFormatters.currency(book.price),
-                        style: GoogleFonts.outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 32,
-                        child: ElevatedButton(
-                          onPressed: () => onSendWhatsApp(
-                            whatsappNumber,
-                            'Halo Kak, saya tertarik untuk memesan buku "${book.name}" dari katalog digital Anda.',
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF25D366),
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                      _buildCover(widget.book),
+                      // Hover overlay: slides up from bottom
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 220),
+                        curve: Curves.easeOut,
+                        bottom: _hovered ? 0 : -60,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          height: 52,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                                const Color(0xFF1E8449).withValues(alpha: 0.95),
+                                const Color(0xFF25D366).withValues(alpha: 0.85),
+                              ],
                             ),
-                            elevation: 0,
                           ),
+                          alignment: Alignment.center,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.chat, size: 14),
-                              const SizedBox(width: 4),
+                              const Icon(
+                                Icons.chat_bubble_outline_rounded,
+                                size: 14,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 6),
                               Text(
-                                'Pesan',
+                                'Pesan via WA',
                                 style: GoogleFonts.outfit(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
                             ],
@@ -269,11 +268,86 @@ class _BookCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
+              // Info section
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.book.category.toUpperCase(),
+                      style: GoogleFonts.outfit(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryColor,
+                        letterSpacing: 0.3,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      widget.book.name,
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        height: 1.3,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      AppFormatters.currency(widget.book.price),
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF1A9E52),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCover(ProductModel book) {
+    final imageUrl = (book.imageUrl != null && book.imageUrl!.isNotEmpty)
+        ? book.imageUrl!
+        : (book.marketingKitUrl != null && book.marketingKitUrl!.isNotEmpty)
+            ? book.marketingKitUrl!
+            : null;
+
+    if (imageUrl != null) {
+      return NetworkImageWeb(
+        imageUrl: imageUrl,
+        fit: BoxFit.cover,
+        errorWidget: _CoverFallback(),
+      );
+    }
+    return _CoverFallback();
+  }
+}
+
+class _CoverFallback extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppTheme.primaryColor.withValues(alpha: 0.08),
+      child: Center(
+        child: Icon(
+          Icons.menu_book_rounded,
+          size: 36,
+          color: AppTheme.primaryColor.withValues(alpha: 0.4),
+        ),
       ),
     );
   }

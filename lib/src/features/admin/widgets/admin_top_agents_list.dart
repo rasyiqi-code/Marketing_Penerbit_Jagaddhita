@@ -32,11 +32,11 @@ class AdminTopAgentsList extends StatelessWidget {
             final user = entry.value;
             final isFirst = index == 0;
             return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: isFirst
                       ? Colors.amber.withValues(alpha: 0.5)
@@ -47,8 +47,8 @@ class AdminTopAgentsList extends StatelessWidget {
                     ? [
                         BoxShadow(
                           color: Colors.amber.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
                         ),
                       ]
                     : null,
@@ -56,8 +56,8 @@ class AdminTopAgentsList extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: isFirst
@@ -70,6 +70,7 @@ class AdminTopAgentsList extends StatelessWidget {
                     child: Text(
                       '#${index + 1}',
                       style: TextStyle(
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: isFirst
                             ? Colors.white
@@ -77,19 +78,19 @@ class AdminTopAgentsList extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           user.name ?? user.email.split('@')[0],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                         Text(
                           '${user.totalSalesCount} Penjualan',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurfaceVariant,
@@ -105,6 +106,7 @@ class AdminTopAgentsList extends StatelessWidget {
                       decimalDigits: 0,
                     ).format(user.totalCommissionEarned),
                     style: const TextStyle(
+                      fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: Colors.green,
                     ),

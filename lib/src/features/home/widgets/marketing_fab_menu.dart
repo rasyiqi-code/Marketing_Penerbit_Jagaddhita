@@ -1,60 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/global_settings_model.dart';
 
 class MarketingFabMenu extends StatelessWidget {
   const MarketingFabMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        16,
-        16,
-        16,
-        16 + MediaQuery.of(context).padding.bottom,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Menu Pemasaran',
-            style: GoogleFonts.outfit(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
+    final productService = Provider.of<ProductService>(context, listen: false);
+
+    return StreamBuilder<GlobalSettingsModel>(
+      stream: productService.getGlobalSettings(),
+      builder: (context, snapshot) {
+        final settings = snapshot.data;
+        final showBookSales = settings?.enableR1 ?? true;
+
+        return Container(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + MediaQuery.of(context).padding.bottom,
           ),
-          const SizedBox(height: 16),
-          Row(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: _buildFabOption(
-                  context,
-                  'Entri Penjualan',
-                  Icons.book_rounded,
-                  Colors.blue,
-                  '/sales/penerbitan',
+              Text(
+                'Menu Pemasaran',
+                style: GoogleFonts.outfit(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildFabOption(
-                  context,
-                  'Poster Generator',
-                  Icons.auto_awesome_rounded,
-                  Colors.orange,
-                  '/poster_generator',
-                ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  if (showBookSales) ...[
+                    Expanded(
+                      child: _buildFabOption(
+                        context,
+                        'Entri Penjualan',
+                        Icons.book_rounded,
+                        Colors.blue,
+                        '/sales/book',
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: _buildFabOption(
+                      context,
+                      'Poster Generator',
+                      Icons.auto_awesome_rounded,
+                      Colors.orange,
+                      '/poster_generator',
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

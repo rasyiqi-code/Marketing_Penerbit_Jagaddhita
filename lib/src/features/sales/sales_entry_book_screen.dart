@@ -19,16 +19,16 @@ import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_t
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_proof_input.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_entry_shared_widgets.dart';
 
-class SalesEntryPenerbitanScreen extends StatefulWidget {
-  const SalesEntryPenerbitanScreen({super.key});
+class SalesEntryBookScreen extends StatefulWidget {
+  const SalesEntryBookScreen({super.key});
 
   @override
-  State<SalesEntryPenerbitanScreen> createState() =>
-      _SalesEntryPenerbitanScreenState();
+  State<SalesEntryBookScreen> createState() =>
+      _SalesEntryBookScreenState();
 }
 
-class _SalesEntryPenerbitanScreenState
-    extends State<SalesEntryPenerbitanScreen> {
+class _SalesEntryBookScreenState
+    extends State<SalesEntryBookScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _transactionProofUrl;
@@ -90,8 +90,8 @@ class _SalesEntryPenerbitanScreenState
             : user.email.split('@').first;
         _marketingCategory = user.marketingCategory;
         _userMonthlyBonusCount = monthlyBonuses;
-        _monthlySalesCount = monthlyStats['count'] as int;
-        _monthlySalesTotal = monthlyStats['total'] as double;
+        _monthlySalesCount = (monthlyStats['count'] ?? 0).toInt();
+        _monthlySalesTotal = (monthlyStats['total'] ?? 0).toDouble();
       });
       _calculateValues();
     }
@@ -121,39 +121,53 @@ class _SalesEntryPenerbitanScreenState
     });
   }
 
-  // ─── Single source of truth for commission % ───────────────────────────────
-  double _getCommissionPercent(double bruto) {
-    if (_settings == null) return 0;
+  // ─── Discount Calculation Logic ───────────────────────────────
+  Map<String, double> _getDiscountPercents(double bruto) {
+    double percentSibi = _settings?.bonusPercentR1 ?? 0;
+    double percentJagaddhita = _settings?.bonusPercentR1 ?? 0;
 
-    // Base rate by category
-    double percent = _settings!.bonusPercentR1;
-    if (_marketingCategory == 'reseller') {
-      percent = _settings!.resellerCommissionPercent; // default 30%
-    } else if (_marketingCategory == 'distributor') {
-      percent = _settings!.distributorCommissionPercent; // default 40%
+    if (_settings == null || !_settings!.enableR1Commission) {
+      return {'sibi': 0, 'jagaddhita': 0};
     }
 
-    // Progressive overrides (only if commission is enabled)
-    if (!_settings!.enableR1Commission) return 0;
-
-    final hasSibi = _selectedProducts.any((p) => p.isSibi);
-    final hasJagaddhita = _selectedProducts.any((p) => p.isJagaddhita);
-
-    if (hasSibi && !hasJagaddhita) {
-      // Pure SIBI order — cap at percentSibi if threshold reached
-      if (bruto >= _settings!.thresholdSibi) {
-        percent = _settings!.percentSibi; // default 50%
+    String method = _settings!.discountCalculationMethod;
+    if (method == 'manual') {
+      if (_marketingCategory == 'premium') {
+        percentSibi = _settings!.premiumCommissionPercentSibi;
+        percentJagaddhita = _settings!.premiumCommissionPercentJagaddhita;
+      } else if (_marketingCategory == 'platinum') {
+        percentSibi = _settings!.platinumCommissionPercentSibi;
+        percentJagaddhita = _settings!.platinumCommissionPercentJagaddhita;
+      } else if (_marketingCategory == 'gold') {
+        percentSibi = _settings!.goldCommissionPercentSibi;
+        percentJagaddhita = _settings!.goldCommissionPercentJagaddhita;
       }
-    } else {
-      // Jagaddhita or mixed order — progressive tiers
-      if (bruto >= _settings!.thresholdJagaddhitaHigh) {
-        percent = _settings!.percentJagaddhitaHigh; // default 70%
-      } else if (bruto >= _settings!.thresholdJagaddhitaMedium) {
-        percent = _settings!.percentJagaddhitaMedium; // default 60%
+    } else if (method == 'per_transaction') {
+      if (bruto >= _settings!.premiumThreshold) {
+        percentSibi = _settings!.premiumCommissionPercentSibi;
+        percentJagaddhita = _settings!.premiumCommissionPercentJagaddhita;
+      } else if (bruto >= _settings!.platinumThreshold) {
+        percentSibi = _settings!.platinumCommissionPercentSibi;
+        percentJagaddhita = _settings!.platinumCommissionPercentJagaddhita;
+      } else if (bruto >= _settings!.goldThreshold) {
+        percentSibi = _settings!.goldCommissionPercentSibi;
+        percentJagaddhita = _settings!.goldCommissionPercentJagaddhita;
+      }
+    } else if (method == 'cumulative_monthly') {
+      double totalAccumulated = _monthlySalesTotal + bruto;
+      if (totalAccumulated >= _settings!.premiumThreshold) {
+        percentSibi = _settings!.premiumCommissionPercentSibi;
+        percentJagaddhita = _settings!.premiumCommissionPercentJagaddhita;
+      } else if (totalAccumulated >= _settings!.platinumThreshold) {
+        percentSibi = _settings!.platinumCommissionPercentSibi;
+        percentJagaddhita = _settings!.platinumCommissionPercentJagaddhita;
+      } else if (totalAccumulated >= _settings!.goldThreshold) {
+        percentSibi = _settings!.goldCommissionPercentSibi;
+        percentJagaddhita = _settings!.goldCommissionPercentJagaddhita;
       }
     }
 
-    return percent;
+    return {'sibi': percentSibi, 'jagaddhita': percentJagaddhita};
   }
 
   void _calculateValues() {
@@ -164,8 +178,38 @@ class _SalesEntryPenerbitanScreenState
     final qty = int.tryParse(_qtyController.text) ?? 1;
 
     _bruto = unitPrice * qty;
-    _discountPercent = _getCommissionPercent(_bruto);
-    _discountAmount = _bruto * (_discountPercent / 100);
+
+    // Calculate ratio of SIBI vs Jagaddhita based on catalog prices
+    double catalogSibi = 0;
+    double catalogJagaddhita = 0;
+    for (var p in _selectedProducts) {
+      if (p.isSibi) {
+        catalogSibi += p.price;
+      } else {
+        catalogJagaddhita += p.price;
+      }
+    }
+    double totalCatalog = catalogSibi + catalogJagaddhita;
+    double ratioSibi = totalCatalog > 0 ? (catalogSibi / totalCatalog) : 0;
+    double ratioJagaddhita = totalCatalog > 0 ? (catalogJagaddhita / totalCatalog) : 0;
+
+    // Fallback if all prices are 0 but products exist
+    if (totalCatalog == 0 && _selectedProducts.isNotEmpty) {
+      int countSibi = _selectedProducts.where((p) => p.isSibi).length;
+      int countJag = _selectedProducts.where((p) => !p.isSibi).length;
+      ratioSibi = countSibi / _selectedProducts.length;
+      ratioJagaddhita = countJag / _selectedProducts.length;
+    }
+
+    double brutoSibi = _bruto * ratioSibi;
+    double brutoJagaddhita = _bruto * ratioJagaddhita;
+
+    final percents = _getDiscountPercents(_bruto);
+    double discSibi = brutoSibi * (percents['sibi']! / 100);
+    double discJagaddhita = brutoJagaddhita * (percents['jagaddhita']! / 100);
+
+    _discountAmount = discSibi + discJagaddhita;
+    _discountPercent = _bruto > 0 ? (_discountAmount / _bruto) * 100 : 0;
     _netto = _bruto - _discountAmount;
     _commissionAmount = _discountAmount; // Marketing income = discount they get
 
@@ -371,8 +415,64 @@ class _SalesEntryPenerbitanScreenState
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: _settings != null && !_settings!.enableR1
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.warning_amber_rounded,
+                        size: 64,
+                        color: Colors.amber,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Input Penjualan Ditangguhkan',
+                      style: GoogleFonts.outfit(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Penginputan laporan penjualan buku saat ini dinonaktifkan oleh administrator.',
+                      style: GoogleFonts.outfit(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 14,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back),
+                      label: const Text('Kembali ke Dashboard'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(10),
         child: Form(
           key: _formKey,
           child: Column(
@@ -382,20 +482,20 @@ class _SalesEntryPenerbitanScreenState
               if (_agentName.isNotEmpty)
                 SalesAgentBanner(
                     agentName: _agentName, category: _marketingCategory),
-              const SizedBox(height: 24),
+              const SizedBox(height: 10),
 
               // ── Produk ────────────────────────────────────────────────────
               SalesSectionTitle('Pilih Produk'),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               _buildProductDropdown(color),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 12),
               const Divider(thickness: 1),
-              const SizedBox(height: 32),
+              const SizedBox(height: 12),
 
               // ── Harga & Qty ───────────────────────────────────────────────
               SalesSectionTitle('Harga & Jumlah'),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
@@ -410,7 +510,7 @@ class _SalesEntryPenerbitanScreenState
                       onChanged: (_) => _calculateValues(),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 8),
                   Expanded(
                     flex: 2,
                     child: SalesTextField(
@@ -423,7 +523,7 @@ class _SalesEntryPenerbitanScreenState
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               // ── Kalkulasi Card ────────────────────────────────────────────
               SalesCalculationCard(
@@ -437,7 +537,7 @@ class _SalesEntryPenerbitanScreenState
                 pulsaBonusAmount: _pulsaBonusAmount,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               // ── Markup ────────────────────────────────────────────────────
               MarkupInputField(
@@ -445,7 +545,7 @@ class _SalesEntryPenerbitanScreenState
                 quantity: int.tryParse(_qtyController.text) ?? 1,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               // ── Status Bayar ──────────────────────────────────────────────
               SalesPaymentStatusDropdown(
@@ -454,7 +554,7 @@ class _SalesEntryPenerbitanScreenState
               ),
 
               if (_paymentStatus == 'DP') ...[
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 SalesTextField(
                   controller: _dpAmountController,
                   label: 'Jumlah DP yang Dibayar',
@@ -466,20 +566,20 @@ class _SalesEntryPenerbitanScreenState
               ],
 
               if (_paymentStatus == 'LUNAS') ...[
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                         color: AppTheme.primaryColor.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
                       const Icon(Icons.check_circle,
-                          color: AppTheme.primaryColor, size: 20),
-                      const SizedBox(width: 8),
+                          color: AppTheme.primaryColor, size: 18),
+                      const SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           'Pembayaran LUNAS. Komisi dihitung otomatis.',
@@ -492,11 +592,11 @@ class _SalesEntryPenerbitanScreenState
                 ),
               ],
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
 
               // ── Bukti Transfer ────────────────────────────────────────────
               SalesSectionTitle('Bukti Transfer'),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               TransactionProofInput(
                 themeColor: color,
                 initialUrl: _transactionProofUrl,
@@ -504,18 +604,18 @@ class _SalesEntryPenerbitanScreenState
                     setState(() => _transactionProofUrl = url),
               ),
 
-              const SizedBox(height: 48),
+              const SizedBox(height: 16),
 
               // ── Submit ────────────────────────────────────────────────────
               SizedBox(
-                height: 56,
+                height: 48,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: color,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    elevation: 4,
-                    shadowColor: color.withValues(alpha: 0.4),
+                        borderRadius: BorderRadius.circular(8)),
+                    elevation: 2,
+                    shadowColor: color.withValues(alpha: 0.3),
                   ),
                   onPressed:
                       (_isLoading || _transactionProofUrl == null)
@@ -526,13 +626,13 @@ class _SalesEntryPenerbitanScreenState
                       : Text(
                           'Submit Order',
                           style: GoogleFonts.outfit(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
                         ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
             ],
           ),
         ),

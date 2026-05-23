@@ -87,7 +87,7 @@ class _AdminTransactionsScreenState extends State<AdminTransactionsScreen> {
       ),
       body: StreamBuilder<List<SaleModel>>(
         stream: Provider.of<SalesService>(context).getSales(
-          houseType: 1, // Penerbitan
+          houseType: 1, // Penjualan Buku
           status: _selectedStatus,
           limit: _limit,
         ),

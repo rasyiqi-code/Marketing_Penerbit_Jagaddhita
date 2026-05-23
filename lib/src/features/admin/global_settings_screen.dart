@@ -6,7 +6,6 @@ import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/setting
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/appearance_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/bonus_pulsa_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/commission_settings_card.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/progressive_commission_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/danger_zone_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/withdrawal_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/settings_scaffold_widgets.dart';
@@ -23,8 +22,16 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController _bonusR1Controller;
-  late TextEditingController _resellerCommissionController;
-  late TextEditingController _distributorCommissionController;
+  late TextEditingController _goldCommissionJagaddhitaController;
+  late TextEditingController _platinumCommissionJagaddhitaController;
+  late TextEditingController _premiumCommissionJagaddhitaController;
+  late TextEditingController _goldCommissionSibiController;
+  late TextEditingController _platinumCommissionSibiController;
+  late TextEditingController _premiumCommissionSibiController;
+  late TextEditingController _goldThresholdController;
+  late TextEditingController _platinumThresholdController;
+  late TextEditingController _premiumThresholdController;
+  String _discountCalculationMethod = 'manual';
   late TextEditingController _pulsaBonusController;
   late TextEditingController _minSalePulsaController;
   late TextEditingController _minPayoutController;
@@ -34,12 +41,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   late TextEditingController _maxPulsaBonusCountController;
   late TextEditingController _minCompletedSalesCountController;
 
-  late TextEditingController _thresholdJagaddhitaMediumController;
-  late TextEditingController _percentJagaddhitaMediumController;
-  late TextEditingController _thresholdJagaddhitaHighController;
-  late TextEditingController _percentJagaddhitaHighController;
-  late TextEditingController _thresholdSibiController;
-  late TextEditingController _percentSibiController;
+  // Progressive settings removed
 
   bool _enableR1 = true;
   bool _enableR1Commission = true;
@@ -55,8 +57,15 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   void initState() {
     super.initState();
     _bonusR1Controller = TextEditingController();
-    _resellerCommissionController = TextEditingController();
-    _distributorCommissionController = TextEditingController();
+    _goldCommissionJagaddhitaController = TextEditingController();
+    _platinumCommissionJagaddhitaController = TextEditingController();
+    _premiumCommissionJagaddhitaController = TextEditingController();
+    _goldCommissionSibiController = TextEditingController();
+    _platinumCommissionSibiController = TextEditingController();
+    _premiumCommissionSibiController = TextEditingController();
+    _goldThresholdController = TextEditingController();
+    _platinumThresholdController = TextEditingController();
+    _premiumThresholdController = TextEditingController();
     _pulsaBonusController = TextEditingController();
     _minSalePulsaController = TextEditingController();
     _minPayoutController = TextEditingController();
@@ -65,12 +74,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
     _webBaseUrlController = TextEditingController();
     _maxPulsaBonusCountController = TextEditingController();
     _minCompletedSalesCountController = TextEditingController();
-    _thresholdJagaddhitaMediumController = TextEditingController();
-    _percentJagaddhitaMediumController = TextEditingController();
-    _thresholdJagaddhitaHighController = TextEditingController();
-    _percentJagaddhitaHighController = TextEditingController();
-    _thresholdSibiController = TextEditingController();
-    _percentSibiController = TextEditingController();
+    // Progressive controllers removed
     _loadSettings();
   }
 
@@ -80,10 +84,16 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
       if (mounted) {
         setState(() {
           _bonusR1Controller.text = settings.bonusPercentR1.toString();
-          _resellerCommissionController.text =
-              settings.resellerCommissionPercent.toString();
-          _distributorCommissionController.text =
-              settings.distributorCommissionPercent.toString();
+          _discountCalculationMethod = settings.discountCalculationMethod;
+          _goldCommissionJagaddhitaController.text = settings.goldCommissionPercentJagaddhita.toString();
+          _platinumCommissionJagaddhitaController.text = settings.platinumCommissionPercentJagaddhita.toString();
+          _premiumCommissionJagaddhitaController.text = settings.premiumCommissionPercentJagaddhita.toString();
+          _goldCommissionSibiController.text = settings.goldCommissionPercentSibi.toString();
+          _platinumCommissionSibiController.text = settings.platinumCommissionPercentSibi.toString();
+          _premiumCommissionSibiController.text = settings.premiumCommissionPercentSibi.toString();
+          _goldThresholdController.text = settings.goldThreshold.toStringAsFixed(0);
+          _platinumThresholdController.text = settings.platinumThreshold.toStringAsFixed(0);
+          _premiumThresholdController.text = settings.premiumThreshold.toStringAsFixed(0);
           _pulsaBonusController.text =
               settings.pulsaBonusAmount.toStringAsFixed(0);
           _minSalePulsaController.text =
@@ -107,17 +117,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
               settings.minCompletedSalesCount.toString();
           _enableMinSalesLimit = settings.enableMinSalesLimit;
 
-          _thresholdJagaddhitaMediumController.text =
-              settings.thresholdJagaddhitaMedium.toStringAsFixed(0);
-          _percentJagaddhitaMediumController.text =
-              settings.percentJagaddhitaMedium.toString();
-          _thresholdJagaddhitaHighController.text =
-              settings.thresholdJagaddhitaHigh.toStringAsFixed(0);
-          _percentJagaddhitaHighController.text =
-              settings.percentJagaddhitaHigh.toString();
-          _thresholdSibiController.text =
-              settings.thresholdSibi.toStringAsFixed(0);
-          _percentSibiController.text = settings.percentSibi.toString();
+          // Progressive fields removed
         });
       }
     });
@@ -132,10 +132,16 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
           Provider.of<ProductService>(context, listen: false);
       final settings = GlobalSettingsModel(
         bonusPercentR1: double.tryParse(_bonusR1Controller.text) ?? 0,
-        resellerCommissionPercent:
-            double.tryParse(_resellerCommissionController.text) ?? 30.0,
-        distributorCommissionPercent:
-            double.tryParse(_distributorCommissionController.text) ?? 40.0,
+        discountCalculationMethod: _discountCalculationMethod,
+        goldCommissionPercentJagaddhita: double.tryParse(_goldCommissionJagaddhitaController.text) ?? 30.0,
+        platinumCommissionPercentJagaddhita: double.tryParse(_platinumCommissionJagaddhitaController.text) ?? 40.0,
+        premiumCommissionPercentJagaddhita: double.tryParse(_premiumCommissionJagaddhitaController.text) ?? 50.0,
+        goldCommissionPercentSibi: double.tryParse(_goldCommissionSibiController.text) ?? 25.0,
+        platinumCommissionPercentSibi: double.tryParse(_platinumCommissionSibiController.text) ?? 35.0,
+        premiumCommissionPercentSibi: double.tryParse(_premiumCommissionSibiController.text) ?? 45.0,
+        goldThreshold: double.tryParse(_goldThresholdController.text) ?? 100000.0,
+        platinumThreshold: double.tryParse(_platinumThresholdController.text) ?? 3000000.0,
+        premiumThreshold: double.tryParse(_premiumThresholdController.text) ?? 25000000.0,
         pulsaBonusAmount:
             double.tryParse(_pulsaBonusController.text) ?? 50000,
         minSaleForPulsa:
@@ -143,19 +149,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
         minPayout: double.tryParse(_minPayoutController.text) ?? 0,
         minPulsaWithdrawal:
             double.tryParse(_minPulsaWithdrawalController.text) ?? 20000,
-        thresholdJagaddhitaMedium:
-            double.tryParse(_thresholdJagaddhitaMediumController.text) ??
-                20000000.0,
-        percentJagaddhitaMedium:
-            double.tryParse(_percentJagaddhitaMediumController.text) ?? 60.0,
-        thresholdJagaddhitaHigh:
-            double.tryParse(_thresholdJagaddhitaHighController.text) ??
-                50000000.0,
-        percentJagaddhitaHigh:
-            double.tryParse(_percentJagaddhitaHighController.text) ?? 70.0,
-        thresholdSibi:
-            double.tryParse(_thresholdSibiController.text) ?? 10000000.0,
-        percentSibi: double.tryParse(_percentSibiController.text) ?? 50.0,
+        // Progressive fields removed
         enableR1: _enableR1,
         enableR1Commission: _enableR1Commission,
         enableR1PulsaBonus: _enableR1PulsaBonus,
@@ -255,8 +249,15 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   @override
   void dispose() {
     _bonusR1Controller.dispose();
-    _resellerCommissionController.dispose();
-    _distributorCommissionController.dispose();
+    _goldCommissionJagaddhitaController.dispose();
+    _platinumCommissionJagaddhitaController.dispose();
+    _premiumCommissionJagaddhitaController.dispose();
+    _goldCommissionSibiController.dispose();
+    _platinumCommissionSibiController.dispose();
+    _premiumCommissionSibiController.dispose();
+    _goldThresholdController.dispose();
+    _platinumThresholdController.dispose();
+    _premiumThresholdController.dispose();
     _pulsaBonusController.dispose();
     _minSalePulsaController.dispose();
     _minPayoutController.dispose();
@@ -265,12 +266,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
     _webBaseUrlController.dispose();
     _maxPulsaBonusCountController.dispose();
     _minCompletedSalesCountController.dispose();
-    _thresholdJagaddhitaMediumController.dispose();
-    _percentJagaddhitaMediumController.dispose();
-    _thresholdJagaddhitaHighController.dispose();
-    _percentJagaddhitaHighController.dispose();
-    _thresholdSibiController.dispose();
-    _percentSibiController.dispose();
+    // Progressive fields removed
     super.dispose();
   }
 
@@ -282,10 +278,20 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
         title: const Text('Pengaturan Global'),
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacementNamed(context, '/');
+            }
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(10.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -299,7 +305,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                   enableR1: _enableR1,
                   onR1Changed: (val) => setState(() => _enableR1 = val),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
                 const SettingsSectionHeader(
                   title: 'Pengumuman & Link',
                   icon: Icons.campaign_rounded,
@@ -308,7 +314,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                   latestInfoController: _latestInfoController,
                   webBaseUrlController: _webBaseUrlController,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
                 const SettingsSectionHeader(
                   title: 'Komisi Penjualan (Tunai)',
                   icon: Icons.monetization_on_rounded,
@@ -316,30 +322,24 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                 CommissionSettingsCard(
                   enableR1Commission: _enableR1Commission,
                   bonusR1Controller: _bonusR1Controller,
-                  resellerCommissionController: _resellerCommissionController,
-                  distributorCommissionController:
-                      _distributorCommissionController,
+                  discountCalculationMethod: _discountCalculationMethod,
+                  onMethodChanged: (val) {
+                    if (val != null) setState(() => _discountCalculationMethod = val);
+                  },
+                  goldCommissionJagaddhitaController: _goldCommissionJagaddhitaController,
+                  platinumCommissionJagaddhitaController: _platinumCommissionJagaddhitaController,
+                  premiumCommissionJagaddhitaController: _premiumCommissionJagaddhitaController,
+                  goldCommissionSibiController: _goldCommissionSibiController,
+                  platinumCommissionSibiController: _platinumCommissionSibiController,
+                  premiumCommissionSibiController: _premiumCommissionSibiController,
+                  goldThresholdController: _goldThresholdController,
+                  platinumThresholdController: _platinumThresholdController,
+                  premiumThresholdController: _premiumThresholdController,
                   onR1CommissionChanged: (val) =>
                       setState(() => _enableR1Commission = val),
                 ),
-                const SizedBox(height: 24),
-                const SettingsSectionHeader(
-                  title: 'Diskon Progresif Buku',
-                  icon: Icons.trending_up_rounded,
-                ),
-                ProgressiveCommissionSettingsCard(
-                  thresholdJagaddhitaMediumController:
-                      _thresholdJagaddhitaMediumController,
-                  percentJagaddhitaMediumController:
-                      _percentJagaddhitaMediumController,
-                  thresholdJagaddhitaHighController:
-                      _thresholdJagaddhitaHighController,
-                  percentJagaddhitaHighController:
-                      _percentJagaddhitaHighController,
-                  thresholdSibiController: _thresholdSibiController,
-                  percentSibiController: _percentSibiController,
-                ),
-                const SizedBox(height: 24),
+                // Progressive card removed
+                const SizedBox(height: 12),
                 const SettingsSectionHeader(
                   title: 'Pengaturan Bonus Pulsa',
                   icon: Icons.phonelink_ring_rounded,
@@ -363,7 +363,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                   onMinCompletedSalesLimitChanged: (val) =>
                       setState(() => _enableMinCompletedSalesLimit = val),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
                 const SettingsSectionHeader(
                   title: 'Penarikan Dana (Withdrawal)',
                   icon: Icons.account_balance_wallet_rounded,
@@ -382,12 +382,12 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                     });
                   },
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
                 SettingsSaveButton(
                   isLoading: _isLoading,
                   onPressed: _saveSettings,
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: 24),
                 const SettingsSectionHeader(
                   title: 'Area Berbahaya',
                   icon: Icons.warning_rounded,
@@ -398,7 +398,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                   onSeedData: _seedData,
                   onResetData: _resetData,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
               ],
             ),
           ),

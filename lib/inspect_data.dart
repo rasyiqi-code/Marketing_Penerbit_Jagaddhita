@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'lib/firebase_options.dart';
+import 'firebase_options.dart';
 
 void main() async {
   // We need to initialize Firebase app. But since this is a command line, we can do it if we are on the same machine.

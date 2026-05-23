@@ -17,15 +17,15 @@ class SettingsSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveColor = color ?? Theme.of(context).colorScheme.onSurface;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0, left: 4),
+      padding: const EdgeInsets.only(bottom: 6.0, left: 4),
       child: Row(
         children: [
-          Icon(icon, color: effectiveColor),
-          const SizedBox(width: 10),
+          Icon(icon, color: effectiveColor, size: 20),
+          const SizedBox(width: 8),
           Text(
             title,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: effectiveColor,
             ),

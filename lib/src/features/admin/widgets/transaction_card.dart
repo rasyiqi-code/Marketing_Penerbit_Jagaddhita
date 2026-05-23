@@ -82,10 +82,10 @@ class TransactionCard extends StatelessWidget {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: InkWell(
         onTap: () => TransactionDetailModal.show(context, sale),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(

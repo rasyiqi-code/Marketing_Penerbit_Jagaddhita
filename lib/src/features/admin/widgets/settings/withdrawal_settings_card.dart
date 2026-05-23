@@ -18,10 +18,10 @@ class WithdrawalSettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -40,7 +40,7 @@ class WithdrawalSettingsCard extends StatelessWidget {
             icon: Icons.account_balance_outlined,
             prefixText: 'Rp ',
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           AppTextField(
             controller: minPulsaWithdrawalController,
             keyboardType: TextInputType.number,
@@ -48,12 +48,12 @@ class WithdrawalSettingsCard extends StatelessWidget {
             icon: Icons.phonelink_ring_outlined,
             prefixText: 'Rp ',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 10),
           const Text(
             'Jadwal Penarikan',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 6),
           LayoutBuilder(
             builder: (context, constraints) {
               final width = constraints.maxWidth;

@@ -78,7 +78,7 @@ class AdminHomeScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -86,33 +86,33 @@ class AdminHomeScreen extends StatelessWidget {
             const Row(
               children: [
                 Expanded(child: AdminPendingClaimsCard()),
-                SizedBox(width: 16),
+                SizedBox(width: 8),
                 Expanded(child: AdminTotalAgentsCard()),
               ],
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 12),
 
             // Top Agents Section
             Text(
               'Agen Terbaik',
               style: GoogleFonts.outfit(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             const AdminTopAgentsList(),
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
 
             // Recent Transactions Section
             Text(
               'Transaksi Terkini',
               style: GoogleFonts.outfit(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             const AdminRecentTransactionsList(),
             const SizedBox(height: 120), // Bottom padding
           ],

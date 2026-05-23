@@ -42,6 +42,7 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
 
   // Draggable position
   Offset _position = const Offset(50, 400);
+  bool _positionInitialized = false;
   final GlobalKey _imageKey = GlobalKey();
 
   @override
@@ -77,12 +78,27 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
   Future<void> _fetchImageFromUrl(String url) async {
     setState(() => _isLoading = true);
     try {
-      final response = await http.get(Uri.parse(url));
+      String finalUrl = url;
+      if (url.contains('r2.cloudflarestorage.com')) {
+        try {
+          final uri = Uri.parse(url);
+          final segments = uri.pathSegments;
+          if (segments.length > 1) {
+            final objectPath = segments.sublist(1).join('/').split('?').first;
+            finalUrl = 'https://poster.librarypenerbitjagaddhita.science/$objectPath';
+          }
+        } catch (_) {}
+      }
+
+      final response = await http.get(Uri.parse(finalUrl));
       if (response.statusCode == 200) {
         setState(() {
           _originalImageBytes = response.bodyBytes;
+          _positionInitialized = false;
         });
         _showEditDialog();
+      } else {
+        throw Exception('HTTP status ${response.statusCode}');
       }
     } catch (e) {
       if (mounted) {
@@ -103,6 +119,7 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
         _originalImageBytes = bytes;
+        _positionInitialized = false;
       });
       _showEditDialog();
     }
@@ -458,6 +475,13 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
   Widget _buildEditorStack() {
     return LayoutBuilder(
       builder: (context, constraints) {
+        if (!_positionInitialized) {
+          _position = Offset(
+            (constraints.maxWidth / 2 - 100).clamp(0.0, constraints.maxWidth),
+            (constraints.maxHeight * 0.75).clamp(0.0, constraints.maxHeight),
+          );
+          _positionInitialized = true;
+        }
         return Stack(
           alignment: Alignment.center,
           children: [

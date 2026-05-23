@@ -24,12 +24,12 @@ class AdminProductCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
@@ -45,25 +45,25 @@ class AdminProductCard extends StatelessWidget {
               ),
             );
           },
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             child: Row(
               children: [
                 // Product Image / Icon
                 Hero(
                   tag: 'product_${product.id}',
                   child: Container(
-                    width: 80,
-                    height: 80,
+                    width: 70,
+                    height: 70,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                       color: houseType == 1
                           ? AppTheme.primaryColor.withValues(alpha: 0.1)
                           : AppTheme.secondaryColor.withValues(alpha: 0.1),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
@@ -81,7 +81,7 @@ class AdminProductCard extends StatelessWidget {
                                 child: Icon(
                                   Icons.broken_image_rounded,
                                   color: Colors.grey,
-                                  size: 24,
+                                  size: 20,
                                 ),
                               ),
                             )
@@ -94,7 +94,7 @@ class AdminProductCard extends StatelessWidget {
                                 color: houseType == 1
                                     ? AppTheme.primaryColor
                                     : AppTheme.secondaryColor,
-                                size: 32,
+                                size: 28,
                               ),
                             ),
                         ],
@@ -102,7 +102,7 @@ class AdminProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 10),
 
                 // Details
                 Expanded(
@@ -114,12 +114,12 @@ class AdminProductCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.outfit(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey[900],
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         NumberFormat.currency(
                           locale: 'id',
@@ -127,25 +127,25 @@ class AdminProductCard extends StatelessWidget {
                           decimalDigits: 0,
                         ).format(product.price),
                         style: GoogleFonts.outfit(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: AppTheme.primaryColor,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                          horizontal: 6,
+                          vertical: 2,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           product.category.toUpperCase(),
                           style: GoogleFonts.outfit(
-                            fontSize: 10,
+                            fontSize: 9,
                             fontWeight: FontWeight.bold,
                             color: Colors.grey[600],
                           ),

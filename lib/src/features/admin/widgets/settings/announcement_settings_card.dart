@@ -14,10 +14,10 @@ class AnnouncementSettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -35,7 +35,7 @@ class AnnouncementSettingsCard extends StatelessWidget {
             icon: Icons.info_outline,
             maxLines: 2,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           AppTextField(
             controller: webBaseUrlController,
             label: 'URL Dasar Web App',

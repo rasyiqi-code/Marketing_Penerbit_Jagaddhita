@@ -27,8 +27,9 @@ class SalesCalculationCard extends StatelessWidget {
   });
 
   String get _categoryLabel {
-    if (marketingCategory == 'reseller') return 'Reseller';
-    if (marketingCategory == 'distributor') return 'Distributor';
+    if (marketingCategory == 'gold') return 'Reseller Gold';
+    if (marketingCategory == 'platinum') return 'Reseller Platinum';
+    if (marketingCategory == 'premium') return 'Reseller Premium';
     return 'Marketing';
   }
 
@@ -181,11 +182,13 @@ class SalesAgentBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final catLabel = category == 'reseller'
-        ? 'Reseller'
-        : category == 'distributor'
-            ? 'Distributor'
-            : 'Marketing';
+    final catLabel = category == 'gold'
+        ? 'Reseller Gold'
+        : category == 'platinum'
+            ? 'Reseller Platinum'
+            : category == 'premium'
+                ? 'Reseller Premium'
+                : 'Marketing';
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

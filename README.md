@@ -1,12 +1,12 @@
 # Marketing Penerbit Jagaddhita App
 
-Marketing Penerbit Jagaddhita is a comprehensive specialized application for **Penerbit Jagaddhita Group**, designed to facilitate marketing operations, sales entries, and administrative management for **Penerbitan** (Red) and **Jagaddhita Creator** (Blue).
+Marketing Penerbit Jagaddhita is a comprehensive specialized application for **Penerbit Jagaddhita Group**, designed to facilitate marketing operations, sales entries, and administrative management for **Penjualan Buku**.
 
 ## 🚀 Features
 
 ### for Marketing Agents (Users)
-*   **Quick Sales Entry**: Dedicated forms for **Penerbitan** (Sales R1) and **Jagaddhita Creator** (Sales R2).
-*   **Dual-Brand Catalog**: Browse products / packages with a dynamic UI that adapts to the selected category (Red/Blue theme).
+*   **Quick Sales Entry**: Dedicated form for **Penjualan Buku**.
+*   **Book Catalog**: Browse products / packages with a dynamic UI.
 *   **Link Bio**: Create and manage a professional "Digital Card" / Link in Bio to share with customers.
 *   **Wallet & Withdrawals**: Track commissions, pulsa balance, and request withdrawals.
 *   **Profile Management**: Manage personal details and bank account information.

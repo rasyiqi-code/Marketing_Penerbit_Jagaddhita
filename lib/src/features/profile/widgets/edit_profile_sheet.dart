@@ -143,6 +143,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
         'ktp_number': ktp,
         'address': address,
         'phone_number': phone,
+        'whatsapp_number': phone, // sync: phone = WA number for link bio
       };
       if (newPhotoUrl != null) updateData['photo_url'] = newPhotoUrl;
 

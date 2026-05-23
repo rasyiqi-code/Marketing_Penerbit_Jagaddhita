@@ -30,44 +30,44 @@ class AdminRecentTransactionsList extends StatelessWidget {
             final isLunas = sale.paymentStatus == 'LUNAS';
             return InkWell(
               onTap: () => _showSaleDetailDialog(context, sale),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               child: Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Theme.of(context).dividerColor),
                 ),
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: isLunas ? Colors.green[50] : Colors.orange[50],
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Icon(
                         Icons.receipt_long,
                         color: isLunas ? Colors.green : Colors.orange,
-                        size: 20,
+                        size: 18,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             sale.details['product_name'] ?? 'Product',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
                             sale.details['buyer_name'] ?? 'Buyer',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 11,
                               color: Theme.of(
                                 context,
                               ).colorScheme.onSurfaceVariant,

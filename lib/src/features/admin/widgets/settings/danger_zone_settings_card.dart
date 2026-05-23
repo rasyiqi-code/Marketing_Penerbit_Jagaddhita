@@ -15,10 +15,10 @@ class DangerZoneSettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.red[50],
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -32,14 +32,14 @@ class DangerZoneSettingsCard extends StatelessWidget {
         children: [
           const Text(
             'Manajemen Data Demo',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 14),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           const Text(
             'Gunakan fitur ini hanya untuk keperluan testing.',
             style: TextStyle(color: Colors.red, fontSize: 12),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(

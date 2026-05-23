@@ -43,8 +43,8 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
     if (mounted) {
       setState(() {
         _userMonthlyBonusCount = monthlyBonuses;
-        _monthlySalesCount = monthlyStats['count'] as int;
-        _monthlySalesTotal = monthlyStats['total'] as double;
+        _monthlySalesCount = (monthlyStats['count'] ?? 0).toInt();
+        _monthlySalesTotal = (monthlyStats['total'] ?? 0).toDouble();
       });
     }
   }

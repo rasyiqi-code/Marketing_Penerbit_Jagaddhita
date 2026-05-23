@@ -19,11 +19,11 @@ class WithdrawalAllowedDayWarning extends StatelessWidget {
     if (isAllowedDay) return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.red.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.red.withOpacity(0.2)),
       ),
       child: Row(
@@ -61,7 +61,7 @@ class WithdrawalBalanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isBank
@@ -70,7 +70,7 @@ class WithdrawalBalanceCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: (isBank ? Colors.blue : Colors.orange).withOpacity(0.2),
@@ -85,15 +85,15 @@ class WithdrawalBalanceCard extends StatelessWidget {
             'Saldo Tersedia',
             style: TextStyle(
               color: Colors.white70,
-              fontSize: 14,
+              fontSize: 13,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             AppFormatters.currency(balance),
             style: GoogleFonts.outfit(
               color: Colors.white,
-              fontSize: 28,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -157,7 +157,7 @@ class WithdrawalForm extends StatelessWidget {
               ),
             ),
           ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 10),
 
         // Nominal Input Field
         TextField(
@@ -168,20 +168,20 @@ class WithdrawalForm extends StatelessWidget {
           decoration: InputDecoration(
             labelText: 'Nominal Penarikan',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2),
             ),
             filled: true,
             fillColor: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
-            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             prefixText: 'Rp ',
             suffixIcon: TextButton(
               onPressed: isAllowedDay ? onTarikSemua : null,
@@ -189,7 +189,7 @@ class WithdrawalForm extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
 
         // Banking/Phone Info (Read-only) Field
         TextField(
@@ -200,21 +200,21 @@ class WithdrawalForm extends StatelessWidget {
           decoration: InputDecoration(
             labelText: isBank ? 'Bank & No. Rekening' : 'Nomor HP',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2),
             ),
             hintText: 'Belum diset',
             filled: true,
             fillColor: isDark ? const Color(0xFF1E293B) : Colors.grey[100],
-            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             helperText: infoController.text.isNotEmpty
                 ? 'Data dikunci. Ubah via Profile.'
                 : 'Mohon lengkapi data di menu Profile.',
@@ -236,11 +236,11 @@ class WithdrawalForm extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
 
         // Submission Button
         SizedBox(
-          height: 46,
+          height: 40,
           child: ElevatedButton(
             onPressed: (isLoading || infoController.text.isEmpty || !isAllowedDay)
                 ? null
@@ -249,7 +249,7 @@ class WithdrawalForm extends StatelessWidget {
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
               ),
               elevation: 0,
               disabledBackgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
@@ -266,7 +266,7 @@ class WithdrawalForm extends StatelessWidget {
                 : const Text(
                     'Kirim Permintaan',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

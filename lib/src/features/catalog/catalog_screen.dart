@@ -62,15 +62,15 @@ class CatalogList extends StatelessWidget {
 
         final products = snapshot.data!;
         return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
+          padding: const EdgeInsets.fromLTRB(10, 8, 10, 120),
           itemCount: products.length,
           itemBuilder: (context, index) {
             final product = products[index];
             return Container(
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
@@ -85,7 +85,7 @@ class CatalogList extends StatelessWidget {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(8),
                   onTap: () {
                     Navigator.pushNamed(
                       context,
@@ -94,22 +94,22 @@ class CatalogList extends StatelessWidget {
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             Container(
-                              width: 48,
-                              height: 48,
-                              padding: const EdgeInsets.all(10),
+                              width: 44,
+                              height: 44,
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: (houseType == 1
                                         ? AppTheme.primaryColor
                                         : AppTheme.secondaryColor)
                                     .withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                               child: Icon(
                                 houseType == 1
@@ -118,10 +118,10 @@ class CatalogList extends StatelessWidget {
                                 color: houseType == 1
                                     ? AppTheme.primaryColor
                                     : AppTheme.secondaryColor,
-                                size: 22,
+                                size: 20,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +129,7 @@ class CatalogList extends StatelessWidget {
                                   Text(
                                     product.name,
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: Theme.of(
                                         context,
@@ -143,7 +143,7 @@ class CatalogList extends StatelessWidget {
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.onSurfaceVariant,
-                                      fontSize: 12,
+                                      fontSize: 11,
                                     ),
                                   ),
                                 ],
@@ -152,28 +152,28 @@ class CatalogList extends StatelessWidget {
                             Text(
                               AppFormatters.currency(product.price),
                               style: const TextStyle(
-                                fontSize: 14,
+                                fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 color: AppTheme.primaryColor,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 6),
                         Text(
                           product.description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Theme.of(
-                              context,
+                                context,
                             ).colorScheme.onSurfaceVariant,
-                            fontSize: 12,
+                            fontSize: 11,
                             height: 1.4,
                           ),
                         ),
                         if (product.marketingKitUrl != null) ...[
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 10,

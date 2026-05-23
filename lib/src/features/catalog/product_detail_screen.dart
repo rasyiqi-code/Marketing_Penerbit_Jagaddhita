@@ -58,18 +58,18 @@ class ProductDetailScreen extends StatelessWidget {
           // Content Body
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ProductDetailHeader(product: product),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 12),
                   const Divider(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 10),
                   ProductDetailDescription(description: product.description),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 12),
                   ProductDetailMarketingKit(product: product),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

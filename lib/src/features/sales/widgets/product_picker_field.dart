@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Public widget — drop‑in replacement for the old ProductPickerField.
@@ -762,16 +763,21 @@ class _ProductCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(9)),
-                    child: product.imageUrl != null &&
-                            product.imageUrl!.isNotEmpty
-                        ? Image.network(
-                            product.imageUrl!,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) =>
-                                _PlaceholderImage(color: color),
-                          )
-                        : _PlaceholderImage(color: color),
+                    child: (() {
+                          final imgUrl = (product.imageUrl != null && product.imageUrl!.isNotEmpty)
+                              ? product.imageUrl!
+                              : (product.marketingKitUrl != null && product.marketingKitUrl!.isNotEmpty)
+                                  ? product.marketingKitUrl!
+                                  : null;
+                          return imgUrl != null
+                              ? NetworkImageWeb(
+                                  imageUrl: imgUrl,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorWidget: _PlaceholderImage(color: color),
+                                )
+                              : _PlaceholderImage(color: color);
+                        })()
                   ),
 
                   // Multi‑select checkbox overlay

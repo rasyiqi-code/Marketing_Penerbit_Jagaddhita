@@ -16,7 +16,7 @@ class UserModel {
   final String? address;
   final String? phoneNumber;
   final Map<String, dynamic>? bankDetails;
-  final String? marketingCategory; // 'reseller', 'distributor', or null
+  final String? marketingCategory; // 'gold', 'platinum', 'premium', or null
 
   // Custom Catalogs & Digital Business Card settings (New)
   final bool showJagaddhitaCatalog;

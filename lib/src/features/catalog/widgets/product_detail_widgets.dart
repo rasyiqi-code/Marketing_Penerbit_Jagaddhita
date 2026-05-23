@@ -112,17 +112,17 @@ class ProductDetailHeader extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         Text(
           product.name,
           style: GoogleFonts.outfit(
-            fontSize: 28,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
             height: 1.2,
             color: Theme.of(context).textTheme.titleLarge?.color,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 6),
         Text(
           NumberFormat.currency(
             locale: 'id',
@@ -130,7 +130,7 @@ class ProductDetailHeader extends StatelessWidget {
             decimalDigits: 0,
           ).format(product.price),
           style: GoogleFonts.outfit(
-            fontSize: 24,
+            fontSize: 18,
             fontWeight: FontWeight.w900,
             color: AppTheme.primaryColor,
           ),
@@ -159,12 +159,12 @@ class ProductDetailDescription extends StatelessWidget {
             color: Theme.of(context).textTheme.titleLarge?.color,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 6),
         Text(
           description,
           style: GoogleFonts.outfit(
-            fontSize: 16,
-            height: 1.6,
+            fontSize: 13,
+            height: 1.5,
             color: Theme.of(context).textTheme.bodyLarge?.color?.withValues(alpha: 0.8),
           ),
         ),
@@ -214,28 +214,28 @@ class ProductDetailMarketingKit extends StatelessWidget {
                 }
               }
             },
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 border: Border.all(color: Theme.of(context).dividerColor),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 color: Theme.of(context).cardColor,
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Icon(
                       Icons.image_outlined,
                       color: AppTheme.primaryColor,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,25 +244,25 @@ class ProductDetailMarketingKit extends StatelessWidget {
                           'Poster / Gambar Produk',
                           style: GoogleFonts.outfit(
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
                         ),
                         Text(
                           'Tap untuk melihat atau download gambar',
                           style: GoogleFonts.outfit(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Icon(Icons.open_in_new_rounded, size: 20),
+                  const Icon(Icons.open_in_new_rounded, size: 18),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           ElevatedButton.icon(
             onPressed: () {
               Navigator.pushNamed(
@@ -277,9 +277,9 @@ class ProductDetailMarketingKit extends StatelessWidget {
               backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
               foregroundColor: AppTheme.primaryColor,
               elevation: 0,
-              minimumSize: const Size(double.infinity, 50),
+              minimumSize: const Size(double.infinity, 40),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
                 side: const BorderSide(color: AppTheme.primaryColor),
               ),
             ),
@@ -293,14 +293,14 @@ class ProductDetailMarketingKit extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).inputDecorationTheme.fillColor,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -308,15 +308,15 @@ class ProductDetailMarketingKit extends StatelessWidget {
                         children: [
                           const Icon(
                             Icons.copy_all_rounded,
-                            size: 20,
+                            size: 18,
                             color: Colors.white24, // Translucent white to perfectly match brand guideline
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           Text(
                             'Promo Copywriting',
                             style: GoogleFonts.outfit(
                               fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                              fontSize: 13,
                               color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                             ),
                           ),
@@ -339,7 +339,7 @@ class ProductDetailMarketingKit extends StatelessWidget {
                         },
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: AppTheme.primaryColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
@@ -349,7 +349,7 @@ class ProductDetailMarketingKit extends StatelessWidget {
                             style: GoogleFonts.outfit(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                              fontSize: 11,
                             ),
                           ),
                         ),
@@ -359,12 +359,12 @@ class ProductDetailMarketingKit extends StatelessWidget {
                 ),
                 const Divider(height: 1),
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(10),
                   child: Text(
                     product.copywriting!,
                     style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      height: 1.6,
+                      fontSize: 13,
+                      height: 1.5,
                       color: Theme.of(context).textTheme.bodyMedium?.color,
                     ),
                   ),

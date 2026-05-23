@@ -22,7 +22,7 @@ class SaleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLunas = sale.paymentStatus.toUpperCase() == 'LUNAS';
     final isComplete = sale.paymentStatus.toUpperCase() == 'COMPLETE';
-    const houseName = 'Penerbitan Buku';
+    const houseName = 'Penjualan Buku';
 
     final productName = sale.details['product_name'] ??
         sale.details['book_title'] ??

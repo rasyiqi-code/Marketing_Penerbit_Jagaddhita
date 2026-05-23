@@ -123,10 +123,16 @@ class UserService extends BaseFirestoreService {
       if (commissionAmount == 0 && marketingCategory != null) {
         final double totalPrice = (data['total_price'] ?? 0).toDouble();
         double percent = 0;
-        if (marketingCategory == 'reseller') {
-          percent = settings.resellerCommissionPercent;
-        } else if (marketingCategory == 'distributor') {
-          percent = settings.distributorCommissionPercent;
+        
+        if (settings.discountCalculationMethod == 'manual') {
+          if (marketingCategory == 'premium') percent = settings.premiumCommissionPercentJagaddhita;
+          else if (marketingCategory == 'platinum') percent = settings.platinumCommissionPercentJagaddhita;
+          else if (marketingCategory == 'gold') percent = settings.goldCommissionPercentJagaddhita;
+        } else {
+          // Fallback to per-transaction for retroactive correction
+          if (totalPrice >= settings.premiumThreshold) percent = settings.premiumCommissionPercentJagaddhita;
+          else if (totalPrice >= settings.platinumThreshold) percent = settings.platinumCommissionPercentJagaddhita;
+          else if (totalPrice >= settings.goldThreshold) percent = settings.goldCommissionPercentJagaddhita;
         }
 
         if (percent > 0) {

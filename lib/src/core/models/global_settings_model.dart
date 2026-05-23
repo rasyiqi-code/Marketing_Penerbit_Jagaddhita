@@ -1,23 +1,28 @@
 class GlobalSettingsModel {
   final double bonusPercentR1;
   final double minPayout;
-  final double pulsaBonusAmount; // Fixed amount for Pulsa Penerbitan
+  final double pulsaBonusAmount; // Fixed amount for Pulsa Penjualan Buku
   final double minSaleForPulsa; // Threshold
   final bool enableR1;
 
-  // Reseller and Distributor Commission Settings
-  final double resellerCommissionPercent;
-  final double distributorCommissionPercent;
+  // Tier & Discount Settings
+  final String discountCalculationMethod; // 'manual', 'per_transaction', 'cumulative_monthly'
+  
+  // Jagaddhita Percentages
+  final double goldCommissionPercentJagaddhita;
+  final double platinumCommissionPercentJagaddhita;
+  final double premiumCommissionPercentJagaddhita;
 
-  // Progressive Commission Settings
-  final double thresholdJagaddhitaMedium;
-  final double percentJagaddhitaMedium;
-  final double thresholdJagaddhitaHigh;
-  final double percentJagaddhitaHigh;
-  final double thresholdSibi;
-  final double percentSibi;
+  // SIBI Percentages
+  final double goldCommissionPercentSibi;
+  final double platinumCommissionPercentSibi;
+  final double premiumCommissionPercentSibi;
 
-  // Specific Reward Toggles (Penerbitan only)
+  final double goldThreshold;
+  final double platinumThreshold;
+  final double premiumThreshold;
+
+  // Specific Reward Toggles (Penjualan Buku only)
   final bool enableR1Commission;
   final bool enableR1PulsaBonus;
 
@@ -42,14 +47,16 @@ class GlobalSettingsModel {
     required this.minPayout,
     this.pulsaBonusAmount = 50000.0,
     this.minSaleForPulsa = 10000000.0,
-    this.resellerCommissionPercent = 30.0,
-    this.distributorCommissionPercent = 40.0,
-    this.thresholdJagaddhitaMedium = 20000000.0,
-    this.percentJagaddhitaMedium = 60.0,
-    this.thresholdJagaddhitaHigh = 50000000.0,
-    this.percentJagaddhitaHigh = 70.0,
-    this.thresholdSibi = 10000000.0,
-    this.percentSibi = 50.0,
+    this.discountCalculationMethod = 'manual',
+    this.goldCommissionPercentJagaddhita = 30.0,
+    this.platinumCommissionPercentJagaddhita = 40.0,
+    this.premiumCommissionPercentJagaddhita = 50.0,
+    this.goldCommissionPercentSibi = 25.0,
+    this.platinumCommissionPercentSibi = 35.0,
+    this.premiumCommissionPercentSibi = 45.0,
+    this.goldThreshold = 100000.0,
+    this.platinumThreshold = 3000000.0,
+    this.premiumThreshold = 25000000.0,
     this.minPulsaWithdrawal = 20000.0,
     this.enableR1 = true,
     this.enableR1Commission = true,
@@ -70,20 +77,17 @@ class GlobalSettingsModel {
       minPayout: (data['min_payout'] ?? 5000000).toDouble(),
       pulsaBonusAmount: (data['pulsa_bonus_amount'] ?? 50000).toDouble(),
       minSaleForPulsa: (data['min_sale_for_pulsa'] ?? 10000000).toDouble(),
-      resellerCommissionPercent:
-          (data['reseller_commission_percent'] ?? 30.0).toDouble(),
-      distributorCommissionPercent:
-          (data['distributor_commission_percent'] ?? 40.0).toDouble(),
-      thresholdJagaddhitaMedium:
-          (data['threshold_jagaddhita_medium'] ?? 20000000.0).toDouble(),
-      percentJagaddhitaMedium:
-          (data['percent_jagaddhita_medium'] ?? 60.0).toDouble(),
-      thresholdJagaddhitaHigh:
-          (data['threshold_jagaddhita_high'] ?? 50000000.0).toDouble(),
-      percentJagaddhitaHigh:
-          (data['percent_jagaddhita_high'] ?? 70.0).toDouble(),
-      thresholdSibi: (data['threshold_sibi'] ?? 10000000.0).toDouble(),
-      percentSibi: (data['percent_sibi'] ?? 50.0).toDouble(),
+      discountCalculationMethod: data['discount_calculation_method'] ?? 'manual',
+      // Fallback to old 'gold_commission_percent' if jagaddhita specific one is missing
+      goldCommissionPercentJagaddhita: (data['gold_commission_percent_jagaddhita'] ?? data['gold_commission_percent'] ?? 30.0).toDouble(),
+      platinumCommissionPercentJagaddhita: (data['platinum_commission_percent_jagaddhita'] ?? data['platinum_commission_percent'] ?? 40.0).toDouble(),
+      premiumCommissionPercentJagaddhita: (data['premium_commission_percent_jagaddhita'] ?? data['premium_commission_percent'] ?? 50.0).toDouble(),
+      goldCommissionPercentSibi: (data['gold_commission_percent_sibi'] ?? 25.0).toDouble(),
+      platinumCommissionPercentSibi: (data['platinum_commission_percent_sibi'] ?? 35.0).toDouble(),
+      premiumCommissionPercentSibi: (data['premium_commission_percent_sibi'] ?? 45.0).toDouble(),
+      goldThreshold: (data['gold_threshold'] ?? 100000.0).toDouble(),
+      platinumThreshold: (data['platinum_threshold'] ?? 3000000.0).toDouble(),
+      premiumThreshold: (data['premium_threshold'] ?? 25000000.0).toDouble(),
       enableR1: data['enable_r1'] ?? true,
       enableR1Commission: data['enable_r1_commission'] ?? true,
       enableR1PulsaBonus: data['enable_r1_pulsa_bonus'] ?? true,
@@ -93,11 +97,9 @@ class GlobalSettingsModel {
       allowedWithdrawalDays: List<int>.from(
         data['allowed_withdrawal_days'] ?? [1, 2, 3, 4, 5, 6, 7],
       ),
-      enableMaxPulsaBonusLimit:
-          data['enable_max_pulsa_bonus_limit'] ?? true,
+      enableMaxPulsaBonusLimit: data['enable_max_pulsa_bonus_limit'] ?? true,
       maxPulsaBonusCount: data['max_pulsa_bonus_count'] ?? 1,
-      enableMinCompletedSalesLimit:
-          data['enable_min_completed_sales_limit'] ?? false,
+      enableMinCompletedSalesLimit: data['enable_min_completed_sales_limit'] ?? false,
       minCompletedSalesCount: data['min_completed_sales_count'] ?? 5,
       enableMinSalesLimit: data['enable_min_sales_limit'] ?? true,
     );
@@ -109,14 +111,16 @@ class GlobalSettingsModel {
       'min_payout': minPayout,
       'pulsa_bonus_amount': pulsaBonusAmount,
       'min_sale_for_pulsa': minSaleForPulsa,
-      'reseller_commission_percent': resellerCommissionPercent,
-      'distributor_commission_percent': distributorCommissionPercent,
-      'threshold_jagaddhita_medium': thresholdJagaddhitaMedium,
-      'percent_jagaddhita_medium': percentJagaddhitaMedium,
-      'threshold_jagaddhita_high': thresholdJagaddhitaHigh,
-      'percent_jagaddhita_high': percentJagaddhitaHigh,
-      'threshold_sibi': thresholdSibi,
-      'percent_sibi': percentSibi,
+      'discount_calculation_method': discountCalculationMethod,
+      'gold_commission_percent_jagaddhita': goldCommissionPercentJagaddhita,
+      'platinum_commission_percent_jagaddhita': platinumCommissionPercentJagaddhita,
+      'premium_commission_percent_jagaddhita': premiumCommissionPercentJagaddhita,
+      'gold_commission_percent_sibi': goldCommissionPercentSibi,
+      'platinum_commission_percent_sibi': platinumCommissionPercentSibi,
+      'premium_commission_percent_sibi': premiumCommissionPercentSibi,
+      'gold_threshold': goldThreshold,
+      'platinum_threshold': platinumThreshold,
+      'premium_threshold': premiumThreshold,
       'enable_r1': enableR1,
       'enable_r1_commission': enableR1Commission,
       'enable_r1_pulsa_bonus': enableR1PulsaBonus,

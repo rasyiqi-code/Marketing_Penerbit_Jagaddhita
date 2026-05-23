@@ -22,38 +22,51 @@ class MarketingCategoryCard extends StatelessWidget {
     String categoryDesc;
     IconData categoryIcon;
 
-    if (cat == 'reseller') {
-      primaryColor = Colors.orange.shade700;
-      bgColor = isDark ? Colors.orange.withOpacity(0.15) : Colors.orange.shade50;
-      categoryName = 'Reseller Resmi';
-      categoryDesc = 'Anda mendapatkan diskon khusus retail dan komisi menarik dari penjualan paket buku sekolah.';
+    if (cat == 'gold') {
+      primaryColor = Colors.amber.shade700;
+      bgColor = isDark ? Colors.amber.withValues(alpha: 0.15) : Colors.amber.shade50;
+      categoryName = 'Reseller Gold';
+      categoryDesc = 'Anda mendapatkan diskon khusus tingkat pertama dari penjualan paket buku sekolah.';
       categoryIcon = Icons.storefront_rounded;
-    } else if (cat == 'distributor') {
-      primaryColor = Colors.teal.shade700;
-      bgColor = isDark ? Colors.teal.withOpacity(0.15) : Colors.teal.shade50;
-      categoryName = 'Distributor Utama';
-      categoryDesc = 'Kategori tertinggi! Dapatkan potongan diskon maksimal untuk distribusi skala besar ke sekolah-sekolah.';
-      categoryIcon = Icons.local_shipping_rounded;
+    } else if (cat == 'platinum') {
+      primaryColor = Colors.blueGrey.shade600;
+      bgColor = isDark ? Colors.blueGrey.withValues(alpha: 0.15) : Colors.blueGrey.shade50;
+      categoryName = 'Reseller Platinum';
+      categoryDesc = 'Kategori tingkat menengah. Dapatkan potongan diskon lebih besar dari penjualan paket buku sekolah.';
+      categoryIcon = Icons.stars_rounded;
+    } else if (cat == 'premium') {
+      primaryColor = Colors.grey.shade900;
+      bgColor = isDark ? Colors.grey.withValues(alpha: 0.15) : Colors.grey.shade50;
+      categoryName = 'Reseller Premium';
+      categoryDesc = 'Kategori tertinggi! Dapatkan potongan diskon maksimal untuk penjualan skala besar.';
+      categoryIcon = Icons.diamond_rounded;
     } else {
       primaryColor = AppTheme.secondaryColor;
       bgColor = isDark ? AppTheme.secondaryColor.withValues(alpha: 0.15) : AppTheme.secondaryColor.withValues(alpha: 0.05);
       categoryName = 'Kemitraan Umum';
-      categoryDesc = 'Hubungi administrator untuk mengajukan upgrade status marketing menjadi Reseller atau Distributor.';
+      categoryDesc = 'Hubungi administrator untuk mengajukan upgrade status marketing.';
       categoryIcon = Icons.handshake_outlined;
     }
 
     return StreamBuilder<GlobalSettingsModel>(
       stream: Provider.of<ProductService>(context, listen: false).getGlobalSettings(),
       builder: (context, snapshot) {
-        double activePercent = 0;
+        double activeJagaddhita = 0;
+        double activeSibi = 0;
         if (snapshot.hasData) {
           final settings = snapshot.data!;
-          if (cat == 'reseller') {
-            activePercent = settings.resellerCommissionPercent;
-          } else if (cat == 'distributor') {
-            activePercent = settings.distributorCommissionPercent;
+          if (cat == 'gold') {
+            activeJagaddhita = settings.goldCommissionPercentJagaddhita;
+            activeSibi = settings.goldCommissionPercentSibi;
+          } else if (cat == 'platinum') {
+            activeJagaddhita = settings.platinumCommissionPercentJagaddhita;
+            activeSibi = settings.platinumCommissionPercentSibi;
+          } else if (cat == 'premium') {
+            activeJagaddhita = settings.premiumCommissionPercentJagaddhita;
+            activeSibi = settings.premiumCommissionPercentSibi;
           } else {
-            activePercent = settings.bonusPercentR1; // fallback
+            activeJagaddhita = settings.bonusPercentR1; // fallback
+            activeSibi = settings.bonusPercentR1;
           }
         }
 
@@ -64,7 +77,7 @@ class MarketingCategoryCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -91,7 +104,7 @@ class MarketingCategoryCard extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -117,7 +130,7 @@ class MarketingCategoryCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Kategori Kemitraan Aktif Anda',
+                            'Kategori Kemitraan Aktif',
                             style: GoogleFonts.outfit(
                               fontSize: 11,
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -126,21 +139,45 @@ class MarketingCategoryCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (activePercent > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '${activePercent.toStringAsFixed(0)}% OFF',
-                          style: GoogleFonts.outfit(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 11,
-                            color: Colors.white,
-                          ),
-                        ),
+                    if (activeJagaddhita > 0 || activeSibi > 0)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          if (activeJagaddhita > 0)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: primaryColor,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'JGD ${activeJagaddhita.toStringAsFixed(0)}%',
+                                style: GoogleFonts.outfit(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          if (activeSibi > 0) ...[
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: primaryColor,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'SIBI ${activeSibi.toStringAsFixed(0)}%',
+                                style: GoogleFonts.outfit(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                   ],
                 ),
@@ -171,7 +208,7 @@ class MarketingCategoryCard extends StatelessWidget {
                           child: Text(
                             cat == 'none'
                                 ? 'Kirim email pengajuan kemitraan resmi untuk menikmati rate diskon terbaik.'
-                                : 'Rate potongan otomatis diaplikasikan di form pemesanan R1 Penerbit.',
+                                : 'Rate potongan otomatis diaplikasikan di form pemesanan buku.',
                             style: GoogleFonts.outfit(
                               fontSize: 11,
                               color: primaryColor,

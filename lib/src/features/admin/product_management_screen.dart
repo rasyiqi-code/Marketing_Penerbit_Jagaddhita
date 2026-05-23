@@ -49,9 +49,9 @@ class ProductList extends StatelessWidget {
 
         final products = snapshot.data!;
         return ListView.separated(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 120),
           itemCount: products.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          separatorBuilder: (context, index) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             final product = products[index];
             return AdminProductCard(

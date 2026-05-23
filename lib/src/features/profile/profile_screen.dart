@@ -86,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _usernameController.text = user.username ?? '';
     _ktpController.text = user.ktpNumber ?? '';
     _addressController.text = user.address ?? '';
-    _profilePhoneController.text = user.phoneNumber ?? '';
+    _profilePhoneController.text = user.whatsappNumber ?? user.phoneNumber ?? '';
   }
 
   // ── Dialogs ────────────────────────────────────────────────────────────────
@@ -179,12 +179,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isAdmin = _currentUser?.role == 'admin';
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Column(
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           _ProfileAvatar(user: _currentUser),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Text(
             _currentUser?.name ?? _currentUser?.email ?? 'Unknown User',
             style: Theme.of(context)
@@ -206,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
 
           // ── Admin Menu ────────────────────────────────────────────────
           if (isAdmin) ...[
@@ -233,7 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (_) => const ImageManagementScreen()),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
           ],
 
           // ── Informasi Pribadi ─────────────────────────────────────────
@@ -244,7 +244,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             subtitle: 'Perbarui nama dan detail pribadi',
             onTap: _openEditProfileSheet,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
 
           // ── Detail Pembayaran ─────────────────────────────────────────
           _SectionHeader('Detail Pembayaran'),
@@ -254,7 +254,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             subtitle: 'Kelola akun penarikan',
             onTap: _openBankSheet,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
 
           // ── Akun ──────────────────────────────────────────────────────
           _SectionHeader('Akun'),
@@ -325,7 +325,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
@@ -361,27 +361,30 @@ class _SettingsTile extends StatelessWidget {
     final color = isRed ? Colors.red : AppTheme.primaryColor;
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         side: BorderSide(color: Theme.of(context).dividerColor),
       ),
       child: ListTile(
         onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
         leading: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(6),
           ),
-          child: Icon(icon, color: color),
+          child: Icon(icon, color: color, size: 20),
         ),
-        title: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        ),
         subtitle: Text(
           subtitle,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 11,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),

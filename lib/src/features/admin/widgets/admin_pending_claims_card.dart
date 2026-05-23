@@ -23,15 +23,15 @@ class AdminPendingClaimsCard extends StatelessWidget {
             );
           },
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
                 ),
               ],
               border: Border.all(
@@ -46,13 +46,13 @@ class AdminPendingClaimsCard extends StatelessWidget {
                 Icon(
                   Icons.mark_email_unread_rounded,
                   color: count > 0 ? Colors.red : Colors.grey,
-                  size: 28,
+                  size: 20,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 6),
                 Text(
                   count.toString(),
                   style: GoogleFonts.outfit(
-                    fontSize: 28,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
@@ -60,7 +60,7 @@ class AdminPendingClaimsCard extends StatelessWidget {
                 Text(
                   'Permintaan Masuk',
                   style: GoogleFonts.outfit(
-                    fontSize: 13,
+                    fontSize: 11,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),

@@ -227,7 +227,7 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
                   ][today - 1];
 
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -240,7 +240,7 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
                       isBank: isBank,
                       balance: availableBalance,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 10),
 
                     WithdrawalForm(
                       isBank: isBank,
