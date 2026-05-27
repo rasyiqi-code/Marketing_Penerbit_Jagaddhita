@@ -36,7 +36,7 @@ class HomeLatestInfo extends StatelessWidget {
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+                  color: Theme.of(context).dividerColor.withValues(alpha: isDark ? 0.05 : 0.1),
                 ),
               ),
               child: Row(

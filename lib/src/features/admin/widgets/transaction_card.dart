@@ -73,147 +73,179 @@ class TransactionCard extends StatelessWidget {
       textColor = AppTheme.primaryColor;
     } else if (isPending) {
       statusColor = AppTheme.accentColor;
-      textColor = const Color(0xFFB8860B); // Darker yellow/gold for text contrast
+      textColor = const Color(0xFFB8860B);
     } else {
       statusColor = AppTheme.secondaryColor;
       textColor = AppTheme.secondaryColor;
     }
 
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: InkWell(
-        onTap: () => TransactionDetailModal.show(context, sale),
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    DateFormat('dd MMM yyyy, HH:mm').format(sale.createdAt),
-                    style: GoogleFonts.outfit(
-                      fontSize: 11, // Reduced font size
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: statusColor),
-                    ),
-                    child: Text(
-                      sale.paymentStatus,
-                      style: GoogleFonts.outfit(
-                        fontSize: 11, // Reduced font size
-                        color: textColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                sale.details['product_name'] ?? '-',
-                style: GoogleFonts.outfit(
-                  fontSize: 15, // Reduced font size
-                  fontWeight: FontWeight.bold,
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.4),
+            width: 1,
+          ),
+        ),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Sleek left-edge patriot Red-White accent strip if transaction is Green (complete/lunas)
+            if (isComplete || isLunas)
+              SizedBox(
+                width: 4,
+                child: Column(
+                  children: [
+                    Expanded(child: Container(color: AppTheme.secondaryColor)), // Red top
+                    Expanded(child: Container(color: Colors.white)), // White bottom
+                  ],
                 ),
-              ),
-              if (sale.details['judul_naskah'] != null)
-                Text(
-                  'Title: ${sale.details['judul_naskah']}',
-                  style: TextStyle(
-                    fontSize: 12, // Reduced font size
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              const SizedBox(height: 4),
-              Text(
-                'Agent: ${sale.details['agent_name'] ?? sale.details['buyer_name'] ?? '-'}',
-                style: GoogleFonts.outfit(
-                  fontSize: 12, // Reduced font size
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Compact Bottom Row: Price + Actions
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Price Column
-                  Column(
+              )
+            else
+              Container(width: 4, color: statusColor.withValues(alpha: 0.3)),
+
+            Expanded(
+              child: InkWell(
+                onTap: () => TransactionDetailModal.show(context, sale),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Total Price',
-                        style: GoogleFonts.outfit(
-                          fontSize: 10,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      // Header Row: Time & Status
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            DateFormat('dd MMM yyyy, HH:mm').format(sale.createdAt),
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: statusColor.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: statusColor.withValues(alpha: 0.5)),
+                            ),
+                            child: Text(
+                              sale.paymentStatus,
+                              style: GoogleFonts.outfit(
+                                fontSize: 10,
+                                color: textColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 6),
+
+                      // Product Title
                       Text(
-                        currencyFormat.format(sale.totalPrice),
+                        sale.details['product_name'] ?? '-',
                         style: GoogleFonts.outfit(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+
+                      // Customer & Agent Details
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Cust: ${sale.customerName} | Agent: ${sale.details['agent_name'] ?? sale.details['buyer_name'] ?? '-'}',
+                              style: GoogleFonts.outfit(
+                                fontSize: 11,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Pricing & Actions Compact Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Total Price',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 9,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                              Text(
+                                currencyFormat.format(sale.totalPrice),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          // Action buttons
+                          if (!isComplete &&
+                              sale.paymentStatus != SaleModel.statusCanceled &&
+                              sale.paymentStatus != SaleModel.statusProblem)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextButton(
+                                  onPressed: () => _cancelTransaction(context, sale),
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  child: Text(
+                                    'Batalkan',
+                                    style: GoogleFonts.outfit(color: AppTheme.secondaryColor, fontSize: 11),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                ElevatedButton(
+                                  onPressed: () =>
+                                      TransactionUpdateDialog.show(context, sale),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppTheme.primaryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    minimumSize: const Size(0, 28),
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                                  ),
+                                  child: Text(
+                                    'Update',
+                                    style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
                       ),
                     ],
                   ),
-                  // Actions Row (if applicable)
-                  if (!isComplete &&
-                      sale.paymentStatus != SaleModel.statusCanceled &&
-                      sale.paymentStatus != SaleModel.statusProblem)
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: () => _cancelTransaction(context, sale),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          child: const Text(
-                            'Batalkan',
-                            style: TextStyle(color: AppTheme.secondaryColor, fontSize: 12),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () =>
-                              TransactionUpdateDialog.show(context, sale),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            minimumSize: const Size(0, 32), // Compact height
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          child: const Text(
-                            'Update',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

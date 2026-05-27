@@ -25,6 +25,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/link_bio_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/customer_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/notification_service.dart' as local;
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/sales_entry_book_screen.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/link_bio_loading_screen.dart';
@@ -50,6 +51,7 @@ void main() async {
         Provider<UserService>(create: (_) => UserService()),
         Provider<ProductService>(create: (_) => ProductService()),
         Provider<SalesService>(create: (_) => SalesService()),
+        Provider<CustomerService>(create: (_) => CustomerService()),
         Provider<WalletService>(create: (_) => WalletService()),
         Provider<AppNotificationService>(create: (_) => AppNotificationService()),
         Provider<LinkBioService>(create: (_) => LinkBioService()),

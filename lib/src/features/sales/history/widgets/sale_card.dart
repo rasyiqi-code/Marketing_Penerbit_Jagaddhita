@@ -5,7 +5,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 
-/// Card ringkasan transaksi penjualan di halaman riwayat.
+/// Card ringkasan transaksi penjualan di halaman riwayat (didesain ulang menjadi Flat List Item).
 class SaleCard extends StatelessWidget {
   final SaleModel sale;
   final VoidCallback onTap;
@@ -28,91 +28,96 @@ class SaleCard extends StatelessWidget {
         sale.details['book_title'] ??
         'Product #${sale.productId.substring(0, 4)}';
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.4),
+            width: 1,
+          ),
+        ),
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Header row ───────────────────────────────────────────
+              // ── Header row: Status & Tanggal ────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _StatusBadge(
-                    isLunas: isLunas,
-                    label: isLunas ? 'PAID' : sale.paymentStatus,
+                    isLunas: isLunas || isComplete,
+                    label: isComplete ? 'COMPLETE' : (isLunas ? 'PAID' : sale.paymentStatus),
                   ),
                   Text(
                     DateFormat('dd MMM yyyy, HH:mm').format(sale.createdAt),
-                    style: TextStyle(
+                    style: GoogleFonts.outfit(
                       fontSize: 12,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
 
-              // ── Product name + category ───────────────────────────────
+              // ── Product name & Customer ──────────────────────────────
               Text(
                 productName,
                 style: GoogleFonts.outfit(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).textTheme.bodyMedium?.color,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
-              Text(
-                houseName,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const Divider(height: 24),
-
-              // ── Price summary ─────────────────────────────────────────
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Total Harga',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  Icon(Icons.person_outline, size: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Customer: ${sale.customerName}',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Text(
-                    AppFormatters.currency(sale.totalPrice),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 2),
+              Text(
+                houseName,
+                style: GoogleFonts.outfit(
+                  fontSize: 11,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                ),
+              ),
+              const SizedBox(height: 8),
 
-              // ── Commission / Bonus ────────────────────────────────────
+              // ── Financial info row ────────────────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         isComplete ? 'Masuk Saldo' : 'Estimasi Potensi',
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
                           color: isComplete
-                              ? Theme.of(context).colorScheme.onSurfaceVariant
-                              : AppTheme.accentColor,
+                              ? AppTheme.primaryColor
+                              : AppTheme.secondaryColor,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
@@ -120,9 +125,9 @@ class SaleCard extends StatelessWidget {
                         style: GoogleFonts.outfit(
                           color: isComplete
                               ? AppTheme.primaryColor
-                              : AppTheme.accentColor,
+                              : AppTheme.secondaryColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: 13,
                         ),
                       ),
                       if (sale.pulsaBonusAmount > 0)
@@ -131,33 +136,51 @@ class SaleCard extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             color: isComplete
                                 ? AppTheme.primaryColor
-                                : AppTheme.accentColor,
+                                : AppTheme.secondaryColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            fontSize: 13,
                           ),
                         ),
                     ],
                   ),
-                  Icon(Icons.chevron_right,
-                      color: Theme.of(context).dividerColor),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Total Harga',
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      Text(
+                        AppFormatters.currency(sale.totalPrice),
+                        style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
 
-              // ── Markup ────────────────────────────────────────────────
+              // ── Keuntungan Markup ───────────────────────────────────
               if ((sale.totalMarkup ?? 0) > 0) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Keuntungan Markup',
-                        style:
-                            TextStyle(fontSize: 12, color: AppTheme.primaryColor)),
+                    Text(
+                      'Keuntungan Markup',
+                      style: GoogleFonts.outfit(fontSize: 11, color: AppTheme.primaryColor),
+                    ),
                     Text(
                       AppFormatters.currency(sale.totalMarkup ?? 0),
                       style: GoogleFonts.outfit(
                         color: AppTheme.primaryColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 13,
                       ),
                     ),
                   ],
@@ -166,43 +189,52 @@ class SaleCard extends StatelessWidget {
 
               // ── DP info + pelunasan button ────────────────────────────
               if (sale.paymentStatus == 'DP' && sale.paidAmount > 0) ...[
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.info_outline,
-                          size: 16, color: AppTheme.accentColor),
-                      const SizedBox(width: 8),
-                      Text(
-                        'DP Terbayar: ${AppFormatters.currency(sale.paidAmount)}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppTheme.accentColor,
-                          fontWeight: FontWeight.bold,
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppTheme.secondaryColor.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppTheme.secondaryColor.withValues(alpha: 0.15)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.info_outline, size: 14, color: AppTheme.secondaryColor),
+                            const SizedBox(width: 6),
+                            Text(
+                              'DP Terbayar: ${AppFormatters.currency(sale.paidAmount)}',
+                              style: GoogleFonts.outfit(
+                                fontSize: 11,
+                                color: AppTheme.secondaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
                       onPressed: onPelunasan,
-                      icon: const Icon(Icons.payment, size: 18),
-                      label: const Text('Lunasi Sekarang & Upload Bukti'),
+                      icon: const Icon(Icons.payment, size: 14),
+                      label: Text(
+                        'Lunasi',
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryColor,
                         foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 32),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        elevation: 1,
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ],
@@ -220,18 +252,18 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isLunas ? AppTheme.primaryColor : AppTheme.accentColor;
+    final color = isLunas ? AppTheme.primaryColor : AppTheme.secondaryColor;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color),
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 12,
+        style: GoogleFonts.outfit(
+          fontSize: 10,
           fontWeight: FontWeight.bold,
           color: color,
         ),

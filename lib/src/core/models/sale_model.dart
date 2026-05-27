@@ -57,6 +57,41 @@ class SaleModel {
   static const String statusProblem = 'PROBLEM';
   static const String statusCanceled = 'CANCELED';
 
+  // Helper getters for new transaction fields
+  String get customerName => details['customer_name'] ?? details['nama_pemesan'] ?? '-';
+  String get customerPhone => details['customer_phone'] ?? details['telepon_penerima'] ?? '-';
+  
+  List<int> get productQuantities {
+    if (details['product_quantities'] != null) {
+      return List<int>.from(details['product_quantities']);
+    }
+    // Fallback for legacy orders: replicate single qty for each product ID
+    final productIdsList = productIds;
+    final legacyQty = details['quantity'] as int? ?? 1;
+    return List<int>.filled(productIdsList.length, legacyQty);
+  }
+
+  List<String> get productIds {
+    if (details['product_ids'] != null) {
+      return List<String>.from(details['product_ids']);
+    }
+    return [productId];
+  }
+
+  List<String> get productNames {
+    if (details['product_names'] != null) {
+      return List<String>.from(details['product_names']);
+    }
+    return [details['product_name'] ?? 'Produk'];
+  }
+
+  List<double> get productPrices {
+    if (details['product_prices'] != null) {
+      return List<double>.from(details['product_prices'].map((e) => (e as num).toDouble()));
+    }
+    return [(details['product_price'] as num? ?? totalPrice).toDouble()];
+  }
+
   SaleModel({
     required this.id,
     required this.userId,

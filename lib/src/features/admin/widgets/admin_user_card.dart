@@ -112,7 +112,7 @@ class AdminUserCard extends StatelessWidget {
               if (user.role == 'marketing') ...[
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String?>(
-                  value: selectedCategory,
+                  initialValue: selectedCategory,
                   decoration: const InputDecoration(
                     labelText: 'Kategori Marketing',
                     border: OutlineInputBorder(),

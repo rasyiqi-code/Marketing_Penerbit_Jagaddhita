@@ -63,20 +63,20 @@ class TopMarketersList extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isMe
-                        ? Theme.of(context).colorScheme.primaryContainer.withOpacity(0.15)
+                        ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.15)
                         : Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isFirst
-                          ? Colors.amber.withOpacity(0.5)
+                          ? Colors.amber.withValues(alpha: 0.5)
                           : (isMe
-                                ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
-                                : Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1)),
+                                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+                                : Theme.of(context).dividerColor.withValues(alpha: isDark ? 0.05 : 0.1)),
                       width: isFirst || isMe ? 1.5 : 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                        color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),

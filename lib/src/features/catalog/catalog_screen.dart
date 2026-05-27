@@ -73,13 +73,13 @@ class CatalogList extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
-                  color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+                  color: Theme.of(context).dividerColor.withValues(alpha: isDark ? 0.05 : 0.1),
                 ),
               ),
               child: Material(
@@ -108,7 +108,7 @@ class CatalogList extends StatelessWidget {
                                 color: (houseType == 1
                                         ? AppTheme.primaryColor
                                         : AppTheme.secondaryColor)
-                                    .withOpacity(0.1),
+                                    .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Icon(

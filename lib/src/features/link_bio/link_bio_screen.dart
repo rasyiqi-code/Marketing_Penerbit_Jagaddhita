@@ -196,13 +196,13 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     )
                   ],
                   border: Border.all(
-                    color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+                    color: Theme.of(context).dividerColor.withValues(alpha: isDark ? 0.05 : 0.1),
                   ),
                 ),
                 padding: const EdgeInsets.all(10),
@@ -263,13 +263,13 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           side: BorderSide(
-                            color: AppTheme.primaryColor.withOpacity(0.5),
+                            color: AppTheme.primaryColor.withValues(alpha: 0.5),
                             width: 1.5,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          backgroundColor: AppTheme.primaryColor.withOpacity(0.05),
+                          backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.05),
                         ),
                         icon: const Icon(Icons.add_circle_outline, size: 16),
                         label: Text(

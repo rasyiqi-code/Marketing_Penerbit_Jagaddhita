@@ -3,10 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/global_settings_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/models/customer_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/customer_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/notification_service.dart' as local;
 import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
@@ -37,12 +39,18 @@ class _SalesEntryBookScreenState
   String _agentName = '';
   String? _marketingCategory;
 
-  // Products
+  // Products & Quantities
   List<ProductModel> _selectedProducts = [];
+  Map<String, int> _selectedProductQuantities = {};
+
+  // Customer Autocomplete
+  final _customerNameController = TextEditingController();
+  final _customerPhoneController = TextEditingController();
+  List<CustomerModel> _allCustomers = [];
+  List<CustomerModel> _filteredCustomers = [];
+  bool _showCustomerSuggestions = false;
 
   // Controllers
-  final _unitPriceController = TextEditingController();
-  final _qtyController = TextEditingController(text: '1');
   final _markupController = TextEditingController();
   final _dpAmountController = TextEditingController();
 
@@ -76,6 +84,7 @@ class _SalesEntryBookScreenState
   Future<void> _loadUserInfo() async {
     final auth = Provider.of<AuthService>(context, listen: false);
     final salesService = Provider.of<SalesService>(context, listen: false);
+    final customerService = Provider.of<CustomerService>(context, listen: false);
     final user = await auth.getCurrentUserDetails();
 
     if (mounted && user != null) {
@@ -83,6 +92,15 @@ class _SalesEntryBookScreenState
           await salesService.getUserBonusCountThisMonth(user.id);
       final monthlyStats =
           await salesService.getUserSalesStatsThisMonth(user.id);
+
+      // Listen to agent's customers list
+      customerService.getCustomers(user.id).listen((customers) {
+        if (mounted) {
+          setState(() {
+            _allCustomers = customers;
+          });
+        }
+      });
 
       setState(() {
         _agentName = (user.name != null && user.name!.isNotEmpty)
@@ -111,13 +129,33 @@ class _SalesEntryBookScreenState
   void _onProductsChanged(List<ProductModel> products) {
     setState(() {
       _selectedProducts = products;
-      if (products.isNotEmpty) {
-        final totalCatalogPrice =
-            products.fold<double>(0, (sum, p) => sum + p.price);
-        _unitPriceController.text =
-            AppFormatters.formatNumber(totalCatalogPrice);
+      // Sync quantities: retain existing quantities, default new ones to 1
+      final syncedQuantities = <String, int>{};
+      for (var p in products) {
+        syncedQuantities[p.id] = _selectedProductQuantities[p.id] ?? 1;
       }
+      _selectedProductQuantities = syncedQuantities;
       _calculateValues();
+    });
+  }
+
+  void _onCustomerNameChanged(String query) {
+    if (query.trim().isEmpty) {
+      setState(() {
+        _filteredCustomers = [];
+        _showCustomerSuggestions = false;
+      });
+      return;
+    }
+
+    final filtered = _allCustomers.where((c) {
+      return c.name.toLowerCase().contains(query.toLowerCase()) ||
+          c.phoneNumber.contains(query);
+    }).toList();
+
+    setState(() {
+      _filteredCustomers = filtered;
+      _showCustomerSuggestions = filtered.isNotEmpty;
     });
   }
 
@@ -171,38 +209,19 @@ class _SalesEntryBookScreenState
   }
 
   void _calculateValues() {
-    final unitPrice = double.tryParse(
-          _unitPriceController.text.replaceAll(RegExp(r'[^0-9]'), ''),
-        ) ??
-        0;
-    final qty = int.tryParse(_qtyController.text) ?? 1;
+    double brutoSibi = 0;
+    double brutoJagaddhita = 0;
 
-    _bruto = unitPrice * qty;
-
-    // Calculate ratio of SIBI vs Jagaddhita based on catalog prices
-    double catalogSibi = 0;
-    double catalogJagaddhita = 0;
     for (var p in _selectedProducts) {
+      final qty = _selectedProductQuantities[p.id] ?? 1;
       if (p.isSibi) {
-        catalogSibi += p.price;
+        brutoSibi += p.price * qty;
       } else {
-        catalogJagaddhita += p.price;
+        brutoJagaddhita += p.price * qty;
       }
     }
-    double totalCatalog = catalogSibi + catalogJagaddhita;
-    double ratioSibi = totalCatalog > 0 ? (catalogSibi / totalCatalog) : 0;
-    double ratioJagaddhita = totalCatalog > 0 ? (catalogJagaddhita / totalCatalog) : 0;
 
-    // Fallback if all prices are 0 but products exist
-    if (totalCatalog == 0 && _selectedProducts.isNotEmpty) {
-      int countSibi = _selectedProducts.where((p) => p.isSibi).length;
-      int countJag = _selectedProducts.where((p) => !p.isSibi).length;
-      ratioSibi = countSibi / _selectedProducts.length;
-      ratioJagaddhita = countJag / _selectedProducts.length;
-    }
-
-    double brutoSibi = _bruto * ratioSibi;
-    double brutoJagaddhita = _bruto * ratioJagaddhita;
+    _bruto = brutoSibi + brutoJagaddhita;
 
     final percents = _getDiscountPercents(_bruto);
     double discSibi = brutoSibi * (percents['sibi']! / 100);
@@ -246,15 +265,27 @@ class _SalesEntryBookScreenState
       return;
     }
 
-    final unitPrice = double.tryParse(
-          _unitPriceController.text.replaceAll(RegExp(r'[^0-9]'), ''),
-        ) ??
-        0;
-    final qty = int.tryParse(_qtyController.text) ?? 0;
+    final customerName = _customerNameController.text.trim();
+    final customerPhone = _customerPhoneController.text.trim();
 
-    if (unitPrice <= 0 || qty <= 0) {
+    if (customerName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Harga satuan dan jumlah tidak valid')),
+        const SnackBar(content: Text('Silakan masukkan nama customer')),
+      );
+      return;
+    }
+    if (customerPhone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Silakan masukkan nomor HP customer')),
+      );
+      return;
+    }
+
+    final totalQty = _selectedProductQuantities.values.fold<int>(0, (sum, q) => sum + q);
+
+    if (_bruto <= 0 || totalQty <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Harga total dan jumlah tidak valid')),
       );
       return;
     }
@@ -276,17 +307,17 @@ class _SalesEntryBookScreenState
 
     try {
       final auth = Provider.of<AuthService>(context, listen: false);
-      final salesService =
-          Provider.of<SalesService>(context, listen: false);
-      final notificationService =
-          Provider.of<AppNotificationService>(context, listen: false);
+      final salesService = Provider.of<SalesService>(context, listen: false);
+      final customerService = Provider.of<CustomerService>(context, listen: false);
+      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
+      
       final user = await auth.getCurrentUserDetails();
       if (user == null) throw Exception('User not found');
 
       final markupPerQty = int.tryParse(
               _markupController.text.replaceAll(RegExp(r'[^0-9]'), '')) ??
           0;
-      final totalMarkup = markupPerQty * qty;
+      final totalMarkup = markupPerQty * totalQty;
 
       final paidAmount = _paymentStatus == 'LUNAS'
           ? _bruto
@@ -295,10 +326,18 @@ class _SalesEntryBookScreenState
               ) ??
               0);
 
+      // Save customer to custom database if they are new
+      await customerService.saveCustomerIfNew(user.id, customerName, customerPhone);
+
       final primaryProduct = _selectedProducts.first;
+      final productSummaryList = _selectedProducts.map((p) {
+        final q = _selectedProductQuantities[p.id] ?? 1;
+        return '${p.name} (x$q)';
+      }).join(', ');
+
       final productLabel = _selectedProducts.length == 1
-          ? '"${primaryProduct.name}"'
-          : '${_selectedProducts.length} produk';
+          ? '"${primaryProduct.name} (x${_selectedProductQuantities[primaryProduct.id] ?? 1})"'
+          : '${_selectedProducts.length} judul buku ($totalQty eks)';
 
       final sale = SaleModel(
         id: '',
@@ -306,13 +345,16 @@ class _SalesEntryBookScreenState
         productId: primaryProduct.id,
         details: {
           'product_name': _selectedProducts.length == 1
-              ? primaryProduct.name
-              : '${_selectedProducts.length} produk: ${_selectedProducts.map((p) => p.name).join(', ')}',
-          'product_price': unitPrice,
-          'quantity': qty,
+              ? '${primaryProduct.name} (x${_selectedProductQuantities[primaryProduct.id] ?? 1})'
+              : '${_selectedProducts.length} judul buku: $productSummaryList',
+          'product_price': primaryProduct.price,
+          'quantity': totalQty,
           'product_ids': _selectedProducts.map((p) => p.id).toList(),
           'product_names': _selectedProducts.map((p) => p.name).toList(),
           'product_prices': _selectedProducts.map((p) => p.price).toList(),
+          'product_quantities': _selectedProducts.map((p) => _selectedProductQuantities[p.id] ?? 1).toList(),
+          'customer_name': customerName,
+          'customer_phone': customerPhone,
           'marketing_category': _marketingCategory ?? 'none',
           'commission_percentage': _discountPercent,
           'discount_amount': _discountAmount,
@@ -381,8 +423,8 @@ class _SalesEntryBookScreenState
 
   @override
   void dispose() {
-    _unitPriceController.dispose();
-    _qtyController.dispose();
+    _customerNameController.dispose();
+    _customerPhoneController.dispose();
     _markupController.dispose();
     _dpAmountController.dispose();
     super.dispose();
@@ -391,6 +433,7 @@ class _SalesEntryBookScreenState
   @override
   Widget build(BuildContext context) {
     const color = AppTheme.primaryColor;
+    final totalQty = _selectedProductQuantities.values.fold<int>(0, (sum, q) => sum + q);
 
     return Scaffold(
       appBar: AppBar(
@@ -412,6 +455,15 @@ class _SalesEntryBookScreenState
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
           decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4),
+          child: Row(
+            children: [
+              Expanded(child: Container(height: 4, color: AppTheme.secondaryColor)),
+              Expanded(child: Container(height: 4, color: Colors.white)),
+            ],
+          ),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -473,170 +525,331 @@ class _SalesEntryBookScreenState
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(10),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Agent Banner ──────────────────────────────────────────────
-              if (_agentName.isNotEmpty)
-                SalesAgentBanner(
-                    agentName: _agentName, category: _marketingCategory),
-              const SizedBox(height: 10),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // ── Agent Banner ──────────────────────────────────────────────
+                    if (_agentName.isNotEmpty)
+                      SalesAgentBanner(
+                          agentName: _agentName, category: _marketingCategory),
+                    const SizedBox(height: 10),
 
-              // ── Produk ────────────────────────────────────────────────────
-              SalesSectionTitle('Pilih Produk'),
-              const SizedBox(height: 8),
-              _buildProductDropdown(color),
-
-              const SizedBox(height: 12),
-              const Divider(thickness: 1),
-              const SizedBox(height: 12),
-
-              // ── Harga & Qty ───────────────────────────────────────────────
-              SalesSectionTitle('Harga & Jumlah'),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: SalesTextField(
-                      controller: _unitPriceController,
-                      label: 'Harga Satuan Bruto',
-                      icon: Icons.attach_money_rounded,
-                      keyboardType: TextInputType.number,
-                      prefixText: 'Rp ',
-                      inputFormatters: [CurrencyInputFormatter()],
-                      onChanged: (_) => _calculateValues(),
+                    // ── Customer Info ─────────────────────────────────────────────
+                    SalesSectionTitle('Informasi Pelanggan'),
+                    const SizedBox(height: 8),
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SalesTextField(
+                              controller: _customerNameController,
+                              label: 'Nama Customer',
+                              icon: Icons.person_outline_rounded,
+                              onChanged: _onCustomerNameChanged,
+                            ),
+                            const SizedBox(height: 10),
+                            SalesTextField(
+                              controller: _customerPhoneController,
+                              label: 'Nomor HP Customer',
+                              icon: Icons.phone_android_rounded,
+                              keyboardType: TextInputType.phone,
+                            ),
+                          ],
+                        ),
+                        if (_showCustomerSuggestions)
+                          Positioned(
+                            top: 50,
+                            left: 0,
+                            right: 0,
+                            child: Material(
+                              elevation: 6,
+                              borderRadius: BorderRadius.circular(10),
+                              shadowColor: Colors.black26,
+                              color: Theme.of(context).cardColor,
+                              child: Container(
+                                constraints: const BoxConstraints(maxHeight: 180),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Theme.of(context).dividerColor,
+                                  ),
+                                ),
+                                child: ListView.separated(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
+                                  itemCount: _filteredCustomers.length,
+                                  separatorBuilder: (ctx, idx) => const Divider(height: 1),
+                                  itemBuilder: (ctx, idx) {
+                                    final customer = _filteredCustomers[idx];
+                                    return ListTile(
+                                      dense: true,
+                                      leading: const CircleAvatar(
+                                        radius: 14,
+                                        child: Icon(Icons.person, size: 14),
+                                      ),
+                                      title: Text(
+                                        customer.name,
+                                        style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                                      ),
+                                      subtitle: Text(
+                                        customer.phoneNumber,
+                                        style: GoogleFonts.outfit(fontSize: 11),
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          _customerNameController.text = customer.name;
+                                          _customerPhoneController.text = customer.phoneNumber;
+                                          _showCustomerSuggestions = false;
+                                          _filteredCustomers = [];
+                                        });
+                                        FocusScope.of(context).unfocus();
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    flex: 2,
-                    child: SalesTextField(
-                      controller: _qtyController,
-                      label: 'Jumlah',
-                      icon: Icons.numbers_rounded,
-                      keyboardType: TextInputType.number,
-                      onChanged: (_) => _calculateValues(),
+
+                    const SizedBox(height: 12),
+                    const Divider(thickness: 1),
+                    const SizedBox(height: 12),
+
+                    // ── Produk ────────────────────────────────────────────────────
+                    SalesSectionTitle('Pilih Produk'),
+                    const SizedBox(height: 8),
+                    _buildProductDropdown(color),
+
+                    const SizedBox(height: 12),
+                    const Divider(thickness: 1),
+                    const SizedBox(height: 12),
+
+                    // ── Selected Books List (Itemized Steppers) ───────────────────
+                    if (_selectedProducts.isNotEmpty) ...[
+                      SalesSectionTitle('Daftar Buku Yang Dipesan'),
+                      const SizedBox(height: 8),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _selectedProducts.length,
+                        itemBuilder: (ctx, idx) {
+                          final product = _selectedProducts[idx];
+                          final qty = _selectedProductQuantities[product.id] ?? 1;
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: (product.isSibi ? Colors.indigo : AppTheme.primaryColor)
+                                    .withValues(alpha: 0.15),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: (product.isSibi ? Colors.indigo : AppTheme.primaryColor)
+                                        .withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    product.isSibi ? Icons.account_balance : Icons.menu_book_rounded,
+                                    color: product.isSibi ? Colors.indigo : AppTheme.primaryColor,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        product.name,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.outfit(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${AppFormatters.currency(product.price)} • ${product.category}',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 12,
+                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.remove_circle_outline, size: 22),
+                                      onPressed: qty > 1
+                                          ? () {
+                                              setState(() {
+                                                _selectedProductQuantities[product.id] = qty - 1;
+                                                _calculateValues();
+                                              });
+                                            }
+                                          : null,
+                                    ),
+                                    Container(
+                                      constraints: const BoxConstraints(minWidth: 24),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '$qty',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.add_circle_outline, size: 22),
+                                      onPressed: () {
+                                        setState(() {
+                                          _selectedProductQuantities[product.id] = qty + 1;
+                                          _calculateValues();
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      const Divider(thickness: 1),
+                      const SizedBox(height: 12),
+                    ],
+
+                    // ── Kalkulasi Card ────────────────────────────────────────────
+                    SalesCalculationCard(
+                      color: color,
+                      marketingCategory: _marketingCategory ?? '',
+                      bruto: _bruto,
+                      discountPercent: _discountPercent,
+                      discountAmount: _discountAmount,
+                      netto: _netto,
+                      commissionAmount: _commissionAmount,
+                      pulsaBonusAmount: _pulsaBonusAmount,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
 
-              // ── Kalkulasi Card ────────────────────────────────────────────
-              SalesCalculationCard(
-                color: color,
-                marketingCategory: _marketingCategory ?? '',
-                bruto: _bruto,
-                discountPercent: _discountPercent,
-                discountAmount: _discountAmount,
-                netto: _netto,
-                commissionAmount: _commissionAmount,
-                pulsaBonusAmount: _pulsaBonusAmount,
-              ),
+                    const SizedBox(height: 10),
 
-              const SizedBox(height: 10),
+                    // ── Markup ────────────────────────────────────────────────────
+                    MarkupInputField(
+                      controller: _markupController,
+                      quantity: totalQty > 0 ? totalQty : 1,
+                    ),
 
-              // ── Markup ────────────────────────────────────────────────────
-              MarkupInputField(
-                controller: _markupController,
-                quantity: int.tryParse(_qtyController.text) ?? 1,
-              ),
+                    const SizedBox(height: 10),
 
-              const SizedBox(height: 10),
+                    // ── Status Bayar ──────────────────────────────────────────────
+                    SalesPaymentStatusDropdown(
+                      value: _paymentStatus,
+                      onChanged: (val) => setState(() => _paymentStatus = val!),
+                    ),
 
-              // ── Status Bayar ──────────────────────────────────────────────
-              SalesPaymentStatusDropdown(
-                value: _paymentStatus,
-                onChanged: (val) => setState(() => _paymentStatus = val!),
-              ),
+                    if (_paymentStatus == 'DP') ...[
+                      const SizedBox(height: 10),
+                      SalesTextField(
+                        controller: _dpAmountController,
+                        label: 'Jumlah DP yang Dibayar',
+                        icon: Icons.payments_outlined,
+                        keyboardType: TextInputType.number,
+                        prefixText: 'Rp ',
+                        inputFormatters: [CurrencyInputFormatter()],
+                      ),
+                    ],
 
-              if (_paymentStatus == 'DP') ...[
-                const SizedBox(height: 10),
-                SalesTextField(
-                  controller: _dpAmountController,
-                  label: 'Jumlah DP yang Dibayar',
-                  icon: Icons.payments_outlined,
-                  keyboardType: TextInputType.number,
-                  prefixText: 'Rp ',
-                  inputFormatters: [CurrencyInputFormatter()],
-                ),
-              ],
-
-              if (_paymentStatus == 'LUNAS') ...[
-                const SizedBox(height: 10),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: AppTheme.primaryColor.withValues(alpha: 0.3)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.check_circle,
-                          color: AppTheme.primaryColor, size: 18),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          'Pembayaran LUNAS. Komisi dihitung otomatis.',
-                          style: GoogleFonts.outfit(
-                              color: AppTheme.primaryColor, fontSize: 13),
+                    if (_paymentStatus == 'LUNAS') ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                              color: AppTheme.primaryColor.withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.check_circle,
+                                color: AppTheme.primaryColor, size: 18),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Pembayaran LUNAS. Komisi dihitung otomatis.',
+                                style: GoogleFonts.outfit(
+                                    color: AppTheme.primaryColor, fontSize: 13),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ],
 
-              const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-              // ── Bukti Transfer ────────────────────────────────────────────
-              SalesSectionTitle('Bukti Transfer'),
-              const SizedBox(height: 8),
-              TransactionProofInput(
-                themeColor: color,
-                initialUrl: _transactionProofUrl,
-                onProofUploaded: (url) =>
-                    setState(() => _transactionProofUrl = url),
-              ),
+                    // ── Bukti Transfer ────────────────────────────────────────────
+                    SalesSectionTitle('Bukti Transfer'),
+                    const SizedBox(height: 8),
+                    TransactionProofInput(
+                      themeColor: color,
+                      initialUrl: _transactionProofUrl,
+                      onProofUploaded: (url) =>
+                          setState(() => _transactionProofUrl = url),
+                    ),
 
-              const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-              // ── Submit ────────────────────────────────────────────────────
-              SizedBox(
-                height: 48,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: color,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    elevation: 2,
-                    shadowColor: color.withValues(alpha: 0.3),
-                  ),
-                  onPressed:
-                      (_isLoading || _transactionProofUrl == null)
-                          ? null
-                          : _submitSale,
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          'Submit Order',
-                          style: GoogleFonts.outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                    // ── Submit ────────────────────────────────────────────────────
+                    SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: color,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          elevation: 2,
+                          shadowColor: color.withValues(alpha: 0.3),
                         ),
+                        onPressed:
+                            (_isLoading || _transactionProofUrl == null)
+                                ? null
+                                : _submitSale,
+                        child: _isLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                'Submit Order',
+                                style: GoogleFonts.outfit(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 

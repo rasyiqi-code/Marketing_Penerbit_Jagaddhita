@@ -2,6 +2,7 @@
 // Jalankan: dart run tool/test_r2_upload.dart
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:minio/minio.dart';
 
@@ -13,10 +14,10 @@ const _region     = 'auto';
 const _publicUrl  = 'https://pub-98de0967b7d448d0a10dbaf9f62e0bb2.r2.dev';
 
 void main() async {
-  print('🔄 Menghubungkan ke Cloudflare R2...');
-  print('   Endpoint : $_endpoint');
-  print('   Bucket   : $_bucket');
-  print('');
+  stdout.writeln('🔄 Menghubungkan ke Cloudflare R2...');
+  stdout.writeln('   Endpoint : $_endpoint');
+  stdout.writeln('   Bucket   : $_bucket');
+  stdout.writeln('');
 
   final minio = Minio(
     endPoint: _endpoint,
@@ -29,9 +30,9 @@ void main() async {
   // ── 1. Cek bucket exists ──────────────────────────────────────────────────
   try {
     await minio.bucketExists(_bucket);
-    print('✅ Bucket "$_bucket" ditemukan');
+    stdout.writeln('✅ Bucket "$_bucket" ditemukan');
   } catch (e) {
-    print('❌ Bucket tidak ditemukan: $e');
+    stderr.writeln('❌ Bucket tidak ditemukan: $e');
     return;
   }
 
@@ -42,26 +43,26 @@ void main() async {
   final stream     = Stream<Uint8List>.value(bytes);
 
   try {
-    print('🔄 Mengupload file test...');
+    stdout.writeln('🔄 Mengupload file test...');
     await minio.putObject(_bucket, objectName, stream, size: bytes.length);
     final publicFileUrl = '$_publicUrl/$objectName';
-    print('✅ Upload berhasil!');
-    print('   URL : $publicFileUrl');
+    stdout.writeln('✅ Upload berhasil!');
+    stdout.writeln('   URL : $publicFileUrl');
   } catch (e) {
-    print('❌ Upload gagal: $e');
+    stderr.writeln('❌ Upload gagal: $e');
     return;
   }
 
   // ── 3. Verifikasi file ada di bucket ──────────────────────────────────────
   try {
     final stat = await minio.statObject(_bucket, objectName);
-    print('✅ File terverifikasi di R2:');
-    print('   Size         : ${stat.size} bytes');
-    print('   Last Modified: ${stat.lastModified}');
+    stdout.writeln('✅ File terverifikasi di R2:');
+    stdout.writeln('   Size         : ${stat.size} bytes');
+    stdout.writeln('   Last Modified: ${stat.lastModified}');
   } catch (e) {
-    print('⚠️  Verifikasi gagal (tapi upload mungkin berhasil): $e');
+    stderr.writeln('⚠️  Verifikasi gagal (tapi upload mungkin berhasil): $e');
   }
 
-  print('');
-  print('🎉 Cloudflare R2 integration berjalan dengan baik!');
+  stdout.writeln('');
+  stdout.writeln('🎉 Cloudflare R2 integration berjalan dengan baik!');
 }

@@ -80,7 +80,7 @@ class CommissionSettingsCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: DropdownButtonFormField<String>(
-                value: discountCalculationMethod,
+                initialValue: discountCalculationMethod,
                 decoration: const InputDecoration(
                   labelText: 'Metode Perhitungan Tier',
                   prefixIcon: Icon(Icons.calculate_rounded),

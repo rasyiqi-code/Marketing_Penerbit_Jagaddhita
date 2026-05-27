@@ -81,7 +81,7 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -98,80 +98,93 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                 ),
                 decoration: BoxDecoration(
                   color: isEligible && !isBonusLimitReached
-                      ? Colors.green.withOpacity(0.1)
-                      : AppTheme.primaryColor.withOpacity(0.05),
+                      ? Colors.green.withValues(alpha: 0.1)
+                      : AppTheme.primaryColor.withValues(alpha: 0.05),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10),
                   ),
                 ),
-                child: Row(
+                child: Column(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Icon(
-                        isEligible && !isBonusLimitReached
-                            ? Icons.verified_rounded
-                            : Icons.verified_user_outlined,
-                        color: isEligible && !isBonusLimitReached
-                            ? Colors.green
-                            : AppTheme.primaryColor,
-                        size: 18,
-                      ),
+                          child: Icon(
+                            isEligible && !isBonusLimitReached
+                                ? Icons.verified_rounded
+                                : Icons.verified_user_outlined,
+                            color: isEligible && !isBonusLimitReached
+                                ? Colors.green
+                                : AppTheme.primaryColor,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Status Kelayakan Bonus',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
+                              Text(
+                                'Periode: ${DateFormat('MMMM yyyy', 'id_ID').format(DateTime.now())}',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              if (isBonusLimitReached)
+                                Text(
+                                  'Bonus bulan ini sudah diterima',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 11,
+                                    color: isDark ? Colors.orange[300] : Colors.orange[800],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
+                              else if (isEligible)
+                                Text(
+                                  'Selamat! Anda berhak klaim bonus.',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 11,
+                                    color: isDark ? Colors.green[300] : Colors.green[700],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    if (isEligible && !isBonusLimitReached) ...[
+                      const SizedBox(height: 10),
+                      Row(
                         children: [
-                          Text(
-                            'Status Kelayakan Bonus',
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                          Text(
-                            'Periode: ${DateFormat('MMMM yyyy', 'id_ID').format(DateTime.now())}',
-                            style: GoogleFonts.outfit(
-                              fontSize: 11,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          if (isBonusLimitReached)
-                            Text(
-                              'Bonus bulan ini sudah diterima',
-                              style: GoogleFonts.outfit(
-                                fontSize: 11,
-                                color: isDark ? Colors.orange[300] : Colors.orange[800],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
-                          else if (isEligible)
-                            Text(
-                              'Selamat! Anda berhak klaim bonus.',
-                              style: GoogleFonts.outfit(
-                                fontSize: 11,
-                                color: isDark ? Colors.green[300] : Colors.green[700],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                          Expanded(child: Container(height: 2, color: AppTheme.secondaryColor)),
+                          Expanded(child: Container(height: 2, color: Colors.white)),
                         ],
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
@@ -215,7 +228,7 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                           color: isDark ? const Color(0xFF1E293B) : Colors.black.withValues(alpha: 0.03),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withValues(alpha: 0.08),
+                            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.08),
                           ),
                         ),
                         child: Column(
@@ -251,7 +264,7 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
                         color: isDark ? const Color(0xFF1E293B) : Colors.black.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withValues(alpha: 0.05),
+                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
                         ),
                       ),
                       child: Row(
@@ -305,7 +318,7 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Icon(icon, color: color, size: 16),
@@ -337,7 +350,26 @@ class _BonusEligibilityCardState extends State<BonusEligibilityCard> {
               ),
             ),
             if (isMet)
-              const Icon(Icons.check_circle, color: AppTheme.primaryColor, size: 18),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 18),
+                  const SizedBox(width: 4),
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                    ),
+                    child: Column(
+                      children: [
+                        Expanded(child: Container(color: AppTheme.secondaryColor)),
+                        Expanded(child: Container(color: Colors.white)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
         const SizedBox(height: 8),

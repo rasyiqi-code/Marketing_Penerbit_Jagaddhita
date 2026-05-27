@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
@@ -9,6 +10,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notifi
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/storage_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/laporan_excel_exporter.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/pelunasan_dialog.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/sale_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/sale_detail_sheet.dart';
@@ -145,6 +147,37 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
         appBar: AppBar(
           title: const Text('Riwayat Aktivitas'),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.description_outlined),
+              tooltip: 'Export Excel',
+              onPressed: () async {
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+                scaffoldMessenger.showSnackBar(
+                  const SnackBar(content: Text('Mengekspor laporan penjualan ke Excel...')),
+                );
+                try {
+                  final list = await salesService.getUserSales(_userId!, limit: 500).first;
+                  if (list.isEmpty) {
+                    scaffoldMessenger.showSnackBar(
+                      const SnackBar(content: Text('Tidak ada data penjualan untuk diekspor')),
+                    );
+                    return;
+                  }
+                  final fileDate = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+                  await LaporanExcelExporter.exportSalesToExcel(
+                    list,
+                    fileName: 'Laporan_Penjualan_$fileDate.xlsx',
+                    isAdmin: false,
+                  );
+                } catch (e) {
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('Gagal mengekspor Excel: $e')),
+                  );
+                }
+              },
+            ),
+          ],
           bottom: const TabBar(
             tabs: [
               Tab(text: 'Penjualan'),

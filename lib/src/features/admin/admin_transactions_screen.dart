@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/laporan_excel_exporter.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction_card.dart';
 
 class AdminTransactionsScreen extends StatefulWidget {
@@ -61,6 +63,42 @@ class _AdminTransactionsScreenState extends State<AdminTransactionsScreen> {
         backgroundColor: AppTheme.primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.description_outlined),
+            tooltip: 'Export Excel',
+            onPressed: () async {
+              final salesService = Provider.of<SalesService>(context, listen: false);
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+              scaffoldMessenger.showSnackBar(
+                const SnackBar(content: Text('Mengekspor semua transaksi ke Excel...')),
+              );
+              try {
+                final list = await salesService.getSales(
+                  houseType: 1,
+                  status: _selectedStatus,
+                  limit: 1000,
+                ).first;
+                
+                if (list.isEmpty) {
+                  scaffoldMessenger.showSnackBar(
+                    const SnackBar(content: Text('Tidak ada transaksi untuk diekspor')),
+                  );
+                  return;
+                }
+                
+                final fileDate = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+                await LaporanExcelExporter.exportSalesToExcel(
+                  list,
+                  fileName: 'Laporan_Admin_Penjualan_$fileDate.xlsx',
+                  isAdmin: true,
+                );
+              } catch (e) {
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(content: Text('Gagal mengekspor Excel: $e')),
+                );
+              }
+            },
+          ),
           PopupMenuButton<String?>(
             icon: const Icon(Icons.filter_list),
             onSelected: (value) => setState(() {

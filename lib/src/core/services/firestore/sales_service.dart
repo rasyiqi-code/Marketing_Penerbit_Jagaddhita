@@ -501,7 +501,7 @@ class SalesService extends BaseFirestoreService {
       double total = 0;
 
       for (var doc in snapshot.docs) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data();
         if (data['payment_status'] != SaleModel.statusCanceled) {
           count++;
           total += (data['total_price'] ?? 0) as num;

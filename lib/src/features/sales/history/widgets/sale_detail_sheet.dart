@@ -5,6 +5,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_timeline.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/faktur_view.dart';
 
 /// Full-detail bottom sheet untuk satu transaksi penjualan.
 void showSaleDetailModal(BuildContext context, SaleModel sale) {
@@ -24,9 +25,10 @@ class SaleDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isComplete = sale.paymentStatus == 'COMPLETE';
+    final sisaTagihan = sale.totalPrice - sale.paidAmount;
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.85,
+      height: MediaQuery.of(context).size.height * 0.88,
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
@@ -35,7 +37,7 @@ class SaleDetailSheet extends StatelessWidget {
         children: [
           // Drag handle
           Container(
-            margin: const EdgeInsets.only(top: 12, bottom: 20),
+            margin: const EdgeInsets.only(top: 12, bottom: 16),
             width: 40,
             height: 4,
             decoration: BoxDecoration(
@@ -58,7 +60,32 @@ class SaleDetailSheet extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
+
+                  // ── Action: Lihat Faktur Button ───────────────────────
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => FakturView(sale: sale)),
+                      );
+                    },
+                    icon: const Icon(Icons.receipt_long_rounded, size: 20),
+                    label: Text(
+                      'Lihat Faktur Penjualan',
+                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(46),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 12),
 
                   // ── Identitas transaksi ───────────────────────────────
                   _DetailRow('ID Transaksi',
@@ -68,14 +95,45 @@ class SaleDetailSheet extends StatelessWidget {
                   _DetailRow('Status', sale.paymentStatus),
                   _DetailRow('Total Transaksi',
                       AppFormatters.currency(sale.totalPrice)),
-                  const Divider(height: 32),
+                  _DetailRow('Jumlah Bayar',
+                      AppFormatters.currency(sale.paidAmount)),
+                  _DetailRow('Sisa Tagihan',
+                      AppFormatters.currency(sisaTagihan)),
+                  
+                  const Divider(height: 24),
+
+                  // ── Customer Details ──────────────────────────────────
+                  const Text('Info Pelanggan',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  _DetailRow('Nama Customer', sale.customerName),
+                  _DetailRow('No. HP Customer', sale.customerPhone),
+
+                  const Divider(height: 24),
 
                   // ── Item ─────────────────────────────────────────────
                   const Text('Rincian Item',
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
-                  _DetailRow('Produk',
-                      sale.details['product_name'] ?? '-'),
+                  
+                  if (sale.productNames.isNotEmpty)
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: sale.productNames.length,
+                      itemBuilder: (context, idx) {
+                        final name = sale.productNames[idx];
+                        final price = sale.productPrices.length > idx ? sale.productPrices[idx] : 0.0;
+                        final qty = sale.productQuantities.length > idx ? sale.productQuantities[idx] : 1;
+                        return _DetailRow(
+                          '$name (x$qty)',
+                          AppFormatters.currency(price * qty),
+                        );
+                      },
+                    )
+                  else
+                    _DetailRow('Produk', sale.details['product_name'] ?? '-'),
+
                   if (sale.details['marketing_category'] != null &&
                       sale.details['marketing_category'] != 'none')
                     _DetailRow(
@@ -87,16 +145,8 @@ class SaleDetailSheet extends StatelessWidget {
                   // Legacy fields (backward-compat for old orders)
                   if (sale.details['sekolah'] != null)
                     _DetailRow('Sekolah Tujuan', sale.details['sekolah']),
-                  if (sale.details['nama_pemesan'] != null)
-                    _DetailRow(
-                        'Nama Pemesan', sale.details['nama_pemesan']),
-                  if (sale.details['alamat_pengiriman'] != null)
-                    _DetailRow(
-                        'Alamat Kirim', sale.details['alamat_pengiriman']),
-                  if (sale.details['telepon_penerima'] != null)
-                    _DetailRow('Telp', sale.details['telepon_penerima']),
 
-                  const Divider(height: 32),
+                  const Divider(height: 24),
 
                   // ── Bukti ─────────────────────────────────────────────
                   if (sale.transactionProofUrl != null) ...[
@@ -120,7 +170,7 @@ class SaleDetailSheet extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Divider(height: 32),
+                    const Divider(height: 24),
                   ],
 
                   // ── Agen ─────────────────────────────────────────────
@@ -133,7 +183,7 @@ class SaleDetailSheet extends StatelessWidget {
                         sale.details['buyer_name'] ??
                         '-',
                   ),
-                  const Divider(height: 32),
+                  const Divider(height: 24),
 
                   // ── Pendapatan ────────────────────────────────────────
                   Container(
@@ -200,7 +250,7 @@ class SaleDetailSheet extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
 
                   // ── Timeline ──────────────────────────────────────────
                   TransactionTimeline(history: sale.history),

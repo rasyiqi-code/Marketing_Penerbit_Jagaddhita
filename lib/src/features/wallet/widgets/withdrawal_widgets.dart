@@ -22,9 +22,9 @@ class WithdrawalAllowedDayWarning extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.red.withOpacity(0.2)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -73,7 +73,7 @@ class WithdrawalBalanceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: (isBank ? Colors.blue : Colors.orange).withOpacity(0.2),
+            color: (isBank ? Colors.blue : Colors.orange).withValues(alpha: 0.2),
             offset: const Offset(0, 4),
             blurRadius: 10,
           ),

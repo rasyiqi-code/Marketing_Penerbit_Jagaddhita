@@ -45,7 +45,7 @@ class LinkBioHeaderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryColor.withOpacity(0.3),
+            color: AppTheme.primaryColor.withValues(alpha: 0.3),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -93,10 +93,11 @@ class LinkBioHeaderCard extends StatelessWidget {
                     constraints: const BoxConstraints(),
                     padding: EdgeInsets.zero,
                     onPressed: () async {
-                      // ignore: deprecated_member_use
-                      await Share.share(
-                        'Check out my bio: $bioUrl',
-                        subject: 'My Jagaddhita Bio',
+                      await SharePlus.instance.share(
+                        ShareParams(
+                          text: 'Check out my bio: $bioUrl',
+                          subject: 'My Jagaddhita Bio',
+                        ),
                       );
                     },
                     icon: const Icon(
@@ -145,7 +146,7 @@ class LinkBioHeaderCard extends StatelessWidget {
               vertical: 4,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Row(
@@ -249,10 +250,10 @@ class LinkBioSocialForm extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             margin: const EdgeInsets.only(bottom: 8),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(isDark ? 0.15 : 0.05),
+              color: AppTheme.primaryColor.withValues(alpha: isDark ? 0.15 : 0.05),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: AppTheme.primaryColor.withOpacity(isDark ? 0.3 : 0.15),
+                color: AppTheme.primaryColor.withValues(alpha: isDark ? 0.3 : 0.15),
               ),
             ),
             child: Row(
@@ -260,7 +261,7 @@ class LinkBioSocialForm extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.1),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -498,7 +499,7 @@ class LinkBioCustomLinkCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+          color: Theme.of(context).dividerColor.withValues(alpha: isDark ? 0.05 : 0.1),
         ),
       ),
       child: ListTile(
@@ -506,7 +507,7 @@ class LinkBioCustomLinkCard extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withOpacity(0.1),
+            color: AppTheme.primaryColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(icon, color: AppTheme.primaryColor, size: 18),

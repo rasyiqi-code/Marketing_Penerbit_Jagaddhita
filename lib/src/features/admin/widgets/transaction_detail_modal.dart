@@ -6,6 +6,8 @@ import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_timeline.dart';
 
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/faktur_view.dart';
+
 class TransactionDetailModal extends StatelessWidget {
   final SaleModel sale;
 
@@ -30,7 +32,7 @@ class TransactionDetailModal extends StatelessWidget {
     final dateFormat = DateFormat('dd MMM yyyy, HH:mm');
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.65,
+      height: MediaQuery.of(context).size.height * 0.85,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -102,6 +104,31 @@ class TransactionDetailModal extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ── Action: Lihat Faktur Button ───────────────────────
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => FakturView(sale: sale)),
+                      );
+                    },
+                    icon: const Icon(Icons.receipt_long_rounded, size: 18),
+                    label: Text(
+                      'Lihat Faktur Penjualan',
+                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(42),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      elevation: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  const SizedBox(height: 12),
+
                   _buildDetailRow(
                     context,
                     'Tanggal',
@@ -109,9 +136,35 @@ class TransactionDetailModal extends StatelessWidget {
                   ),
                   _buildDetailRow(
                     context,
-                    'Produk',
-                    sale.details['product_name'] ?? 'Unknown Product',
+                    'Customer',
+                    '${sale.customerName} (${sale.customerPhone})',
                   ),
+                  const Divider(height: 12),
+                  const Text('Daftar Buku', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  const SizedBox(height: 6),
+                  if (sale.productNames.isNotEmpty)
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: sale.productNames.length,
+                      itemBuilder: (context, idx) {
+                        final name = sale.productNames[idx];
+                        final price = sale.productPrices.length > idx ? sale.productPrices[idx] : 0.0;
+                        final qty = sale.productQuantities.length > idx ? sale.productQuantities[idx] : 1;
+                        return _buildDetailRow(
+                          context,
+                          '$name (x$qty)',
+                          currencyFormat.format(price * qty),
+                        );
+                      },
+                    )
+                  else
+                    _buildDetailRow(
+                      context,
+                      'Produk',
+                      sale.details['product_name'] ?? 'Unknown Product',
+                    ),
+                  const Divider(height: 12),
                   if (sale.details['sekolah'] != null)
                     _buildDetailRow(
                       context,

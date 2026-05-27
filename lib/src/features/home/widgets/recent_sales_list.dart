@@ -63,7 +63,7 @@ class RecentSalesList extends StatelessWidget {
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+                    color: Theme.of(context).dividerColor.withValues(alpha: isDark ? 0.05 : 0.1),
                   ),
                 ),
                 child: Center(
@@ -111,11 +111,11 @@ class RecentSalesList extends StatelessWidget {
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: Theme.of(context).dividerColor.withOpacity(isDark ? 0.05 : 0.1),
+                      color: Theme.of(context).dividerColor.withValues(alpha: isDark ? 0.05 : 0.1),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                        color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -127,7 +127,7 @@ class RecentSalesList extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: statusColor.withOpacity(0.1),
+                          color: statusColor.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(statusIcon, color: statusColor, size: 16),

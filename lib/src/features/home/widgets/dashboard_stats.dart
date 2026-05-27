@@ -124,7 +124,7 @@ class DashboardStats extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: gradient.colors.first.withOpacity(0.3),
+            color: gradient.colors.first.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -137,7 +137,7 @@ class DashboardStats extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: Colors.white, size: 16),
@@ -149,7 +149,7 @@ class DashboardStats extends StatelessWidget {
                 title,
                 style: GoogleFonts.outfit(
                   fontSize: 11,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w500,
                 ),
               ),

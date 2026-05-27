@@ -125,14 +125,22 @@ class UserService extends BaseFirestoreService {
         double percent = 0;
         
         if (settings.discountCalculationMethod == 'manual') {
-          if (marketingCategory == 'premium') percent = settings.premiumCommissionPercentJagaddhita;
-          else if (marketingCategory == 'platinum') percent = settings.platinumCommissionPercentJagaddhita;
-          else if (marketingCategory == 'gold') percent = settings.goldCommissionPercentJagaddhita;
+          if (marketingCategory == 'premium') {
+            percent = settings.premiumCommissionPercentJagaddhita;
+          } else if (marketingCategory == 'platinum') {
+            percent = settings.platinumCommissionPercentJagaddhita;
+          } else if (marketingCategory == 'gold') {
+            percent = settings.goldCommissionPercentJagaddhita;
+          }
         } else {
           // Fallback to per-transaction for retroactive correction
-          if (totalPrice >= settings.premiumThreshold) percent = settings.premiumCommissionPercentJagaddhita;
-          else if (totalPrice >= settings.platinumThreshold) percent = settings.platinumCommissionPercentJagaddhita;
-          else if (totalPrice >= settings.goldThreshold) percent = settings.goldCommissionPercentJagaddhita;
+          if (totalPrice >= settings.premiumThreshold) {
+            percent = settings.premiumCommissionPercentJagaddhita;
+          } else if (totalPrice >= settings.platinumThreshold) {
+            percent = settings.platinumCommissionPercentJagaddhita;
+          } else if (totalPrice >= settings.goldThreshold) {
+            percent = settings.goldCommissionPercentJagaddhita;
+          }
         }
 
         if (percent > 0) {
