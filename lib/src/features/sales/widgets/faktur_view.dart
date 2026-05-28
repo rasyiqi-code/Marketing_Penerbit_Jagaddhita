@@ -94,13 +94,7 @@ class _FakturViewState extends State<FakturView> {
 
     final sisa = widget.sale.totalPrice - widget.sale.paidAmount;
     buffer.writeln('------------------------------------------');
-    buffer.writeln('Total Bruto  : ${AppFormatters.currency(widget.sale.totalPrice)}');
-    buffer.writeln(
-      'Diskon/Komisi: ${AppFormatters.currency(widget.sale.commissionAmount)}',
-    );
-    buffer.writeln(
-      'Total Netto  : ${AppFormatters.currency(widget.sale.totalPrice - widget.sale.commissionAmount)}',
-    );
+    buffer.writeln('Total Harga  : ${AppFormatters.currency(widget.sale.totalPrice)}');
     buffer.writeln('Jumlah Bayar : ${AppFormatters.currency(widget.sale.paidAmount)}');
     buffer.writeln('Sisa Tagihan : ${AppFormatters.currency(sisa)}');
     buffer.writeln('------------------------------------------');

@@ -641,16 +641,7 @@ Future<Uint8List> generateFakturPdf(SaleModel sale, GlobalSettingsModel? setting
                         flex: 9,
                         child: pw.Column(
                           children: [
-                            _pdfSummaryRow('Subtotal (Total Bruto)', sale.totalPrice),
-                            _pdfSummaryRow(
-                              'Discount (Komisi Agen)',
-                              sale.commissionAmount,
-                              isDiscount: true,
-                            ),
-                            _pdfSummaryRow(
-                              'Total Netto',
-                              sale.totalPrice - sale.commissionAmount,
-                            ),
+                            _pdfSummaryRow('Total Harga', sale.totalPrice),
                             _pdfSummaryRow(
                               'Paid (Jumlah Dibayar)',
                               sale.paidAmount,

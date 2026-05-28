@@ -596,16 +596,7 @@ class FakturPrintableSheet extends StatelessWidget {
                       flex: 9,
                       child: Column(
                         children: [
-                          _summaryRow('Subtotal (Total Bruto)', sale.totalPrice),
-                          _summaryRow(
-                            'Discount (Komisi Agen)',
-                            sale.commissionAmount,
-                            isDiscount: true,
-                          ),
-                          _summaryRow(
-                            'Total Netto',
-                            sale.totalPrice - sale.commissionAmount,
-                          ),
+                          _summaryRow('Total Harga', sale.totalPrice),
                           _summaryRow(
                             'Paid (Jumlah Dibayar)',
                             sale.paidAmount,
