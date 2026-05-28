@@ -42,6 +42,16 @@ class GlobalSettingsModel {
   // Withdrawal Schedule
   final List<int> allowedWithdrawalDays; // 1 = Mon, 7 = Sun
 
+  final String publisherName;
+  final String publisherSlogan;
+
+  // Dynamic invoice fields
+  final String invoiceBankName;
+  final String invoiceBankAccountNo;
+  final String invoiceBankAccountName;
+  final String invoiceContactPhone;
+  final String invoiceContactEmail;
+
   GlobalSettingsModel({
     required this.bonusPercentR1,
     required this.minPayout,
@@ -69,6 +79,13 @@ class GlobalSettingsModel {
     this.enableMinCompletedSalesLimit = false,
     this.minCompletedSalesCount = 5,
     this.enableMinSalesLimit = true,
+    this.publisherName = 'Penerbit Jagaddhita',
+    this.publisherSlogan = 'Edukasi Bangsa',
+    this.invoiceBankName = 'BCA',
+    this.invoiceBankAccountNo = '1234-5678-910',
+    this.invoiceBankAccountName = 'Penerbit Jagaddhita',
+    this.invoiceContactPhone = '+62 822-8493-2038',
+    this.invoiceContactEmail = 'info@jagaddhita.id',
   });
 
   factory GlobalSettingsModel.fromMap(Map<String, dynamic> data) {
@@ -102,6 +119,13 @@ class GlobalSettingsModel {
       enableMinCompletedSalesLimit: data['enable_min_completed_sales_limit'] ?? false,
       minCompletedSalesCount: data['min_completed_sales_count'] ?? 5,
       enableMinSalesLimit: data['enable_min_sales_limit'] ?? true,
+      publisherName: data['publisher_name'] ?? 'Penerbit Jagaddhita',
+      publisherSlogan: data['publisher_slogan'] ?? 'Edukasi Bangsa',
+      invoiceBankName: data['invoice_bank_name'] ?? 'BCA',
+      invoiceBankAccountNo: data['invoice_bank_account_no'] ?? '1234-5678-910',
+      invoiceBankAccountName: data['invoice_bank_account_name'] ?? 'Penerbit Jagaddhita',
+      invoiceContactPhone: data['invoice_contact_phone'] ?? '+62 822-8493-2038',
+      invoiceContactEmail: data['invoice_contact_email'] ?? 'info@jagaddhita.id',
     );
   }
 
@@ -133,6 +157,13 @@ class GlobalSettingsModel {
       'enable_min_completed_sales_limit': enableMinCompletedSalesLimit,
       'min_completed_sales_count': minCompletedSalesCount,
       'enable_min_sales_limit': enableMinSalesLimit,
+      'publisher_name': publisherName,
+      'publisher_slogan': publisherSlogan,
+      'invoice_bank_name': invoiceBankName,
+      'invoice_bank_account_no': invoiceBankAccountNo,
+      'invoice_bank_account_name': invoiceBankAccountName,
+      'invoice_contact_phone': invoiceContactPhone,
+      'invoice_contact_email': invoiceContactEmail,
     };
   }
 }

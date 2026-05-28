@@ -40,6 +40,13 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   late TextEditingController _webBaseUrlController;
   late TextEditingController _maxPulsaBonusCountController;
   late TextEditingController _minCompletedSalesCountController;
+  late TextEditingController _publisherNameController;
+  late TextEditingController _publisherSloganController;
+  late TextEditingController _invoiceBankNameController;
+  late TextEditingController _invoiceBankAccountNoController;
+  late TextEditingController _invoiceBankAccountNameController;
+  late TextEditingController _invoiceContactPhoneController;
+  late TextEditingController _invoiceContactEmailController;
 
   // Progressive settings removed
 
@@ -74,6 +81,13 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
     _webBaseUrlController = TextEditingController();
     _maxPulsaBonusCountController = TextEditingController();
     _minCompletedSalesCountController = TextEditingController();
+    _publisherNameController = TextEditingController();
+    _publisherSloganController = TextEditingController();
+    _invoiceBankNameController = TextEditingController();
+    _invoiceBankAccountNoController = TextEditingController();
+    _invoiceBankAccountNameController = TextEditingController();
+    _invoiceContactPhoneController = TextEditingController();
+    _invoiceContactEmailController = TextEditingController();
     // Progressive controllers removed
     _loadSettings();
   }
@@ -103,6 +117,13 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
               settings.minPulsaWithdrawal.toStringAsFixed(0);
           _latestInfoController.text = settings.latestInfo;
           _webBaseUrlController.text = settings.webBaseUrl;
+          _publisherNameController.text = settings.publisherName;
+          _publisherSloganController.text = settings.publisherSlogan;
+          _invoiceBankNameController.text = settings.invoiceBankName;
+          _invoiceBankAccountNoController.text = settings.invoiceBankAccountNo;
+          _invoiceBankAccountNameController.text = settings.invoiceBankAccountName;
+          _invoiceContactPhoneController.text = settings.invoiceContactPhone;
+          _invoiceContactEmailController.text = settings.invoiceContactEmail;
 
           _enableR1 = settings.enableR1;
           _enableR1Commission = settings.enableR1Commission;
@@ -156,6 +177,13 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
         allowedWithdrawalDays: _allowedWithdrawalDays,
         latestInfo: _latestInfoController.text,
         webBaseUrl: _webBaseUrlController.text,
+        publisherName: _publisherNameController.text,
+        publisherSlogan: _publisherSloganController.text,
+        invoiceBankName: _invoiceBankNameController.text,
+        invoiceBankAccountNo: _invoiceBankAccountNoController.text,
+        invoiceBankAccountName: _invoiceBankAccountNameController.text,
+        invoiceContactPhone: _invoiceContactPhoneController.text,
+        invoiceContactEmail: _invoiceContactEmailController.text,
         enableMaxPulsaBonusLimit: _enableMaxPulsaBonusLimit,
         maxPulsaBonusCount:
             int.tryParse(_maxPulsaBonusCountController.text) ?? 1,
@@ -266,6 +294,13 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
     _webBaseUrlController.dispose();
     _maxPulsaBonusCountController.dispose();
     _minCompletedSalesCountController.dispose();
+    _publisherNameController.dispose();
+    _publisherSloganController.dispose();
+    _invoiceBankNameController.dispose();
+    _invoiceBankAccountNoController.dispose();
+    _invoiceBankAccountNameController.dispose();
+    _invoiceContactPhoneController.dispose();
+    _invoiceContactEmailController.dispose();
     // Progressive fields removed
     super.dispose();
   }
@@ -304,6 +339,13 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                 AppearanceSettingsCard(
                   enableR1: _enableR1,
                   onR1Changed: (val) => setState(() => _enableR1 = val),
+                  publisherNameController: _publisherNameController,
+                  publisherSloganController: _publisherSloganController,
+                  bankNameController: _invoiceBankNameController,
+                  bankAccountNoController: _invoiceBankAccountNoController,
+                  bankAccountNameController: _invoiceBankAccountNameController,
+                  contactPhoneController: _invoiceContactPhoneController,
+                  contactEmailController: _invoiceContactEmailController,
                 ),
                 const SizedBox(height: 12),
                 const SettingsSectionHeader(

@@ -278,12 +278,21 @@ class _DetailRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
+          Expanded(
+            child: Text(
+              label,
               style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
-          Text(value,
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
         ],
       ),
     );

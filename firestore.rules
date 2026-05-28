@@ -18,10 +18,26 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.role == 'marketing'; // Default role
       allow update: if isAdmin() || (
-        isOwner(userId) && 
-        !request.resource.data.diff(resource.data).affectedKeys()
-          .hasAny(['role', 'commission_balance', 'pulsa_balance', 'markup_balance', 'pulsa_bonus_count', 'pulsa_bonus_month', 'last_pulsa_bonus_at', 'marketing_category', 'total_sales_count', 'total_commission_earned', 'total_pulsa_earned'])
-      ); // Users can update profile/bank details, but not their wallets or roles directly
+        isOwner(userId) && (
+          // Case 1: Editing profile/bank details, but not roles, stats, or wallets
+          (!request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['role', 'commission_balance', 'pulsa_balance', 'markup_balance', 'pulsa_bonus_count', 'pulsa_bonus_month', 'last_pulsa_bonus_at', 'marketing_category', 'total_sales_count', 'total_commission_earned', 'total_pulsa_earned']))
+          ||
+          // Case 2: Deducting wallet balances for claims (withdrawing)
+          (
+            // Ensure no other admin/stats/role keys are modified
+            !request.resource.data.diff(resource.data).affectedKeys()
+              .hasAny(['role', 'pulsa_bonus_count', 'pulsa_bonus_month', 'last_pulsa_bonus_at', 'marketing_category', 'total_sales_count', 'total_commission_earned', 'total_pulsa_earned']) &&
+            // Balances can only be decremented (withdrawn), not increased
+            (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['commission_balance']) || 
+              request.resource.data.commission_balance <= resource.data.get('commission_balance', 0)) &&
+            (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['markup_balance']) || 
+              request.resource.data.markup_balance <= resource.data.get('markup_balance', 0)) &&
+            (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['pulsa_balance']) || 
+              request.resource.data.pulsa_balance <= resource.data.get('pulsa_balance', 0))
+          )
+        )
+      );
       allow delete: if isAdmin();
     }
 
@@ -67,7 +83,8 @@ service cloud.firestore {
     // Wallet & Claims
     match /wallet_history/{historyId} {
       allow read: if isAdmin() || (request.auth != null && resource.data.user_id == request.auth.uid);
-      allow write: if isAdmin();
+      allow create: if request.auth != null && request.resource.data.user_id == request.auth.uid;
+      allow update, delete: if isAdmin();
     }
 
     match /claims/{claimId} {

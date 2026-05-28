@@ -500,33 +500,21 @@ class _CatalogModalState extends State<_CatalogModal> {
                               color: widget.color,
                             ),
                             const SizedBox(height: 12),
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics:
-                                  const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 220,
-                                crossAxisSpacing: 12,
-                                mainAxisSpacing: 12,
-                                childAspectRatio: 0.72,
-                              ),
-                              itemCount: _jagaddhitaFiltered.length,
-                              itemBuilder: (_, i) {
-                                final product =
-                                    _jagaddhitaFiltered[i];
-                                final isPicked =
-                                    _pickedIds.contains(product.id);
-                                return _ProductCard(
-                                  product: product,
-                                  isSelected: isPicked,
-                                  isMultiSelectMode: _isMultiSelectMode,
-                                  color: widget.color,
-                                  onTap: () => _handleTap(product),
-                                  onLongPress: () =>
-                                      _handleLongPress(product),
+                            Column(
+                              children: _jagaddhitaFiltered.map((product) {
+                                final isPicked = _pickedIds.contains(product.id);
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: _ProductCard(
+                                    product: product,
+                                    isSelected: isPicked,
+                                    isMultiSelectMode: _isMultiSelectMode,
+                                    color: widget.color,
+                                    onTap: () => _handleTap(product),
+                                    onLongPress: () => _handleLongPress(product),
+                                  ),
                                 );
-                              },
+                              }).toList(),
                             ),
                           ],
                           // ── Buku SIBI Section ────────────────────────
@@ -539,32 +527,21 @@ class _CatalogModalState extends State<_CatalogModal> {
                               color: Colors.indigo,
                             ),
                             const SizedBox(height: 12),
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics:
-                                  const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 220,
-                                crossAxisSpacing: 12,
-                                mainAxisSpacing: 12,
-                                childAspectRatio: 0.72,
-                              ),
-                              itemCount: _sibiFiltered.length,
-                              itemBuilder: (_, i) {
-                                final product = _sibiFiltered[i];
-                                final isPicked =
-                                    _pickedIds.contains(product.id);
-                                return _ProductCard(
-                                  product: product,
-                                  isSelected: isPicked,
-                                  isMultiSelectMode: _isMultiSelectMode,
-                                  color: Colors.indigo,
-                                  onTap: () => _handleTap(product),
-                                  onLongPress: () =>
-                                      _handleLongPress(product),
+                            Column(
+                              children: _sibiFiltered.map((product) {
+                                final isPicked = _pickedIds.contains(product.id);
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: _ProductCard(
+                                    product: product,
+                                    isSelected: isPicked,
+                                    isMultiSelectMode: _isMultiSelectMode,
+                                    color: Colors.indigo,
+                                    onTap: () => _handleTap(product),
+                                    onLongPress: () => _handleLongPress(product),
+                                  ),
                                 );
-                              },
+                              }).toList(),
                             ),
                           ],
                         ],
@@ -727,7 +704,7 @@ class _ProductCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? color
@@ -752,162 +729,193 @@ class _ProductCard extends StatelessWidget {
                   )
                 ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Product Image ────────────────────────────────────
-            Expanded(
-              flex: 5,
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(9)),
-                    child: (() {
-                          final imgUrl = (product.imageUrl != null && product.imageUrl!.isNotEmpty)
-                              ? product.imageUrl!
-                              : (product.marketingKitUrl != null && product.marketingKitUrl!.isNotEmpty)
-                                  ? product.marketingKitUrl!
-                                  : null;
-                          return imgUrl != null
-                              ? NetworkImageWeb(
-                                  imageUrl: imgUrl,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorWidget: _PlaceholderImage(color: color),
-                                )
-                              : _PlaceholderImage(color: color);
-                        })()
-                  ),
-
-                  // Multi‑select checkbox overlay
-                  if (isMultiSelectMode)
-                    Positioned(
-                      top: 8,
-                      left: 8,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          color: isSelected ? color : Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: isSelected
-                                  ? color
-                                  : (isDark
-                                      ? Colors.white.withValues(alpha: 0.4)
-                                      : Colors.black.withValues(alpha: 0.3)),
-                              width: 2),
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  Colors.black.withValues(alpha: 0.15),
-                              blurRadius: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Book Cover Image on Left with checkmark stacks
+              SizedBox(
+                width: 75,
+                height: 100,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      _buildCover(product, color),
+                      
+                      // Multi-select checkbox overlay
+                      if (isMultiSelectMode)
+                        Positioned(
+                          top: 6,
+                          left: 6,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: 22,
+                            height: 22,
+                            decoration: BoxDecoration(
+                              color: isSelected ? color : Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: isSelected
+                                      ? color
+                                      : (isDark
+                                          ? Colors.white.withValues(alpha: 0.4)
+                                          : Colors.black.withValues(alpha: 0.3)),
+                                  width: 2),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.15),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: isSelected
-                            ? const Icon(Icons.check_rounded,
-                                color: Colors.white, size: 16)
-                            : null,
-                      ),
-                    ),
-
-                  // Selected checkmark (non‑multi mode)
-                  if (!isMultiSelectMode && isSelected)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: color.withValues(alpha: 0.4),
-                              blurRadius: 8,
-                            ),
-                          ],
-                        ),
-                        child: const Icon(Icons.check_rounded,
-                            color: Colors.white, size: 14),
-                      ),
-                    ),
-
-                  // Category chip
-                  if (product.category.isNotEmpty)
-                    Positioned(
-                      bottom: 8,
-                      left: isMultiSelectMode ? 44 : 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color:
-                              Colors.black.withValues(alpha: 0.55),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          product.category,
-                          style: GoogleFonts.outfit(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            child: isSelected
+                                ? const Icon(Icons.check_rounded,
+                                    color: Colors.white, size: 14)
+                                : null,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
 
-            // ── Product Info ─────────────────────────────────────
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      product.name,
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? color
-                            : Theme.of(context)
-                                .colorScheme
-                                .onSurface,
-                        height: 1.3,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      AppFormatters.currency(product.price),
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: isSelected
-                            ? color
-                            : AppTheme.primaryColor,
-                      ),
-                    ),
-                  ],
+                      // Selected checkmark (non-multi mode)
+                      if (!isMultiSelectMode && isSelected)
+                        Positioned(
+                          top: 6,
+                          right: 6,
+                          child: Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: color.withValues(alpha: 0.4),
+                                  blurRadius: 6,
+                                ),
+                              ],
+                            ),
+                            child: const Icon(Icons.check_rounded,
+                                color: Colors.white, size: 12),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              
+              // Book Details on Right
+              Expanded(
+                child: SizedBox(
+                  height: 100,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.name,
+                            style: GoogleFonts.outfit(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: isSelected
+                                  ? color
+                                  : Theme.of(context).colorScheme.onSurface,
+                              height: 1.25,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            product.description,
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              height: 1.3,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                      
+                      // Rating & Price row
+                      Row(
+                        children: [
+                          Text(
+                            '4,9',
+                            style: GoogleFonts.outfit(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(width: 3),
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 14,
+                            color: Colors.amber,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            AppFormatters.currency(product.price),
+                            style: GoogleFonts.outfit(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: isSelected ? color : AppTheme.primaryColor,
+                            ),
+                          ),
+                          if (product.category.isNotEmpty) ...[
+                            const SizedBox(width: 8),
+                            // Category Badge
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: (isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.04)),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                product.category.toUpperCase(),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildCover(ProductModel book, Color fallbackColor) {
+    final imageUrl = (book.imageUrl != null && book.imageUrl!.isNotEmpty)
+        ? book.imageUrl!
+        : (book.marketingKitUrl != null && book.marketingKitUrl!.isNotEmpty)
+            ? book.marketingKitUrl!
+            : null;
+
+    if (imageUrl != null) {
+      return NetworkImageWeb(
+        imageUrl: imageUrl,
+        fit: BoxFit.cover,
+        errorWidget: _PlaceholderImage(color: fallbackColor),
+      );
+    }
+    return _PlaceholderImage(color: fallbackColor);
   }
 }
 

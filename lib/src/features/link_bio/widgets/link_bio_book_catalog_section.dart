@@ -127,40 +127,16 @@ class _BooksGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use a column of rows (2 per row) so cards auto-size to content — no dead space.
-    final rows = <Widget>[];
-    for (int i = 0; i < books.length; i += 2) {
-      final left = books[i];
-      final right = (i + 1 < books.length) ? books[i + 1] : null;
-      rows.add(
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: _BookCard(
-                  book: left,
-                  whatsappNumber: whatsappNumber,
-                  onSendWhatsApp: onSendWhatsApp,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: right != null
-                    ? _BookCard(
-                        book: right,
-                        whatsappNumber: whatsappNumber,
-                        onSendWhatsApp: onSendWhatsApp,
-                      )
-                    : const SizedBox(),
-              ),
-            ],
-          ),
+    return Column(
+      children: books.map((book) => Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: _BookCard(
+          book: book,
+          whatsappNumber: whatsappNumber,
+          onSendWhatsApp: onSendWhatsApp,
         ),
-      );
-      if (i + 2 < books.length) rows.add(const SizedBox(height: 10));
-    }
-    return Column(children: rows);
+      )).toList(),
+    );
   }
 }
 
@@ -198,12 +174,12 @@ class _BookCardState extends State<_BookCard> {
           curve: Curves.easeOut,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: _hovered ? 0.14 : 0.06),
-                blurRadius: _hovered ? 16 : 8,
-                offset: Offset(0, _hovered ? 6 : 2),
+                color: Colors.black.withValues(alpha: _hovered ? 0.12 : 0.05),
+                blurRadius: _hovered ? 12 : 6,
+                offset: Offset(0, _hovered ? 4 : 2),
               ),
             ],
             border: Border.all(
@@ -212,107 +188,108 @@ class _BookCardState extends State<_BookCard> {
                   : Colors.grey.withValues(alpha: 0.08),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Cover image with hover overlay
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                child: AspectRatio(
-                  aspectRatio: 3 / 4,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      _buildCover(widget.book),
-                      // Hover overlay: slides up from bottom
-                      AnimatedPositioned(
-                        duration: const Duration(milliseconds: 220),
-                        curve: Curves.easeOut,
-                        bottom: _hovered ? 0 : -60,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          height: 52,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [
-                                const Color(0xFF1E8449).withValues(alpha: 0.95),
-                                const Color(0xFF25D366).withValues(alpha: 0.85),
-                              ],
-                            ),
-                          ),
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.chat_bubble_outline_rounded,
-                                size: 14,
-                                color: Colors.white,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                'Pesan via WA',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Book Cover Image on Left
+                SizedBox(
+                  width: 75,
+                  height: 100,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: _buildCover(widget.book),
                   ),
                 ),
-              ),
-              // Info section
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      widget.book.category.toUpperCase(),
-                      style: GoogleFonts.outfit(
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryColor,
-                        letterSpacing: 0.3,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                const SizedBox(width: 12),
+                // Book Details on Right
+                Expanded(
+                  child: SizedBox(
+                    height: 100,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.book.name,
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                                height: 1.25,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              widget.book.description,
+                              style: GoogleFonts.outfit(
+                                fontSize: 11,
+                                color: Colors.black54,
+                                height: 1.3,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                        // Rating & Price row
+                        Row(
+                          children: [
+                            Text(
+                              '4,9',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            const Icon(
+                              Icons.star_rounded,
+                              size: 14,
+                              color: Colors.amber,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              AppFormatters.currency(widget.book.price),
+                              style: GoogleFonts.outfit(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF1A9E52),
+                              ),
+                            ),
+                            const Spacer(),
+                            // Small WhatsApp Icon indicator on the right
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: _hovered
+                                    ? const Color(0xFF25D366).withValues(alpha: 0.15)
+                                    : Colors.grey.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Icon(
+                                Icons.chat_bubble_outline_rounded,
+                                size: 12,
+                                color: _hovered
+                                    ? const Color(0xFF1E8449)
+                                    : Colors.black45,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 3),
-                    Text(
-                      widget.book.name,
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                        height: 1.3,
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      AppFormatters.currency(widget.book.price),
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF1A9E52),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
