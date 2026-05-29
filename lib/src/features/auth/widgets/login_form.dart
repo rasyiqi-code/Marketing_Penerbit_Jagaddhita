@@ -34,13 +34,19 @@ class LoginForm extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? Theme.of(context).cardColor.withValues(alpha: 0.95)
-            : Colors.white.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(10),
+            : Colors.white.withValues(alpha: 0.93),
+        borderRadius: BorderRadius.circular(12),
+        border: Border(
+          top: BorderSide(
+            color: AppTheme.secondaryColor,
+            width: 4,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -54,7 +60,7 @@ class LoginForm extends StatelessWidget {
               'Selamat Datang Kembali',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryColor,
+                    color: AppTheme.secondaryColor,
                   ),
               textAlign: TextAlign.center,
             ),

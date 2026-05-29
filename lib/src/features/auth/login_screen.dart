@@ -63,46 +63,60 @@ class _LoginScreenState extends State<LoginScreen>
       if (e.code == 'configuration-not-found' || e.code == '400') {
         _showWebConfigErrorDialog(e.message ?? 'Unknown configuration error');
       } else {
+        // Normalize kode error (Firebase web kadang pakai format berbeda)
+        final code = e.code.toLowerCase().replaceAll('auth/', '');
+        final msg = (e.message ?? '').toLowerCase();
+
         String message;
-        switch (e.code) {
-          case 'invalid-credential':
-          case 'wrong-password':
-            message = 'Email atau kata sandi salah. Jika akun Anda menggunakan Google Sign-In, silakan masuk dengan tombol "Masuk dengan Google" di bawah.';
-            break;
-          case 'user-not-found':
-            message = 'Email belum terdaftar. Silakan hubungi admin untuk didaftarkan atau masuk menggunakan Google jika sudah didaftarkan dengan Google.';
-            break;
-          case 'user-disabled':
-            message = 'Akun ini telah dinonaktifkan oleh administrator.';
-            break;
-          case 'too-many-requests':
-            message = 'Terlalu banyak percobaan masuk yang gagal. Silakan coba lagi beberapa saat lagi.';
-            break;
-          case 'invalid-email':
-            message = 'Format alamat email tidak valid.';
-            break;
-          case 'network-request-failed':
-            message = 'Koneksi internet bermasalah. Silakan periksa jaringan Anda dan coba lagi.';
-            break;
-          default:
-            message = e.message ?? 'Terjadi kesalahan saat masuk. Silakan coba lagi.';
+        if (code == 'invalid-credential' ||
+            code == 'wrong-password' ||
+            code == 'invalid-login-credentials' ||
+            code == 'invalid_login_credentials' ||
+            msg.contains('incorrect') ||
+            msg.contains('malformed') ||
+            msg.contains('expired') ||
+            msg.contains('invalid credential')) {
+          message =
+              'Email atau kata sandi salah. Jika akun Anda didaftarkan menggunakan Google, silakan gunakan tombol "Masuk dengan Google" di bawah.';
+        } else if (code == 'user-not-found' || msg.contains('no user record')) {
+          message =
+              'Email belum terdaftar. Silakan hubungi admin atau gunakan tombol "Masuk dengan Google" jika akun Anda didaftarkan via Google.';
+        } else if (code == 'user-disabled') {
+          message = 'Akun ini telah dinonaktifkan oleh administrator.';
+        } else if (code == 'too-many-requests' || msg.contains('too many')) {
+          message =
+              'Terlalu banyak percobaan masuk yang gagal. Silakan coba lagi beberapa saat lagi.';
+        } else if (code == 'invalid-email' || msg.contains('invalid email')) {
+          message = 'Format alamat email tidak valid.';
+        } else if (code == 'network-request-failed' ||
+            msg.contains('network')) {
+          message =
+              'Koneksi internet bermasalah. Silakan periksa jaringan Anda dan coba lagi.';
+        } else {
+          // Fallback: tetap tampilkan pesan ramah, tapi sertakan kode untuk debugging
+          message =
+              'Gagal masuk (${e.code}). Pastikan email dan kata sandi benar, atau gunakan "Masuk dengan Google".';
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               message,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             backgroundColor: AppTheme.secondaryColor,
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 6),
+            duration: const Duration(seconds: 7),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
           ),
         );
       }
+
     } catch (e) {
       if (!mounted) return;
 
@@ -260,33 +274,74 @@ class _LoginScreenState extends State<LoginScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // 1. Full Screen Gradient Background
-          Container(
-            decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
-          ),
+          // 1. Background putih
+          Container(color: Colors.white),
 
-          // 2. Abstract Shapes (Optional decoration)
+
+          // 2. (Aksen dekoratif saja — banner hijau dipindah ke inline Column)
+
+          // Merah — lingkaran pojok kanan atas
           Positioned(
-            top: -100,
-            right: -100,
+            top: -20,
+            right: -20,
             child: Container(
-              width: 300,
-              height: 300,
+              width: 100,
+              height: 100,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.1),
+                color: AppTheme.secondaryColor.withValues(alpha: 0.3),
               ),
             ),
           ),
+          // Kuning — dot kanan tengah atas
           Positioned(
-            bottom: -50,
-            left: -50,
+            top: 30,
+            right: 20,
             child: Container(
-              width: 200,
-              height: 200,
+              width: 36,
+              height: 36,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.accentColor,
+              ),
+            ),
+          ),
+          // Merah — dot kecil kiri bawah
+          Positioned(
+            bottom: 70,
+            left: 28,
+            child: Container(
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.1),
+                color: AppTheme.secondaryColor.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
+          // Kuning — dot kecil kanan bawah
+          Positioned(
+            bottom: 36,
+            right: 52,
+            child: Container(
+              width: 26,
+              height: 26,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.accentColor.withValues(alpha: 0.85),
+              ),
+            ),
+          ),
+          // Hijau — dot kecil bawah kiri
+          Positioned(
+            bottom: 110,
+            left: 64,
+            child: Container(
+              width: 18,
+              height: 18,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppTheme.primaryColor.withValues(alpha: 0.4),
               ),
             ),
           ),
@@ -303,33 +358,49 @@ class _LoginScreenState extends State<LoginScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Header
-                      const Icon(
-                        Icons.auto_stories_rounded,
-                        size: 60,
-                        color: Colors.white,
+                      // Logo di atas — background putih
+                      Image.asset(
+                        'assets/logo.png',
+                        height: 90,
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        'Penerbit Jagaddhita',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 1.5,
+
+                      // Banner hijau melengkung bawah — subtitle di dalamnya
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+                        decoration: const BoxDecoration(
+                          gradient: AppTheme.primaryGradient,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(36),
+                            bottomRight: Radius.circular(36),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 48,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: AppTheme.accentColor,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Portal Penjualan Internal',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                color: Colors.white70,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        'Portal Penjualan Internal',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
-                          fontSize: 14,
-                          color: Colors.white70,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
+
 
                       // Glass Window Card Form
                       LoginForm(
@@ -370,7 +441,7 @@ class _LoginScreenState extends State<LoginScreen>
                           Text(
                             "Belum punya akun?",
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.8),
+                              color: AppTheme.lightTextSecondary,
                             ),
                           ),
                           TextButton(
@@ -380,7 +451,7 @@ class _LoginScreenState extends State<LoginScreen>
                             child: const Text(
                               'Daftar',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppTheme.primaryColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
