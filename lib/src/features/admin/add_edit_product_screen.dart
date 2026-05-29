@@ -29,6 +29,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
 
   int _houseType = 1;
   String? _uploadedImageUrl;
+  bool _isSibi = false;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     _descriptionController = TextEditingController(text: p?.description ?? '');
     _copywritingController = TextEditingController(text: p?.copywriting ?? '');
     _houseType = p?.houseType ?? 1;
+    _isSibi = p?.isSibi ?? false;
   }
 
   Future<void> _saveProduct() async {
@@ -67,6 +69,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
             .product
             ?.imageUrl, // We haven't added image upload for main image yet
         marketingKitUrl: _uploadedImageUrl,
+        isSibi: _isSibi,
       );
 
       if (widget.product == null) {
@@ -124,6 +127,40 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 label: 'Category',
                 icon: Icons.category_outlined,
                 validator: (v) => v!.isEmpty ? 'Required' : null,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.indigo.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.indigo.withValues(alpha: 0.15),
+                  ),
+                ),
+                child: SwitchListTile(
+                  title: const Text(
+                    'Katalog SIBI Kemendikbud',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Aktifkan jika produk ini merupakan Buku Teks SIBI Kemendikbud. Jika tidak aktif, produk masuk kategori Jagaddhita (JGD).',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  value: _isSibi,
+                  onChanged: (val) {
+                    setState(() {
+                      _isSibi = val;
+                    });
+                  },
+                  secondary: const Icon(
+                    Icons.account_balance,
+                    color: Colors.indigo,
+                  ),
+                  activeThumbColor: Colors.indigo,
+                ),
               ),
               const SizedBox(height: 16),
               AppTextField(

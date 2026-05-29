@@ -33,10 +33,7 @@ class LinkBioBookCatalogSection extends StatelessWidget {
 
         final allProducts = snapshot.data!;
 
-        bool isSibiBook(ProductModel p) =>
-            p.category.toLowerCase().contains('sibi') ||
-            p.category.toLowerCase().contains('kemendikbud') ||
-            p.name.toLowerCase().contains('sibi');
+        bool isSibiBook(ProductModel p) => p.isSibi;
 
         final jagaddhitaBooks =
             allProducts.where((p) => !isSibiBook(p)).toList();

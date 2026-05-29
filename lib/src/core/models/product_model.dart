@@ -8,6 +8,7 @@ class ProductModel {
   final String? imageUrl;
   final String? marketingKitUrl;
   final String? copywriting;
+  final bool isSibi;
 
   ProductModel({
     required this.id,
@@ -19,19 +20,27 @@ class ProductModel {
     this.imageUrl,
     this.marketingKitUrl,
     this.copywriting,
+    this.isSibi = false,
   });
 
   factory ProductModel.fromMap(Map<String, dynamic> data, String id) {
+    final categoryStr = data['category'] ?? '';
+    final nameStr = data['name'] ?? '';
+    final fallbackIsSibi = categoryStr.toLowerCase().contains('sibi') ||
+        categoryStr.toLowerCase().contains('kemendikbud') ||
+        nameStr.toLowerCase().contains('sibi');
+
     return ProductModel(
       id: id,
       houseType: data['house_type'] ?? 1,
-      name: data['name'] ?? '',
-      category: data['category'] ?? '',
+      name: nameStr,
+      category: categoryStr,
       price: (data['price'] ?? 0).toDouble(),
       description: data['description'] ?? '',
       imageUrl: data['image_url'],
       marketingKitUrl: data['marketing_kit_url'],
       copywriting: data['copywriting'],
+      isSibi: data['is_sibi'] ?? fallbackIsSibi,
     );
   }
 
@@ -45,6 +54,7 @@ class ProductModel {
       'image_url': imageUrl,
       'marketing_kit_url': marketingKitUrl,
       'copywriting': copywriting,
+      'is_sibi': isSibi,
     };
   }
 
@@ -56,12 +66,6 @@ class ProductModel {
 
   @override
   int get hashCode => id.hashCode;
-
-  /// Produk SIBI Nonteks Kemendikbud — mendapat aturan diskon berbeda.
-  bool get isSibi =>
-      category.toLowerCase().contains('sibi') ||
-      category.toLowerCase().contains('kemendikbud') ||
-      name.toLowerCase().contains('sibi');
 
   /// Produk Jagaddhita Media Pustaka (Buku Paket & Buku Cerita).
   bool get isJagaddhita => !isSibi;
