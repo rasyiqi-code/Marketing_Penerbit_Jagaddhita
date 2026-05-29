@@ -63,11 +63,43 @@ class _LoginScreenState extends State<LoginScreen>
       if (e.code == 'configuration-not-found' || e.code == '400') {
         _showWebConfigErrorDialog(e.message ?? 'Unknown configuration error');
       } else {
+        String message;
+        switch (e.code) {
+          case 'invalid-credential':
+          case 'wrong-password':
+            message = 'Email atau kata sandi salah. Jika akun Anda menggunakan Google Sign-In, silakan masuk dengan tombol "Masuk dengan Google" di bawah.';
+            break;
+          case 'user-not-found':
+            message = 'Email belum terdaftar. Silakan hubungi admin untuk didaftarkan atau masuk menggunakan Google jika sudah didaftarkan dengan Google.';
+            break;
+          case 'user-disabled':
+            message = 'Akun ini telah dinonaktifkan oleh administrator.';
+            break;
+          case 'too-many-requests':
+            message = 'Terlalu banyak percobaan masuk yang gagal. Silakan coba lagi beberapa saat lagi.';
+            break;
+          case 'invalid-email':
+            message = 'Format alamat email tidak valid.';
+            break;
+          case 'network-request-failed':
+            message = 'Koneksi internet bermasalah. Silakan periksa jaringan Anda dan coba lagi.';
+            break;
+          default:
+            message = e.message ?? 'Terjadi kesalahan saat masuk. Silakan coba lagi.';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Login Error: ${e.message}'),
+            content: Text(
+              message,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+            ),
             backgroundColor: AppTheme.secondaryColor,
             behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 6),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       }
@@ -76,9 +108,15 @@ class _LoginScreenState extends State<LoginScreen>
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: ${e.toString()}'),
+          content: Text(
+            'Kesalahan: ${e.toString()}',
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          ),
           backgroundColor: AppTheme.secondaryColor,
           behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     } finally {
@@ -95,10 +133,29 @@ class _LoginScreenState extends State<LoginScreen>
     } catch (e) {
       if (!mounted) return;
 
+      String errorMessage = e.toString();
+      if (errorMessage.contains('Google Sign-In failed:')) {
+        errorMessage = errorMessage.replaceAll('Exception: Google Sign-In failed:', '').trim();
+      }
+
+      String displayMessage = 'Gagal masuk dengan Google: $errorMessage';
+      if (errorMessage.contains('sign_in_canceled') || errorMessage.contains('canceled')) {
+        displayMessage = 'Masuk dengan Google dibatalkan.';
+      } else if (errorMessage.contains('network_error')) {
+        displayMessage = 'Koneksi internet bermasalah. Silakan periksa koneksi Anda.';
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Google Sign In Error: $e'),
-          backgroundColor: Colors.red,
+          content: Text(
+            displayMessage,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          ),
+          backgroundColor: AppTheme.secondaryColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     } finally {
