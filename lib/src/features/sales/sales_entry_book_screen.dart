@@ -120,7 +120,16 @@ class _SalesEntryBookScreenState
         Provider.of<ProductService>(context, listen: false);
     productService.getGlobalSettings().listen((settings) {
       if (mounted) {
-        setState(() => _settings = settings);
+        setState(() {
+          _settings = settings;
+          
+          // Fallback logic if the current _paymentStatus is disabled
+          if (_paymentStatus == 'DP' && !settings.enablePaymentDP) {
+            _paymentStatus = settings.enablePaymentCOD ? 'COD' : 'LUNAS';
+          } else if (_paymentStatus == 'COD' && !settings.enablePaymentCOD) {
+            _paymentStatus = settings.enablePaymentDP ? 'DP' : 'LUNAS';
+          }
+        });
         _calculateValues();
       }
     });
@@ -321,10 +330,12 @@ class _SalesEntryBookScreenState
 
       final paidAmount = _paymentStatus == 'LUNAS'
           ? _bruto
-          : (double.tryParse(
-                _dpAmountController.text.replaceAll(RegExp(r'[^0-9]'), ''),
-              ) ??
-              0);
+          : (_paymentStatus == 'COD' 
+              ? 0.0
+              : (double.tryParse(
+                    _dpAmountController.text.replaceAll(RegExp(r'[^0-9]'), ''),
+                  ) ??
+                  0));
 
       // Save customer to custom database if they are new
       await customerService.saveCustomerIfNew(user.id, customerName, customerPhone);
@@ -763,6 +774,8 @@ class _SalesEntryBookScreenState
                     // ── Status Bayar ──────────────────────────────────────────────
                     SalesPaymentStatusDropdown(
                       value: _paymentStatus,
+                      enableDp: _settings?.enablePaymentDP ?? true,
+                      enableCod: _settings?.enablePaymentCOD ?? true,
                       onChanged: (val) => setState(() => _paymentStatus = val!),
                     ),
 

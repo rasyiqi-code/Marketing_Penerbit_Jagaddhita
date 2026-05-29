@@ -50,8 +50,8 @@ class SaleCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _StatusBadge(
-                    isLunas: isLunas || isComplete,
-                    label: isComplete ? 'COMPLETE' : (isLunas ? 'PAID' : sale.paymentStatus),
+                    status: sale.paymentStatus.toUpperCase(),
+                    label: isComplete ? 'COMPLETE' : (isLunas ? 'PAID' : sale.paymentStatus.toUpperCase()),
                   ),
                   Text(
                     DateFormat('dd MMM yyyy, HH:mm').format(sale.createdAt),
@@ -208,8 +208,59 @@ class SaleCard extends StatelessWidget {
                             Text(
                               'DP Terbayar: ${AppFormatters.currency(sale.paidAmount)}',
                               style: GoogleFonts.outfit(
+                                  fontSize: 11,
+                                  color: AppTheme.secondaryColor,
+                                  fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: onPelunasan,
+                      icon: const Icon(Icons.payment, size: 14),
+                      label: Text(
+                        'Lunasi',
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 32),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        elevation: 1,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              // ── COD info + pelunasan button ────────────────────────────
+              if (sale.paymentStatus == 'COD') ...[
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3B82F6).withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.15)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.delivery_dining_outlined, size: 14, color: Color(0xFF3B82F6)),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Bayar di Tempat (COD)',
+                              style: GoogleFonts.outfit(
                                 fontSize: 11,
-                                color: AppTheme.secondaryColor,
+                                color: const Color(0xFF3B82F6),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -246,13 +297,20 @@ class SaleCard extends StatelessWidget {
 }
 
 class _StatusBadge extends StatelessWidget {
-  final bool isLunas;
+  final String status;
   final String label;
-  const _StatusBadge({required this.isLunas, required this.label});
+  const _StatusBadge({required this.status, required this.label});
 
   @override
   Widget build(BuildContext context) {
-    final color = isLunas ? AppTheme.primaryColor : AppTheme.secondaryColor;
+    Color color;
+    if (status == 'LUNAS' || status == 'COMPLETE') {
+      color = AppTheme.primaryColor;
+    } else if (status == 'COD') {
+      color = const Color(0xFF3B82F6);
+    } else {
+      color = AppTheme.secondaryColor;
+    }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(

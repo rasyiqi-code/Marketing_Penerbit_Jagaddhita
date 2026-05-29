@@ -39,8 +39,8 @@ class DashboardStats extends StatelessWidget {
             else if (status == 'LUNAS') {
               pendingRevenue += sale.commissionAmount;
             }
-            // Potensi Bonus (DP only)
-            else if (status == 'DP') {
+            // Potensi Bonus (DP & COD)
+            else if (status == 'DP' || status == 'COD') {
               potentialRevenue += sale.commissionAmount;
             }
           }

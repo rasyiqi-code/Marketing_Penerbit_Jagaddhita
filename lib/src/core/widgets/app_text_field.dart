@@ -41,27 +41,44 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      style: GoogleFonts.outfit(fontSize: 16),
-      keyboardType: keyboardType,
-      obscureText: obscureText,
-      readOnly: readOnly,
-      maxLines: maxLines,
-      inputFormatters: inputFormatters,
-      textCapitalization: textCapitalization,
-      decoration: _inputDecoration(context),
-      onChanged: onChanged,
-      validator: validator,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 6),
+          child: Text(
+            label,
+            style: GoogleFonts.outfit(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        TextFormField(
+          controller: controller,
+          style: GoogleFonts.outfit(fontSize: 16),
+          keyboardType: keyboardType,
+          obscureText: obscureText,
+          readOnly: readOnly,
+          maxLines: maxLines,
+          inputFormatters: inputFormatters,
+          textCapitalization: textCapitalization,
+          decoration: _inputDecoration(context),
+          onChanged: onChanged,
+          validator: validator,
+        ),
+      ],
     );
   }
 
   InputDecoration _inputDecoration(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return InputDecoration(
-      labelText: label,
-      labelStyle: GoogleFonts.outfit(
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      hintText: label,
+      hintStyle: GoogleFonts.outfit(
+        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
       ),
       helperText: helperText,
       prefixText: prefixText,

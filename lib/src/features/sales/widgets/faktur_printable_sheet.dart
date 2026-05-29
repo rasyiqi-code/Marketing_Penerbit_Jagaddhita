@@ -42,6 +42,7 @@ class FakturPrintableSheet extends StatelessWidget {
     final isComplete = sale.paymentStatus.toUpperCase() == 'COMPLETE';
     final isDp = sale.paymentStatus.toUpperCase() == 'DP';
     final isPending = sale.paymentStatus.toUpperCase() == 'PENDING';
+    final isCod = sale.paymentStatus.toUpperCase() == 'COD';
 
     Color stampColor;
     String stampText;
@@ -54,6 +55,9 @@ class FakturPrintableSheet extends StatelessWidget {
     } else if (isPending) {
       stampColor = Colors.grey;
       stampText = 'PENDING';
+    } else if (isCod) {
+      stampColor = Colors.blue;
+      stampText = 'COD / BAYAR DI TEMPAT';
     } else {
       stampColor = Colors.red;
       stampText = sale.paymentStatus.toUpperCase();
@@ -83,35 +87,6 @@ class FakturPrintableSheet extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Centered premium watermark
-          Positioned.fill(
-            child: IgnorePointer(
-              child: Center(
-                child: Transform.rotate(
-                  angle: -0.3,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: stampColor.withValues(alpha: 0.12),
-                        width: 4,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      stampText,
-                      style: GoogleFonts.outfit(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: stampColor.withValues(alpha: 0.12),
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -509,22 +484,37 @@ class FakturPrintableSheet extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 4),
-                                    Text(
-                                      'Bank Transfer / VA',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
+                                                                  if (isCod) ...[
+                                      Text(
+                                        'Cash on Delivery (COD)',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      '$bankName: $bankAccountNo',
-                                      style: GoogleFonts.outfit(fontSize: 10, color: Colors.black54),
-                                    ),
-                                    Text(
-                                      'A/N: $bankAccountName',
-                                      style: GoogleFonts.outfit(fontSize: 10, color: Colors.black54),
-                                    ),
+                                      Text(
+                                        'Bayar saat barang diterima',
+                                        style: GoogleFonts.outfit(fontSize: 10, color: Colors.black54),
+                                      ),
+                                    ] else ...[
+                                      Text(
+                                        'Bank Transfer / VA',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Text(
+                                        '$bankName: $bankAccountNo',
+                                        style: GoogleFonts.outfit(fontSize: 10, color: Colors.black54),
+                                      ),
+                                      Text(
+                                        'A/N: $bankAccountName',
+                                        style: GoogleFonts.outfit(fontSize: 10, color: Colors.black54),
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ),
@@ -659,25 +649,61 @@ class FakturPrintableSheet extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // Signature Line
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    // Signature + Stamp Image with local watermark overlay
+                    Stack(
+                      alignment: Alignment.center,
                       children: [
-                        Container(
-                          width: 120,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: Colors.grey[400]!, width: 1),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/signature_stamp.png',
+                              width: 150,
+                              height: 90,
+                              fit: BoxFit.contain,
                             ),
-                          ),
+                            Container(
+                              width: 150,
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(color: Colors.grey[400]!, width: 1),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Authorized Sign',
+                              style: GoogleFonts.outfit(
+                                fontSize: 9,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Authorized Sign',
-                          style: GoogleFonts.outfit(
-                            fontSize: 9,
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.bold,
+                        // Watermark stamp on top of signature image
+                        IgnorePointer(
+                          child: Transform.rotate(
+                            angle: -0.25,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: stampColor.withValues(alpha: 0.45),
+                                  width: 2.5,
+                                ),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                stampText,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: stampColor.withValues(alpha: 0.45),
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],

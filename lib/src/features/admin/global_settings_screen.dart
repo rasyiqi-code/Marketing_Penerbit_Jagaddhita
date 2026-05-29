@@ -7,6 +7,7 @@ import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/setting
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/bonus_pulsa_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/commission_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/danger_zone_settings_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/payment_options_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/withdrawal_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/settings_scaffold_widgets.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +57,8 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   bool _enableMaxPulsaBonusLimit = false;
   bool _enableMinCompletedSalesLimit = false;
   bool _enableMinSalesLimit = true;
+  bool _enablePaymentDP = true;
+  bool _enablePaymentCOD = true;
 
   List<int> _allowedWithdrawalDays = [1, 2, 3, 4, 5, 6, 7];
   bool _isLoading = false;
@@ -137,6 +140,8 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
           _minCompletedSalesCountController.text =
               settings.minCompletedSalesCount.toString();
           _enableMinSalesLimit = settings.enableMinSalesLimit;
+          _enablePaymentDP = settings.enablePaymentDP;
+          _enablePaymentCOD = settings.enablePaymentCOD;
 
           // Progressive fields removed
         });
@@ -191,6 +196,8 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
         minCompletedSalesCount:
             int.tryParse(_minCompletedSalesCountController.text) ?? 5,
         enableMinSalesLimit: _enableMinSalesLimit,
+        enablePaymentDP: _enablePaymentDP,
+        enablePaymentCOD: _enablePaymentCOD,
       );
       await productService.updateGlobalSettings(settings);
 
@@ -404,6 +411,17 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
                       _minCompletedSalesCountController,
                   onMinCompletedSalesLimitChanged: (val) =>
                       setState(() => _enableMinCompletedSalesLimit = val),
+                ),
+                const SizedBox(height: 12),
+                const SettingsSectionHeader(
+                  title: 'Opsi Pembayaran',
+                  icon: Icons.payments_rounded,
+                ),
+                PaymentOptionsSettingsCard(
+                  enablePaymentDP: _enablePaymentDP,
+                  onDPChanged: (val) => setState(() => _enablePaymentDP = val),
+                  enablePaymentCOD: _enablePaymentCOD,
+                  onCODChanged: (val) => setState(() => _enablePaymentCOD = val),
                 ),
                 const SizedBox(height: 12),
                 const SettingsSectionHeader(

@@ -76,6 +76,15 @@ Future<Uint8List> generateFakturPdf(SaleModel sale, GlobalSettingsModel? setting
     // Falls back gracefully if asset is missing
   }
 
+  // Load signature + stamp image from assets
+  pw.MemoryImage? signatureImage;
+  try {
+    final sigBytes = (await rootBundle.load('assets/signature_stamp.png')).buffer.asUint8List();
+    signatureImage = pw.MemoryImage(sigBytes);
+  } catch (e) {
+    // Falls back gracefully if asset is missing
+  }
+
   final dateStr = DateFormat(
     'dd MMMM yyyy, HH:mm',
     'id_ID',
@@ -85,6 +94,7 @@ Future<Uint8List> generateFakturPdf(SaleModel sale, GlobalSettingsModel? setting
   final isComplete = sale.paymentStatus.toUpperCase() == 'COMPLETE';
   final isDp = sale.paymentStatus.toUpperCase() == 'DP';
   final isPending = sale.paymentStatus.toUpperCase() == 'PENDING';
+  final isCod = sale.paymentStatus.toUpperCase() == 'COD';
 
   PdfColor stampColor;
   String stampText;
@@ -97,6 +107,9 @@ Future<Uint8List> generateFakturPdf(SaleModel sale, GlobalSettingsModel? setting
   } else if (isPending) {
     stampColor = PdfColors.grey;
     stampText = 'PENDING';
+  } else if (isCod) {
+    stampColor = PdfColors.blue;
+    stampText = 'COD / BAYAR DI TEMPAT';
   } else {
     stampColor = PdfColors.red;
     stampText = sale.paymentStatus.toUpperCase();
@@ -122,33 +135,6 @@ Future<Uint8List> generateFakturPdf(SaleModel sale, GlobalSettingsModel? setting
       build: (pw.Context context) {
         return pw.Stack(
           children: [
-            // Centered premium watermark
-            pw.Positioned.fill(
-              child: pw.Center(
-                child: pw.Transform.rotate(
-                  angle: -0.3,
-                  child: pw.Container(
-                    padding: const pw.EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    decoration: pw.BoxDecoration(
-                      border: pw.Border.all(
-                        color: PdfColor(stampColor.red, stampColor.green, stampColor.blue, 0.12),
-                        width: 4,
-                      ),
-                      borderRadius: const pw.BorderRadius.all(pw.Radius.circular(12)),
-                    ),
-                    child: pw.Text(
-                      stampText,
-                      style: pw.TextStyle(
-                        fontSize: 36,
-                        fontWeight: pw.FontWeight.bold,
-                        color: PdfColor(stampColor.red, stampColor.green, stampColor.blue, 0.12),
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.stretch,
           children: [
@@ -556,22 +542,37 @@ Future<Uint8List> generateFakturPdf(SaleModel sale, GlobalSettingsModel? setting
                                         ),
                                       ),
                                       pw.SizedBox(height: 4),
-                                      pw.Text(
-                                        'Bank Transfer / VA',
-                                        style: pw.TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: pw.FontWeight.bold,
-                                          color: PdfColors.black,
+                                      if (isCod) ...[
+                                        pw.Text(
+                                          'Cash on Delivery (COD)',
+                                          style: pw.TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: pw.FontWeight.bold,
+                                            color: PdfColors.black,
+                                          ),
                                         ),
-                                      ),
-                                      pw.Text(
-                                        '$bankName: $bankAccountNo',
-                                        style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey800),
-                                      ),
-                                      pw.Text(
-                                        'A/N: $bankAccountName',
-                                        style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey800),
-                                      ),
+                                        pw.Text(
+                                          'Bayar saat barang diterima',
+                                          style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey800),
+                                        ),
+                                      ] else ...[
+                                        pw.Text(
+                                          'Bank Transfer / VA',
+                                          style: pw.TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: pw.FontWeight.bold,
+                                            color: PdfColors.black,
+                                          ),
+                                        ),
+                                        pw.Text(
+                                          '$bankName: $bankAccountNo',
+                                          style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey800),
+                                        ),
+                                        pw.Text(
+                                          'A/N: $bankAccountName',
+                                          style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey800),
+                                        ),
+                                      ],
                                     ],
                                   ),
                                 ),
@@ -699,29 +700,66 @@ Future<Uint8List> generateFakturPdf(SaleModel sale, GlobalSettingsModel? setting
                   ),
                   pw.SizedBox(height: 32),
 
-                  // Signature Row
+                   // Signature Row
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.end,
                     children: [
-                      // Signature line
-                      pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.center,
+                      // Signature + Stamp image with local watermark overlay
+                      pw.Stack(
+                        alignment: pw.Alignment.center,
                         children: [
-                          pw.Container(
-                            width: 120,
-                            decoration: const pw.BoxDecoration(
-                              border: pw.Border(
-                                bottom: pw.BorderSide(color: PdfColors.grey400, width: 1),
+                          pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.center,
+                            children: [
+                              if (signatureImage != null)
+                                pw.Image(
+                                  signatureImage,
+                                  width: 150,
+                                  height: 90,
+                                  fit: pw.BoxFit.contain,
+                                )
+                              else
+                                pw.SizedBox(width: 150, height: 90),
+                              pw.Container(
+                                width: 150,
+                                decoration: const pw.BoxDecoration(
+                                  border: pw.Border(
+                                    bottom: pw.BorderSide(color: PdfColors.grey400, width: 1),
+                                  ),
+                                ),
                               ),
-                            ),
+                              pw.SizedBox(height: 4),
+                              pw.Text(
+                                'Authorized Sign',
+                                style: pw.TextStyle(
+                                  fontSize: 9,
+                                  color: PdfColors.grey700,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                          pw.SizedBox(height: 4),
-                          pw.Text(
-                            'Authorized Sign',
-                            style: pw.TextStyle(
-                              fontSize: 9,
-                              color: PdfColors.grey700,
-                              fontWeight: pw.FontWeight.bold,
+                          // Watermark stamp on top of signature image
+                          pw.Transform.rotate(
+                            angle: -0.25,
+                            child: pw.Container(
+                              padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: pw.BoxDecoration(
+                                border: pw.Border.all(
+                                  color: PdfColor(stampColor.red, stampColor.green, stampColor.blue, 0.45),
+                                  width: 2.5,
+                                ),
+                                borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+                              ),
+                              child: pw.Text(
+                                stampText,
+                                style: pw.TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColor(stampColor.red, stampColor.green, stampColor.blue, 0.45),
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
                             ),
                           ),
                         ],

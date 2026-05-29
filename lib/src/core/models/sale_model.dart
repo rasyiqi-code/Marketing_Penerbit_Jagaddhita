@@ -52,6 +52,7 @@ class SaleModel {
 
   static const String statusPending = 'PENDING';
   static const String statusDp = 'DP';
+  static const String statusCod = 'COD';
   static const String statusLunas = 'LUNAS';
   static const String statusComplete = 'COMPLETE';
   static const String statusProblem = 'PROBLEM';

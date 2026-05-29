@@ -238,11 +238,15 @@ class SalesSectionTitle extends StatelessWidget {
 class SalesPaymentStatusDropdown extends StatelessWidget {
   final String value;
   final ValueChanged<String?> onChanged;
+  final bool enableDp;
+  final bool enableCod;
 
   const SalesPaymentStatusDropdown({
     super.key,
     required this.value,
     required this.onChanged,
+    this.enableDp = true,
+    this.enableCod = true,
   });
 
   @override
@@ -279,9 +283,12 @@ class SalesPaymentStatusDropdown extends StatelessWidget {
       ),
       onChanged: onChanged,
       isExpanded: true,
-      items: const [
-        DropdownMenuItem(value: 'DP', child: Text('DP (Uang Muka)')),
-        DropdownMenuItem(
+      items: [
+        if (enableDp)
+          const DropdownMenuItem(value: 'DP', child: Text('DP (Uang Muka)')),
+        if (enableCod)
+          const DropdownMenuItem(value: 'COD', child: Text('COD (Bayar di Tempat)')),
+        const DropdownMenuItem(
             value: 'LUNAS', child: Text('LUNAS (Bayar Penuh)')),
       ],
     );

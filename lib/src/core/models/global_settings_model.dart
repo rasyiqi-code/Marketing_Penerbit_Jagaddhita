@@ -26,6 +26,10 @@ class GlobalSettingsModel {
   final bool enableR1Commission;
   final bool enableR1PulsaBonus;
 
+  // Payment Options Toggles
+  final bool enablePaymentDP;
+  final bool enablePaymentCOD;
+
   // Announcement
   final String latestInfo;
   final String webBaseUrl;
@@ -71,6 +75,8 @@ class GlobalSettingsModel {
     this.enableR1 = true,
     this.enableR1Commission = true,
     this.enableR1PulsaBonus = true,
+    this.enablePaymentDP = true,
+    this.enablePaymentCOD = true,
     this.latestInfo = 'Batas klaim pulsa bulan ini: Tgl 25.',
     this.webBaseUrl = 'https://marketing-jagaddhitamp.web.app',
     this.allowedWithdrawalDays = const [1, 2, 3, 4, 5, 6, 7],
@@ -108,6 +114,8 @@ class GlobalSettingsModel {
       enableR1: data['enable_r1'] ?? true,
       enableR1Commission: data['enable_r1_commission'] ?? true,
       enableR1PulsaBonus: data['enable_r1_pulsa_bonus'] ?? true,
+      enablePaymentDP: data['enable_payment_dp'] ?? true,
+      enablePaymentCOD: data['enable_payment_cod'] ?? true,
       minPulsaWithdrawal: (data['min_pulsa_withdrawal'] ?? 20000).toDouble(),
       latestInfo: data['latest_info'] ?? 'Batas klaim pulsa bulan ini: Tgl 25.',
       webBaseUrl: data['web_base_url'] ?? 'https://marketing-jagaddhitamp.web.app',
@@ -148,6 +156,8 @@ class GlobalSettingsModel {
       'enable_r1': enableR1,
       'enable_r1_commission': enableR1Commission,
       'enable_r1_pulsa_bonus': enableR1PulsaBonus,
+      'enable_payment_dp': enablePaymentDP,
+      'enable_payment_cod': enablePaymentCOD,
       'min_pulsa_withdrawal': minPulsaWithdrawal,
       'latest_info': latestInfo,
       'web_base_url': webBaseUrl,
