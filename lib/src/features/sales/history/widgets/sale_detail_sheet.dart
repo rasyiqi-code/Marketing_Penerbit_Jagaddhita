@@ -6,6 +6,8 @@ import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_timeline.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/faktur_view.dart';
+import 'package:provider/provider.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
 
 /// Full-detail bottom sheet untuk satu transaksi penjualan.
 void showSaleDetailModal(BuildContext context, SaleModel sale) {
@@ -83,6 +85,67 @@ class SaleDetailSheet extends StatelessWidget {
                       elevation: 2,
                     ),
                   ),
+                  if (sale.shippingStatus == 'DIKIRIM') ...[
+                    const SizedBox(height: 10),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Konfirmasi Barang Sampai'),
+                            content: const Text('Apakah Anda yakin barang pesanan ini sudah sampai ke tangan pembeli?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: const Text('Batal'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: const Text('Yakin'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm == true) {
+                          if (!context.mounted) return;
+                          try {
+                            final salesService = Provider.of<SalesService>(context, listen: false);
+                            await salesService.updateShippingStatus(
+                              sale.id,
+                              'SAMPAI',
+                              note: 'Barang telah diterima oleh customer (dikonfirmasi oleh marketing)',
+                              actor: 'Marketing',
+                            );
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Barang berhasil dikonfirmasi sampai!'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            Navigator.pop(context); // Close sheet to refresh
+                          } catch (e) {
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Gagal konfirmasi: $e')),
+                            );
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.check_circle_outline_rounded, size: 20),
+                      label: Text(
+                        'Konfirmasi Barang Sampai',
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(46),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        elevation: 2,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 20),
                   const Divider(),
                   const SizedBox(height: 12),
@@ -99,6 +162,13 @@ class SaleDetailSheet extends StatelessWidget {
                       AppFormatters.currency(sale.paidAmount)),
                   _DetailRow('Sisa Tagihan',
                       AppFormatters.currency(sisaTagihan)),
+                  if (sale.shippingStatus != null) ...[
+                    _DetailRow('Status Pengiriman', sale.shippingStatus!),
+                    if (sale.shippingCourier != null)
+                      _DetailRow('Ekspedisi', sale.shippingCourier!),
+                    if (sale.shippingResi != null)
+                      _DetailRow('No. Resi', sale.shippingResi!),
+                  ],
                   
                   const Divider(height: 24),
 

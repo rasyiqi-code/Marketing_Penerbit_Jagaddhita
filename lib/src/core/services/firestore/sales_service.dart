@@ -521,6 +521,34 @@ class SalesService extends BaseFirestoreService {
     return null;
   }
 
+  Future<void> updateShippingStatus(
+    String saleId,
+    String newStatus, {
+    String? resi,
+    String? courier,
+    String? note,
+    required String actor,
+  }) async {
+    final saleRef = db.collection('sales').doc(saleId);
+
+    final historyItem = SaleHistoryItem(
+      status: newStatus,
+      note: note ?? (resi != null && courier != null ? 'Resi: $resi ($courier)' : 'Status barang: $newStatus'),
+      timestamp: DateTime.now(),
+      actor: actor,
+    );
+
+    final Map<String, dynamic> updateData = {
+      'shipping_status': newStatus,
+      'history': FieldValue.arrayUnion([historyItem.toMap()]),
+    };
+
+    if (resi != null) updateData['shipping_resi'] = resi;
+    if (courier != null) updateData['shipping_courier'] = courier;
+
+    return saleRef.update(updateData);
+  }
+
   Stream<List<SaleModel>> getSales({
     int? houseType,
     String? status,

@@ -15,7 +15,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Penerbit Jagaddhita'), findsOneWidget);
+    expect(find.text('Portal Penjualan Internal'), findsOneWidget);
     expect(find.text('MASUK'), findsOneWidget);
   });
 }

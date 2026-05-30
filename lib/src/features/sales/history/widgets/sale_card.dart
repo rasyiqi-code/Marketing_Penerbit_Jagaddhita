@@ -49,9 +49,20 @@ class SaleCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _StatusBadge(
-                    status: sale.paymentStatus.toUpperCase(),
-                    label: isComplete ? 'COMPLETE' : (isLunas ? 'PAID' : sale.paymentStatus.toUpperCase()),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _StatusBadge(
+                        status: sale.paymentStatus.toUpperCase(),
+                        label: isComplete ? 'COMPLETE' : (isLunas ? 'PAID' : sale.paymentStatus.toUpperCase()),
+                      ),
+                      if (sale.shippingStatus != null) ...[
+                        const SizedBox(width: 6),
+                        _ShippingBadge(
+                          status: sale.shippingStatus!.toUpperCase(),
+                        ),
+                      ],
+                    ],
                   ),
                   Text(
                     DateFormat('dd MMM yyyy, HH:mm').format(sale.createdAt),
@@ -325,6 +336,48 @@ class _StatusBadge extends StatelessWidget {
           fontWeight: FontWeight.bold,
           color: color,
         ),
+      ),
+    );
+  }
+}
+
+class _ShippingBadge extends StatelessWidget {
+  final String status;
+  const _ShippingBadge({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    Color color;
+    if (status == 'DISIAPKAN') {
+      color = Colors.orange;
+    } else if (status == 'DIKIRIM') {
+      color = Colors.blue;
+    } else if (status == 'SAMPAI') {
+      color = Colors.teal;
+    } else {
+      color = Colors.green; // SELESAI
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.local_shipping_outlined, size: 10, color: color),
+          const SizedBox(width: 4),
+          Text(
+            status,
+            style: GoogleFonts.outfit(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }

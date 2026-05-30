@@ -27,6 +27,9 @@ class TransactionUpdateDialog extends StatefulWidget {
 
 class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
   final TextEditingController _noteController = TextEditingController();
+  final TextEditingController _courierController = TextEditingController();
+  final TextEditingController _resiController = TextEditingController();
+  String? _selectedShippingStatus;
   String? _currentProofUrl;
   bool _hasProof = false;
 
@@ -35,6 +38,10 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
     super.initState();
     _currentProofUrl = widget.sale.transactionProofUrl;
     _hasProof = _currentProofUrl != null;
+
+    _selectedShippingStatus = widget.sale.shippingStatus;
+    _courierController.text = widget.sale.shippingCourier ?? '';
+    _resiController.text = widget.sale.shippingResi ?? '';
 
     if (widget.sale.paymentStatus == SaleModel.statusDp && _hasProof) {
       // Check if proof was uploaded DURING the DP phase
@@ -49,6 +56,8 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
   @override
   void dispose() {
     _noteController.dispose();
+    _courierController.dispose();
+    _resiController.dispose();
     super.dispose();
   }
 
@@ -280,8 +289,113 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
             style: const TextStyle(fontSize: 13),
             maxLines: 2,
           ),
+          const Divider(height: 24),
+          const Text(
+            'Status Pengiriman (Admin)',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
           const SizedBox(height: 8),
-          if (widget.sale.paymentStatus == SaleModel.statusPending)
+          DropdownButtonFormField<String>(
+            initialValue: _selectedShippingStatus,
+            decoration: const InputDecoration(
+              labelText: 'Pilih Status Pengiriman',
+              border: OutlineInputBorder(),
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              labelStyle: TextStyle(fontSize: 12),
+            ),
+            style: TextStyle(fontSize: 13, color: Theme.of(context).textTheme.bodyMedium?.color),
+            dropdownColor: Theme.of(context).cardColor,
+            items: const [
+              DropdownMenuItem(value: null, child: Text('Belum Diproses')),
+              DropdownMenuItem(value: 'DISIAPKAN', child: Text('Disiapkan')),
+              DropdownMenuItem(value: 'DIKIRIM', child: Text('Dikirim')),
+              DropdownMenuItem(value: 'SAMPAI', child: Text('Sampai')),
+              DropdownMenuItem(value: 'SELESAI', child: Text('Selesai')),
+            ],
+            onChanged: (val) {
+              setState(() {
+                _selectedShippingStatus = val;
+              });
+            },
+          ),
+          if (_selectedShippingStatus == 'DIKIRIM') ...[
+            const SizedBox(height: 10),
+            TextField(
+              controller: _courierController,
+              decoration: const InputDecoration(
+                labelText: 'Nama Ekspedisi (Kurir)',
+                hintText: 'JNE, J&T, Sicepat, POS, dll.',
+                border: OutlineInputBorder(),
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                labelStyle: TextStyle(fontSize: 12),
+                hintStyle: TextStyle(fontSize: 12),
+              ),
+              style: const TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _resiController,
+              decoration: const InputDecoration(
+                labelText: 'Nomor Resi',
+                hintText: 'Masukkan nomor resi pengiriman...',
+                border: OutlineInputBorder(),
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                labelStyle: TextStyle(fontSize: 12),
+                hintStyle: TextStyle(fontSize: 12),
+              ),
+              style: const TextStyle(fontSize: 13),
+            ),
+          ],
+          const SizedBox(height: 10),
+          ElevatedButton.icon(
+            onPressed: () async {
+              if (_selectedShippingStatus == 'DIKIRIM') {
+                if (_courierController.text.trim().isEmpty || _resiController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Kurir & Resi wajib diisi jika status Dikirim!')),
+                  );
+                  return;
+                }
+              }
+              try {
+                final salesService = Provider.of<SalesService>(context, listen: false);
+                await salesService.updateShippingStatus(
+                  widget.sale.id,
+                  _selectedShippingStatus ?? 'PENDING',
+                  resi: _selectedShippingStatus == 'DIKIRIM' ? _resiController.text.trim() : null,
+                  courier: _selectedShippingStatus == 'DIKIRIM' ? _courierController.text.trim() : null,
+                  note: _selectedShippingStatus == 'DIKIRIM'
+                      ? 'Barang dikirim via ${_courierController.text.trim()} (Resi: ${_resiController.text.trim()})'
+                      : 'Status barang: ${_selectedShippingStatus ?? "PENDING"}',
+                  actor: 'Admin',
+                );
+
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Status pengiriman berhasil diperbarui!')),
+                );
+                Navigator.pop(context);
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $e')),
+                  );
+                }
+              }
+            },
+            icon: const Icon(Icons.local_shipping_rounded, size: 16),
+            label: const Text('Simpan Status Pengiriman', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(0, 36),
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (widget.sale.paymentStatus == SaleModel.statusPending) ...[
             ListTile(
               dense: true,
               visualDensity: VisualDensity.compact,
@@ -303,6 +417,24 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
                 );
               },
             ),
+            const Divider(height: 8),
+            ListTile(
+              dense: true,
+              visualDensity: VisualDensity.compact,
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Tandai sebagai COD', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              subtitle: const Text('Persetujuan pesanan COD (Bayar di Tempat). Tidak butuh bukti di awal.', style: TextStyle(fontSize: 11)),
+              trailing: const Icon(Icons.delivery_dining, color: Colors.blue, size: 20),
+              onTap: () {
+                Navigator.pop(context);
+                _updateStatus(
+                  widget.sale,
+                  SaleModel.statusCod,
+                  note: _noteController.text,
+                );
+              },
+            ),
+          ],
           if (widget.sale.paymentStatus == SaleModel.statusPending ||
               widget.sale.paymentStatus == SaleModel.statusDp) ...[
             const Divider(height: 8),
@@ -336,14 +468,20 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
               },
             ),
           ],
-          if (widget.sale.paymentStatus == SaleModel.statusLunas) ...[
+          if (widget.sale.paymentStatus == SaleModel.statusLunas ||
+              widget.sale.paymentStatus == SaleModel.statusCod) ...[
             const Divider(height: 8),
             ListTile(
               dense: true,
               visualDensity: VisualDensity.compact,
               contentPadding: EdgeInsets.zero,
               title: const Text('Tandai SELESAI (COMPLETE)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-              subtitle: const Text('Pesanan diterima/selesai.', style: TextStyle(fontSize: 11)),
+              subtitle: Text(
+                widget.sale.paymentStatus == SaleModel.statusCod
+                    ? 'Konfirmasi uang COD telah disetor/masuk rekening penerbit.'
+                    : 'Pesanan diterima/selesai.',
+                style: const TextStyle(fontSize: 11),
+              ),
               trailing: const Icon(Icons.done_all, color: Colors.purple, size: 20),
               onTap: () {
                 Navigator.pop(context);

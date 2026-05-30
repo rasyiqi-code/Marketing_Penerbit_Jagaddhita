@@ -147,10 +147,15 @@ class TransactionTimeline extends StatelessWidget {
   }
 
   Color _getStatusColor(String status) {
-    if (status == SaleModel.statusComplete) return AppTheme.primaryColor;
-    if (status == SaleModel.statusLunas) return AppTheme.primaryColor;
-    if (status == SaleModel.statusDp) return AppTheme.accentColor;
-    if (status == SaleModel.statusProblem) return AppTheme.secondaryColor;
+    final s = status.toUpperCase();
+    if (s == 'DISIAPKAN') return Colors.orange;
+    if (s == 'DIKIRIM') return Colors.blue;
+    if (s == 'SAMPAI') return Colors.teal;
+    if (s == 'SELESAI') return Colors.green;
+    if (s == SaleModel.statusComplete) return AppTheme.primaryColor;
+    if (s == SaleModel.statusLunas) return AppTheme.primaryColor;
+    if (s == SaleModel.statusDp) return AppTheme.accentColor;
+    if (s == SaleModel.statusProblem) return AppTheme.secondaryColor;
     return AppTheme.accentColor; // Pending
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/catalog/widgets/product_detail_widgets.dart';
 
@@ -40,14 +39,6 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-            title: Text(
-              product.name,
-              style: GoogleFonts.outfit(
-                color: Theme.of(context).textTheme.titleLarge?.color,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            centerTitle: true,
           ),
 
           // Product Image Container

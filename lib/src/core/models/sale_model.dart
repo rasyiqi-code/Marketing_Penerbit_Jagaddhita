@@ -49,6 +49,9 @@ class SaleModel {
   final DateTime createdAt;
   final String? transactionProofUrl;
   final List<SaleHistoryItem> history; // New history field
+  final String? shippingStatus; // DISIAPKAN, DIKIRIM, SAMPAI, SELESAI
+  final String? shippingResi;
+  final String? shippingCourier;
 
   static const String statusPending = 'PENDING';
   static const String statusDp = 'DP';
@@ -110,6 +113,9 @@ class SaleModel {
     this.paidAmount = 0,
     this.transactionProofUrl,
     this.history = const [],
+    this.shippingStatus,
+    this.shippingResi,
+    this.shippingCourier,
   });
 
   factory SaleModel.fromMap(Map<String, dynamic> data, String id) {
@@ -134,6 +140,9 @@ class SaleModel {
               ?.map((e) => SaleHistoryItem.fromMap(e as Map<String, dynamic>))
               .toList() ??
           [],
+      shippingStatus: data['shipping_status'],
+      shippingResi: data['shipping_resi'],
+      shippingCourier: data['shipping_courier'],
     );
   }
 
@@ -154,6 +163,9 @@ class SaleModel {
       'created_at': Timestamp.fromDate(createdAt),
       'transaction_proof_url': transactionProofUrl,
       'history': history.map((e) => e.toMap()).toList(),
+      if (shippingStatus != null) 'shipping_status': shippingStatus,
+      if (shippingResi != null) 'shipping_resi': shippingResi,
+      if (shippingCourier != null) 'shipping_courier': shippingCourier,
     };
   }
 }
