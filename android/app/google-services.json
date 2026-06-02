@@ -7,12 +7,25 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:55240641303:android:81f7c0d3eb826e768e4552",
+        "mobilesdk_app_id": "1:55240641303:android:4e91fd15bff6ac6a8e4552",
         "android_client_info": {
           "package_name": "com.jagaddhitagroup.marketing"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "55240641303-sii59ha7p85ik4orq3tbnp6ebmvqjul3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jagaddhitagroup.marketing",
+            "certificate_hash": "9177f856aafdfc2c28e78e98bf1fbb3c1206164d"
+          }
+        },
+        {
+          "client_id": "55240641303-hpr2olfa9i3jfpou3gqo1lvqlibjprna.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCD3BImWXut4Kp4pxRjXuk8K8WF0KUQP_o"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "55240641303-hpr2olfa9i3jfpou3gqo1lvqlibjprna.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "55240641303-4mamlhen08r26f705l4abvt6gl4bka52.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jagaddhitagroup.marketing"
+              }
+            }
+          ]
         }
       }
     }

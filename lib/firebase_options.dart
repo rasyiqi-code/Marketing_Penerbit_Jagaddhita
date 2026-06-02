@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCD3BImWXut4Kp4pxRjXuk8K8WF0KUQP_o',
-    appId: '1:55240641303:android:81f7c0d3eb826e768e4552',
+    appId: '1:55240641303:android:4e91fd15bff6ac6a8e4552',
     messagingSenderId: '55240641303',
     projectId: 'marketing-jagaddhitamp',
     storageBucket: 'marketing-jagaddhitamp.firebasestorage.app',
@@ -60,10 +60,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBMjr0iKIVwGRkDO2G0NS25-pF2MxBxex8',
-    appId: '1:55240641303:ios:bd24bdc0173070688e4552',
+    appId: '1:55240641303:ios:08eee12ba125449a8e4552',
     messagingSenderId: '55240641303',
     projectId: 'marketing-jagaddhitamp',
     storageBucket: 'marketing-jagaddhitamp.firebasestorage.app',
+    iosClientId: '55240641303-4mamlhen08r26f705l4abvt6gl4bka52.apps.googleusercontent.com',
     iosBundleId: 'com.jagaddhitagroup.marketing',
   );
 

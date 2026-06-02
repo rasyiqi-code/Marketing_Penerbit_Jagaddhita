@@ -53,3 +53,7 @@ app.*.map.json
 **/node_modules/
 **/.wrangler/
 .wrangler/
+lib/firebase_options.dart
+android/app/google-services.json
+android/key.properties
+**/*.jks
