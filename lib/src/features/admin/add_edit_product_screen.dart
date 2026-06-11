@@ -146,7 +146,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                     ),
                   ),
                   subtitle: const Text(
-                    'Aktifkan jika produk ini merupakan Buku Teks SIBI Kemendikbud. Jika tidak aktif, produk masuk kategori Jagaddhita (JGD).',
+                    'Aktifkan jika produk ini merupakan Buku SIBI Kemendikbud. Jika tidak aktif, produk masuk kategori Jagaddhita (JGD).',
                     style: TextStyle(fontSize: 12),
                   ),
                   value: _isSibi,
