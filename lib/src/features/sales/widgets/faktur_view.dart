@@ -123,7 +123,7 @@ class _FakturViewState extends State<FakturView> {
       // 2. Save using FilePicker
       final fileName = 'Faktur_${widget.sale.id.toUpperCase()}.pdf';
 
-      final path = await FilePicker.platform.saveFile(
+      final path = await FilePicker.saveFile(
         fileName: fileName,
         bytes: pdfBytes,
       );
