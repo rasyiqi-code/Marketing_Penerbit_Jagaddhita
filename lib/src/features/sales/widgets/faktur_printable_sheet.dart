@@ -260,7 +260,7 @@ class FakturPrintableSheet extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Email: ${sale.details['customer_email'] ?? 'customer@email.com'}',
+                            'Alamat: ${sale.customerAddress}',
                             style: GoogleFonts.outfit(
                               fontSize: 11,
                               color: Colors.black54,

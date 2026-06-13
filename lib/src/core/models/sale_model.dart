@@ -64,6 +64,7 @@ class SaleModel {
   // Helper getters for new transaction fields
   String get customerName => details['customer_name'] ?? details['nama_pemesan'] ?? '-';
   String get customerPhone => details['customer_phone'] ?? details['telepon_penerima'] ?? '-';
+  String get customerAddress => details['customer_address'] ?? details['alamat_lengkap'] ?? '-';
   
   List<int> get productQuantities {
     if (details['product_quantities'] != null) {

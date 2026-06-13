@@ -46,6 +46,7 @@ class _SalesEntryBookScreenState
   // Customer Autocomplete
   final _customerNameController = TextEditingController();
   final _customerPhoneController = TextEditingController();
+  final _customerAddressController = TextEditingController();
   List<CustomerModel> _allCustomers = [];
   List<CustomerModel> _filteredCustomers = [];
   bool _showCustomerSuggestions = false;
@@ -276,6 +277,7 @@ class _SalesEntryBookScreenState
 
     final customerName = _customerNameController.text.trim();
     final customerPhone = _customerPhoneController.text.trim();
+    final customerAddress = _customerAddressController.text.trim();
 
     if (customerName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -286,6 +288,12 @@ class _SalesEntryBookScreenState
     if (customerPhone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Silakan masukkan nomor HP customer')),
+      );
+      return;
+    }
+    if (customerAddress.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Silakan masukkan alamat lengkap customer')),
       );
       return;
     }
@@ -366,6 +374,7 @@ class _SalesEntryBookScreenState
           'product_quantities': _selectedProducts.map((p) => _selectedProductQuantities[p.id] ?? 1).toList(),
           'customer_name': customerName,
           'customer_phone': customerPhone,
+          'customer_address': customerAddress,
           'marketing_category': _marketingCategory ?? 'none',
           'commission_percentage': _discountPercent,
           'discount_amount': _discountAmount,
@@ -436,6 +445,7 @@ class _SalesEntryBookScreenState
   void dispose() {
     _customerNameController.dispose();
     _customerPhoneController.dispose();
+    _customerAddressController.dispose();
     _markupController.dispose();
     _dpAmountController.dispose();
     super.dispose();
@@ -568,6 +578,13 @@ class _SalesEntryBookScreenState
                               label: 'Nomor HP Customer',
                               icon: Icons.phone_android_rounded,
                               keyboardType: TextInputType.phone,
+                            ),
+                            const SizedBox(height: 10),
+                            SalesTextField(
+                              controller: _customerAddressController,
+                              label: 'Alamat Lengkap (Jl, RT/RW, Kec, Kota)',
+                              icon: Icons.location_on_outlined,
+                              maxLines: 3,
                             ),
                           ],
                         ),
@@ -844,7 +861,7 @@ class _SalesEntryBookScreenState
                           shadowColor: color.withValues(alpha: 0.3),
                         ),
                         onPressed:
-                            (_isLoading || _transactionProofUrl == null)
+                            (_isLoading || (_paymentStatus != 'COD' && _transactionProofUrl == null))
                                 ? null
                                 : _submitSale,
                         child: _isLoading

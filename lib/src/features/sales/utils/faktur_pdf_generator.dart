@@ -303,7 +303,7 @@ Future<Uint8List> generateFakturPdf(SaleModel sale, GlobalSettingsModel? setting
                               ),
                             ),
                             pw.Text(
-                              'Email: ${sale.details['customer_email'] ?? 'customer@email.com'}',
+                              'Alamat: ${sale.customerAddress}',
                               style: const pw.TextStyle(
                                 fontSize: 10,
                                 color: PdfColors.grey800,

@@ -11,6 +11,7 @@ class SalesTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
+  final int maxLines;
 
   const SalesTextField({
     super.key,
@@ -22,6 +23,7 @@ class SalesTextField extends StatelessWidget {
     this.inputFormatters,
     this.onChanged,
     this.validator,
+    this.maxLines = 1,
   });
 
   @override
@@ -35,6 +37,7 @@ class SalesTextField extends StatelessWidget {
       inputFormatters: inputFormatters,
       onChanged: onChanged,
       validator: validator ?? (v) => v!.isEmpty ? 'Wajib diisi ya' : null,
+      maxLines: maxLines,
     );
   }
 }

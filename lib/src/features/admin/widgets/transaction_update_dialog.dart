@@ -217,28 +217,28 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
+                color: (widget.sale.paymentStatus == SaleModel.statusCod ? Colors.orange : Colors.red).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                border: Border.all(color: (widget.sale.paymentStatus == SaleModel.statusCod ? Colors.orange : Colors.red).withValues(alpha: 0.3)),
               ),
               child: Column(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.warning_amber_rounded,
-                    color: Colors.red,
+                    color: widget.sale.paymentStatus == SaleModel.statusCod ? Colors.orange : Colors.red,
                     size: 24,
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Bukti Pembayaran Belum Ada',
+                  Text(
+                    widget.sale.paymentStatus == SaleModel.statusCod ? 'Bukti Pencairan Ekspedisi Belum Ada' : 'Bukti Pembayaran Belum Ada',
                     style: TextStyle(
-                      color: Colors.red,
+                      color: widget.sale.paymentStatus == SaleModel.statusCod ? Colors.orange : Colors.red,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
                   ),
                   Text(
-                    'Wajib upload bukti sebelum update ke DP/LUNAS.',
+                    widget.sale.paymentStatus == SaleModel.statusCod ? 'Wajib upload bukti pencairan dana ekspedisi sebelum set ke COMPLETE.' : 'Wajib upload bukti sebelum update ke DP/LUNAS.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 11,
@@ -484,6 +484,12 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
               ),
               trailing: const Icon(Icons.done_all, color: Colors.purple, size: 20),
               onTap: () {
+                if (widget.sale.paymentStatus == SaleModel.statusCod && !_hasProof) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Upload bukti pencairan dana ekspedisi dulu!')),
+                  );
+                  return;
+                }
                 Navigator.pop(context);
                 _updateStatus(
                   widget.sale,
