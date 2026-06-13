@@ -35,9 +35,7 @@ class RecentSalesList extends StatelessWidget {
                 );
               },
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
               child: const Text('Lihat Semua'),
             ),

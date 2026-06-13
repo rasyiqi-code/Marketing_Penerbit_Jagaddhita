@@ -239,9 +239,7 @@ class WalletCard extends StatelessWidget {
                 onPressed: onClaimPulsaTap,
                 style: TextButton.styleFrom(
                   foregroundColor: AppTheme.accentColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 child: const Text('Klaim Pulsa'),
               ),

@@ -208,9 +208,7 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
               icon: const Icon(Icons.edit, size: 14),
               label: const Text('Ubah Bukti Transaksi', style: TextStyle(fontSize: 12)),
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               ),
             ),
           ] else ...[
@@ -267,9 +265,10 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
           ],
@@ -391,62 +390,78 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
-              minimumSize: const Size(0, 36),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
           const SizedBox(height: 8),
           if (widget.sale.paymentStatus == SaleModel.statusPending) ...[
-            ListTile(
-              dense: true,
-              visualDensity: VisualDensity.compact,
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Tandai sebagai DP', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-              subtitle: !_hasProof
-                  ? const Text(
-                      'Wajib bukti foto!',
-                      style: TextStyle(color: Colors.red, fontSize: 11),
-                    )
-                  : null,
-              enabled: _hasProof,
-              onTap: () {
-                Navigator.pop(context);
-                _updateStatus(
-                  widget.sale,
-                  SaleModel.statusDp,
-                  note: _noteController.text,
+            (() {
+              final req = widget.sale.details['requested_status'];
+              if (req == 'COD') {
+                return ListTile(
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Setujui Pembayaran COD', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Pesanan disetujui untuk dikirim dengan metode COD.', style: TextStyle(fontSize: 11)),
+                  trailing: const Icon(Icons.delivery_dining, color: Colors.orange, size: 20),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _updateStatus(widget.sale, SaleModel.statusCod, note: _noteController.text);
+                  },
                 );
-              },
-            ),
-            const Divider(height: 8),
-            ListTile(
-              dense: true,
-              visualDensity: VisualDensity.compact,
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Tandai sebagai COD', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-              subtitle: const Text('Persetujuan pesanan COD (Bayar di Tempat). Tidak butuh bukti di awal.', style: TextStyle(fontSize: 11)),
-              trailing: const Icon(Icons.delivery_dining, color: Colors.blue, size: 20),
-              onTap: () {
-                Navigator.pop(context);
-                _updateStatus(
-                  widget.sale,
-                  SaleModel.statusCod,
-                  note: _noteController.text,
+              } else if (req == 'DP') {
+                return ListTile(
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Setujui Pembayaran DP', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  subtitle: !_hasProof
+                      ? const Text('Wajib bukti foto!', style: TextStyle(color: Colors.red, fontSize: 11))
+                      : null,
+                  enabled: _hasProof,
+                  trailing: Icon(Icons.payments_outlined, color: _hasProof ? Colors.blue : Colors.grey, size: 20),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _updateStatus(widget.sale, SaleModel.statusDp, note: _noteController.text);
+                  },
                 );
-              },
-            ),
+              } else {
+                return ListTile(
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Setujui Pembayaran LUNAS', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  subtitle: Text(
+                    !_hasProof
+                        ? 'Wajib bukti foto!'
+                        : 'Status LUNAS belum mencairkan bonus.',
+                    style: TextStyle(color: !_hasProof ? Colors.red : Colors.grey[600], fontSize: 11),
+                  ),
+                  trailing: Icon(Icons.check_circle, color: _hasProof ? Colors.green : Colors.grey, size: 20),
+                  enabled: _hasProof,
+                  onTap: () {
+                    Navigator.pop(context);
+                    _updateStatus(widget.sale, SaleModel.statusLunas, note: _noteController.text);
+                  },
+                );
+              }
+            })(),
           ],
-          if (widget.sale.paymentStatus == SaleModel.statusPending ||
-              widget.sale.paymentStatus == SaleModel.statusDp) ...[
+          if (widget.sale.paymentStatus == SaleModel.statusDp) ...[
             const Divider(height: 8),
             ListTile(
               dense: true,
               visualDensity: VisualDensity.compact,
               contentPadding: EdgeInsets.zero,
-              title: const Text('Tandai LUNAS', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              title: const Text('Setujui Pelunasan (LUNAS)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
               subtitle: Text(
                 !_hasProof
-                    ? 'Wajib bukti foto!'
-                    : 'Status LUNAS belum mencairkan bonus. Bonus cair saat status COMPLETE.',
+                    ? 'Wajib bukti foto pelunasan!'
+                    : 'Status LUNAS belum mencairkan bonus.',
                 style: TextStyle(
                   color: !_hasProof ? Colors.red : Colors.grey[600],
                   fontSize: 11,

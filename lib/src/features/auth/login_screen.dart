@@ -271,8 +271,10 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
+    return Theme(
+      data: AppTheme.lightTheme,
+      child: Scaffold(
+        body: Stack(
         children: [
           // 1. Background putih
           Container(color: Colors.white),
@@ -466,6 +468,7 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ],
       ),
+    ),
     );
   }
 }

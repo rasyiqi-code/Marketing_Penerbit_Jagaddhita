@@ -253,33 +253,34 @@ class TransactionDetailModal extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color:
-                                (sale.paidAmount > 0 &&
-                                    sale.paidAmount < sale.totalPrice)
-                                ? Colors.blue.withValues(alpha: 0.1)
-                                : Colors.green.withValues(alpha: 0.1),
+                            color: (sale.details['requested_status'] == 'COD' || sale.paymentStatus == SaleModel.statusCod)
+                                ? Colors.orange.withValues(alpha: 0.1)
+                                : (sale.details['requested_status'] == 'DP' || (sale.paidAmount > 0 && sale.paidAmount < sale.totalPrice))
+                                    ? Colors.blue.withValues(alpha: 0.1)
+                                    : Colors.green.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
-                              color:
-                                  (sale.paidAmount > 0 &&
-                                      sale.paidAmount < sale.totalPrice)
-                                  ? Colors.blue
-                                  : Colors.green,
+                              color: (sale.details['requested_status'] == 'COD' || sale.paymentStatus == SaleModel.statusCod)
+                                  ? Colors.orange
+                                  : (sale.details['requested_status'] == 'DP' || (sale.paidAmount > 0 && sale.paidAmount < sale.totalPrice))
+                                      ? Colors.blue
+                                      : Colors.green,
                             ),
                           ),
                           child: Text(
-                            (sale.paidAmount > 0 &&
-                                    sale.paidAmount < sale.totalPrice)
-                                ? 'DP (Cicilan)'
-                                : 'LUNAS (Full Payment)',
+                            (sale.details['requested_status'] == 'COD' || sale.paymentStatus == SaleModel.statusCod)
+                                ? 'COD (Bayar di Tempat)'
+                                : (sale.details['requested_status'] == 'DP' || (sale.paidAmount > 0 && sale.paidAmount < sale.totalPrice))
+                                    ? 'DP (Cicilan)'
+                                    : 'LUNAS (Full Payment)',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
-                              color:
-                                  (sale.paidAmount > 0 &&
-                                      sale.paidAmount < sale.totalPrice)
-                                  ? Colors.blue[800]
-                                  : Colors.green[800],
+                              color: (sale.details['requested_status'] == 'COD' || sale.paymentStatus == SaleModel.statusCod)
+                                  ? Colors.orange[800]
+                                  : (sale.details['requested_status'] == 'DP' || (sale.paidAmount > 0 && sale.paidAmount < sale.totalPrice))
+                                      ? Colors.blue[800]
+                                      : Colors.green[800],
                             ),
                           ),
                         ),

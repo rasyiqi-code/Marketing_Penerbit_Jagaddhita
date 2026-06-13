@@ -208,9 +208,7 @@ class TransactionCard extends StatelessWidget {
                                 TextButton(
                                   onPressed: () => _cancelTransaction(context, sale),
                                   style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                    minimumSize: Size.zero,
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     visualDensity: VisualDensity.compact,
                                   ),
                                   child: Text(
@@ -225,9 +223,7 @@ class TransactionCard extends StatelessWidget {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppTheme.primaryColor,
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                                    minimumSize: const Size(0, 28),
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     visualDensity: VisualDensity.compact,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                                   ),
