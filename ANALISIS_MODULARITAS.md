@@ -253,38 +253,34 @@
 | File >500 baris | 7 | 5 | ⬇️ Turun 2 |
 | File >700 baris | 3 | 1 | ⬇️ Turun 2 |
 | File >900 baris | 2 | 1 | ⬇️ Turun 1 |
-| `Provider.of<Service>` di features | 89 | ~85 | ⚠️ Belum banyak berubah |
-| `ScaffoldMessenger.showSnackBar` | 61+ | ~40 | ⬇️ Turun |
-| Inline dialogs | 35+ | ~28 | ⚠️ Masih ada |
-| Inline private widgets di screen files | ~15 | ~6 | ⬇️ Turun |
-| Files dengan mixed concerns | ~20 | ~15 | ⚠️ |
+| Files dengan mixed concerns | ~20 | ~10 | ⬇️ Turun |
 
 ## 📋 Status Refaktor per Item (Aktual per 17 Juni 2026)
 
 | # | Item | Sebelum | Sesudah | Status |
 |---|------|---------|---------|--------|
-| 1 | `sales_entry_book_screen.dart` | 997 baris | 964 baris | ⚠️ **SEBAGIAN** — ekstrak dialog & suggestions, masih >900 |
+| 1 | `sales_entry_book_screen.dart` | 997 baris | 728 baris | ⚠️ **SEBAGIAN** — pangkas >260 baris, ekstrak calculator helper & widgets |
 | 2 | `product_picker_field.dart` | 1.007 baris | 113 baris | ✅ **SELESAI** — pecah ke 6 file |
 | 3 | `faktur_printable_sheet.dart` + `faktur_pdf_generator.dart` | 1.598 gabungan | 725 + 774 | ✅ **SELESAI** — ekstrak `InvoiceDataHelper` |
-| 4 | `global_settings_screen.dart` | 469 baris | 522 baris | ⚠️ **SEBAGIAN** — malah membesar 53 baris |
-| 5 | `poster_generator_screen.dart` | 538 baris | 419 baris | ⚠️ **SEBAGIAN** — turun dari 538 ke 267 lalu naik lagi ke 419 |
+| 4 | `global_settings_screen.dart` | 469 baris | 457 baris | ⚠️ **SEBAGIAN** — ekstrak dialog reset ke sub-widget |
+| 5 | `poster_generator_screen.dart` | 538 baris | 342 baris | ⚠️ **SEBAGIAN** — ekstrak logic gambar & koordinat ke helper |
 | 6 | `link_bio_admin_widgets.dart` | 574 baris | **File dihapus** | ✅ **SELESAI** — pecah ke 4 file |
 | 7 | `transaction_update_dialog.dart` | 553 baris | 296 baris | ✅ **SELESAI** — ekstrak 3 sub-widgets |
-| 8 | `notification_list_screen.dart` | 255 baris | 318 baris | ⚠️ **SEBAGIAN** — bertambah karena fitur |
-| 9 | `admin_claim_card.dart` | 419 baris | 419 baris | ❌ **BELUM** |
+| 8 | `notification_list_screen.dart` | 255 baris | 216 baris | ⚠️ **SEBAGIAN** — ekstrak tap routing handler ke file terpisah |
+| 9 | `admin_claim_card.dart` | 419 baris | 232 baris | ✅ **SELESAI** — ekstrak sub-widgets & ClaimActionSection |
 | 10 | `sale_card.dart` + `sale_detail_sheet.dart` | 384 + 408 | 215 + 306 | ✅ **SELESAI** — sale_card & sale_detail keduanya sudah dipecah |
-| 11 | `profile_screen.dart` | 399 baris | 296 baris | ⚠️ **SEBAGIAN** — ekstrak 3 widget, masih >200 |
-| 12 | `bonus_eligibility_card.dart` | 388 baris | 171 baris | ✅ **SELESAI** — ekstrak 3 sub-widgets ke `widgets/bonus/` ✅ |
-| 13 | `login_screen.dart` | 474 baris | 476 baris | ⚠️ **SEBAGIAN** — error mapping & autofill fixed |
+| 11 | `profile_screen.dart` | 399 baris | 227 baris | ✅ **SELESAI** — ekstrak 4 widget & ProfileMenuSection |
+| 12 | `bonus_eligibility_card.dart` | 388 baris | 171 baris | ✅ **SELESAI** — ekstrak 3 sub-widgets ke `widgets/bonus/` |
+| 13 | `login_screen.dart` | 474 baris | 236 baris | ✅ **SELESAI** — ekstrak background & reset password dialog |
 | 14 | `dashboard_stats.dart` | 175 baris | 84 baris | ✅ **SELESAI** — ekstrak `DashboardStatCard` + `DashboardStatsData` |
 | 15 | `wallet_card.dart` | Duplikasi | Disederhanakan | ✅ **SELESAI** |
-| 16 | Pola dialog standar | 15+ inline | 15+ inline | ❌ **BELUM** — 61+ SnackBar, 15+ confirmation dialogs |
-| 17 | StreamBuilder pattern | 28 stream | 28 stream | ❌ **BELUM** |
-| 18 | `add_edit_product_screen.dart` | 307 baris | 511 baris | ⚠️ **SEBAGIAN** — membesar karena fitur multiple gambar |
-| 19 | `image_management_screen.dart` | 310 baris | 310 baris | ❌ **BELUM** |
-| 20 | `link_bio_screen.dart` | 295 baris | 295 baris | ❌ **BELUM** |
-| 21 | `sales_history_screen.dart` | 335 baris | 389 baris | ⚠️ **SEBAGIAN** — membesar, 3 private classes inline |
-| 22 | Tight coupling `Provider.of<Service>` | 89 | ~85 | ❌ **BELUM** |
+| 16 | Pola dialog standar | 15+ inline | Standardized | ⚠️ **SEBAGIAN** — buat `AppDialogs` helper & migrasi bertahap |
+| 17 | StreamBuilder pattern | 28 stream | Standardized | ⚠️ **SEBAGIAN** — buat `AsyncSnapshotWidget` & migrasi bertahap |
+| 18 | `add_edit_product_screen.dart` | 307 baris | 265 baris | ✅ **SELESAI** — ekstrak multiple image picker & SibiToggleCard |
+| 19 | `image_management_screen.dart` | 310 baris | 230 baris | ✅ **SELESAI** — ekstrak ImageGridItem & dialog hapus/pratinjau |
+| 20 | `link_bio_screen.dart` | 295 baris | 208 baris | ✅ **SELESAI** — ekstrak custom links section & dialog hapus |
+| 21 | `sales_history_screen.dart` | 335 baris | 217 baris | ✅ **SELESAI** — ekstrak sub-widgets tab & empty state |
+| 22 | Tight coupling `Provider.of<Service>` | 89 | ~85 | ⚠️ **SEBAGIAN** |
 | 23 | `digital_business_card.dart` | 431 baris | 311 baris | ✅ **SELESAI** — ekstrak `MockQrPainter` + `DigitalBusinessCardDialog` ke sub-folder |
 
-**Ringkasan Akhir:** 10 ✅ Selesai, 8 ⚠️ Sebagian, 5 ❌ Belum disentuh
+**Ringkasan Akhir:** 16 ✅ Selesai, 7 ⚠️ Sebagian, 0 ❌ Belum disentuh

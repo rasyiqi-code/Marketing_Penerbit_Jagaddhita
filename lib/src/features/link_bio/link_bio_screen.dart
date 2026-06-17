@@ -12,6 +12,8 @@ import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/add_edit_lin
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_admin_widgets.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_delete_dialog.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_custom_links_section.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/async_snapshot_widget.dart';
 
 class LinkBioScreen extends StatefulWidget {
   const LinkBioScreen({super.key});
@@ -98,18 +100,11 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
       });
       await _loadUser();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Pengaturan Kartu Nama berhasil disimpan!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        AppDialogs.showSuccessSnackBar(context, 'Pengaturan Kartu Nama berhasil disimpan!');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menyimpan: $e')),
-        );
+        AppDialogs.showErrorSnackBar(context, 'Gagal menyimpan: $e');
       }
     } finally {
       if (mounted) setState(() => _isSavingSocial = false);
@@ -139,16 +134,10 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
       body: StreamBuilder<List<LinkBioModel>>(
         stream: linkBioService.getLinks(_currentUser!.id),
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final links = snapshot.data!;
-
-          return ListView(
+          return AsyncSnapshotWidget<List<LinkBioModel>>(
+            snapshot: snapshot,
+            builder: (context, links) {
+              return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             children: [
               // ── Header Card ───────────────────────────────────────────────
@@ -198,7 +187,9 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
             ],
           );
         },
-      ),
+      );
+    },
+  ),
     );
   }
 }
