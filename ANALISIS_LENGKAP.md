@@ -15,7 +15,7 @@
 ### 2. ~~`poster_export_helper_stub.dart` juga pakai `dart:io`~~ `[Selesai]`
 `lib/src/core/utils/poster_export_helper_stub.dart:4` import `dart:io` + `File`, sementara `poster_export_helper_web.dart` sudah benar pakai universal method. Pattern yang sama di `excel_export_helper_stub.dart`. Semua file stub akan **gagal compile di web**.
 
-### 3. `currency_input_formatter.dart` tidak handle format desimal
+### 3. ~~`currency_input_formatter.dart` tidak handle format desimal~~ `[Selesai]`
 `lib/src/core/utils/currency_input_formatter.dart:32-37` — Menggunakan `NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0).format()` tanpa `int.parse()` atau validasi lanjutan, bisa menghasilkan output berisi karakter non-digit yang menyebabkan `FormatException` saat parsing.
 
 ---
@@ -202,12 +202,12 @@ color: const Color(0xFF1E1E1E), // Dark card for contrast
 - Banyak kode redundan (>150 baris untuk card sederhana)
 - Rentan bug: satu branch di-edit, yang lain lupa di-edit
 
-### 🟠 8. Format nominal tidak pakai separator ribuan di komisi card
+### 🟠 8. ~~Format nominal tidak pakai separator ribuan di komisi card~~ `[Selesai]`
 **File:** `wallet_card.dart:149-151`
 - `AppFormatters.currency` dipakai, tapi ada baris di card lain yang masih raw formatting
 - Beberapa tempat di codebase pakai `NumberFormat.currency` langsung dengan format inconsistent
 
-### 🟠 9. Keterangan potongan diskon mengelirukan
+### 🟠 9. ~~Keterangan potongan diskon mengelirukan~~ `[Selesai]`
 **File:** `sales_entry_shared_widgets.dart:93-97`
 ```dart
 _CalcRow(label: 'Diskon ${discountPercent.toStringAsFixed(0)}%', ...)
@@ -220,7 +220,7 @@ _CalcRow(label: 'Diskon ${discountPercent.toStringAsFixed(0)}%', ...)
 - Tidak ada halaman konfirmasi/review sebelum submit
 - User menekan submit langsung, tidak bisa review ulang pesanan
 
-### 🟠 11. `positionInitialized` state untuk drag text di poster — inisialisasi di build()
+### 🟠 11. ~~`positionInitialized` state untuk drag text di poster — inisialisasi di build()~~ `[Selesai]`
 **File:** `poster_generator_screen.dart:476-484`
 ```dart
 if (!_positionInitialized) {
@@ -245,7 +245,7 @@ if (!_positionInitialized) {
 - Hanya handle: today → jam, `< 7 days` → nama hari, `>= 7 days` → tanggal
 - Tidak ada "Kemarin" — notifikasi kemarin muncul sebagai "Wednesday, 14:30"
 
-### 🟠 15. Copy-to-clipboard tooltip ambigu
+### 🟠 15. ~~Copy-to-clipboard tooltip ambigu~~ `[Selesai]`
 **File:** `admin_claim_card.dart:357-358`
 ```dart
 child: Tooltip(message: 'Tap to copy', child: content),
@@ -253,53 +253,53 @@ child: Tooltip(message: 'Tap to copy', child: content),
 - Tooltip multilingual: UI pakai Bahasa Indonesia, tapi tooltip English
 - SnackBar setelah copy juga English: "Copied: $text"
 
-### 🟡 16. Version splash tidak sync dengan pubspec
+### 🟡 16. ~~Version splash tidak sync dengan pubspec~~ `[Selesai]`
 **File:** `splash_screen.dart:101` — Hardcode `'v1.1.1'`  
 **File:** `pubspec.yaml` — `version: 1.1.2+4`
 
-### 🟡 17. Login screen: background putih tapi ada gap dengan widget lain
+### 🟡 17. ~~Login screen: background putih tapi ada gap dengan widget lain~~ `[Selesai]`
 **File:** `login_screen.dart:278-280`
 ```dart
 Container(color: Colors.white),
 ```
 
-### 🟡 18. Register screen tidak ada Google Sign-In option
+### 🟡 18. ~~Register screen tidak ada Google Sign-In option~~ `[Selesai]`
 **File:** `register_screen.dart` — Login screen punya "Masuk dengan Google", register screen tidak ada
 
 ### 🟡 19. ~~Tombol "Tarif Pulsa" di wallet bisa diklik padahal saldo 0~~ `[Selesai]`
 **File:** `wallet_card.dart:238-246` — `TextButton` untuk "Klaim Pulsa" selalu aktif
 
-### 🟡 20. SnackBar tidak uniform — ada yang floating, ada yang default
+### 🟡 20. ~~SnackBar tidak uniform — ada yang floating, ada yang default~~ `[Selesai]`
 Di seluruh codebase — tidak konsisten
 
-### 🟡 21. `dart:io` image_picker untuk web tidak berfungsi
+### 🟡 21. ~~`dart:io` image_picker untuk web tidak berfungsi~~ `[Selesai]`
 **File:** `poster_generator_screen.dart:116-117` — `image_picker` di web hanya support `ImageSource.gallery`
 
-### 🟡 22. `responsive_web_layout.dart` max-width 480px sangat sempit
+### 🟡 22. ~~`responsive_web_layout.dart` max-width 480px sangat sempit~~ `[Selesai]`
 **File:** `responsive_web_layout.dart:21` — `BoxConstraints(maxWidth: 480)`
 
-### 🟡 23. Tidak ada tombol retry untuk error state di main_screen
+### 🟡 23. ~~Tidak ada tombol retry untuk error state di main_screen~~ `[Selesai]`
 **File:** `main_screen.dart:55-71` — Error ditampilkan dengan tombol "Logout", tidak ada "Coba Lagi"
 
-### 🟡 24. `initialValue` di DropdownButtonFormField deprecated
+### 🟡 24. ~~`initialValue` di DropdownButtonFormField deprecated~~ `[Selesai]` *(Versi Flutter SDK saat ini mewajibkan `initialValue` dan mendeprecate `value`)*
 **File:** `sales_entry_shared_widgets.dart:255`, `transaction_update_dialog.dart:298`
 
-### 🟡 25. Tombol "Reset Semua Data" ada di production settings
+### 🟡 25. ~~Tombol "Reset Semua Data" ada di production settings~~ `[Selesai]`
 **File:** `global_settings_screen.dart:456-459` — Tanpa audit log, sangat berbahaya
 
-### 🟡 26. Image Management preview mungkin lambat tanpa loading
+### 🟡 26. ~~Image Management preview mungkin lambat tanpa loading~~ `[Selesai]`
 **File:** `image_management_screen.dart` — `errorWidget` ada, tapi tidak ada loading placeholder
 
-### 🟡 27. Tooltip icon info di wallet menggunakan `Icon` tanpa semantik label
+### 🟡 27. ~~Tooltip icon info di wallet menggunakan `Icon` tanpa semantik label~~ `[Selesai]`
 **File:** `wallet_card.dart:62-68` — Screen reader tidak bisa membaca tooltip
 
-### 🟡 28. `pushReplacementNamed('/auth_wrapper')` bisa menyebabkan infinite loop
+### 🟡 28. ~~`pushReplacementNamed('/auth_wrapper')` bisa menyebabkan infinite loop~~ `[Selesai]`
 **File:** `splash_screen.dart:51` — Setelah logout, splash tidak pernah muncul lagi
 
-### 🟡 29. Tidak ada `unfocus()` saat tap luar field di modal edit contact poster
+### 🟡 29. ~~Tidak ada `unfocus()` saat tap luar field di modal edit contact poster~~ `[Selesai]`
 **File:** `poster_generator_screen.dart:128-181` — Tidak ada cara dismiss keyboard selain tap "Simpan"
 
-### 🟡 30. Icon emoji (`📚`, `🏛️`) di catalog tidak konsisten di semua platform
+### 🟡 30. ~~Icon emoji (`📚`, `🏛️`) di catalog tidak konsisten di semua platform~~ `[Selesai]`
 **File:** `product_picker_field.dart:497,524` — Emoji render berbeda antar platform
 
 ---

@@ -139,21 +139,25 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
           'Edit Kontak',
           style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Nama'),
-              textCapitalization: TextCapitalization.words,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: phoneController,
-              decoration: const InputDecoration(labelText: 'Nomor WhatsApp'),
-              keyboardType: TextInputType.phone,
-            ),
-          ],
+        content: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          behavior: HitTestBehavior.translucent,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Nama'),
+                textCapitalization: TextCapitalization.words,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: phoneController,
+                decoration: const InputDecoration(labelText: 'Nomor WhatsApp'),
+                keyboardType: TextInputType.phone,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(

@@ -71,7 +71,7 @@
 | 46 | ~~**`SalesCalculationCard` overflow di device kecil** — Column dengan Row untuk label-value bisa overflow di HP 320px tanpa ellipsis~~ | `sales_entry_shared_widgets.dart` | 38-50 | **Selesai** |
 | 47 | ~~**`home_header.dart` overflow di landscape** — Avatar + nama + role bisa terpotong di mode landscape~~ | `home_header.dart` | - | **Selesai** |
 | 48 | ~~**FittedBox tidak perlu di admin home** — `FittedBox(BoxFit.scaleDown)` pada AppBar title pendek ("Admin Dashboard") tidak berguna~~ | `admin_home_screen.dart` | 21-31 | **Selesai** |
-| 49 | ~~**`pushReplacementNamed('/auth_wrapper')` bikin flow tidak natural** — Setelah logout, tombol back tidak bisa kembali ke splash~~ | `splash_screen.dart` | 51 | **Selesai** |ow tidak natural** — Setelah logout, tombol back tidak bisa kembali ke splash | `splash_screen.dart` | 51 | **Belum** |
+| 49 | ~~**`pushReplacementNamed('/auth_wrapper')` bikin flow tidak natural** — Setelah logout, tombol back tidak bisa kembali ke splash~~ | `splash_screen.dart` | 51 | **Selesai** |
 
 ---
 

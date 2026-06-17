@@ -349,13 +349,13 @@ class AdminClaimCard extends StatelessWidget {
         Clipboard.setData(ClipboardData(text: text));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Copied: $text'),
+            content: Text('Berhasil disalin: $text'),
             duration: const Duration(seconds: 1),
             behavior: SnackBarBehavior.floating,
           ),
         );
       },
-      child: Tooltip(message: 'Tap to copy', child: content),
+      child: Tooltip(message: 'Ketuk untuk menyalin', child: content),
     );
   }
 
@@ -373,12 +373,12 @@ class AdminClaimCard extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         actionsPadding: const EdgeInsets.only(right: 12, bottom: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: Text('$action Request', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        title: Text('Konfirmasi $action', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         content: Text(message, style: const TextStyle(fontSize: 13)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(fontSize: 13)),
+            child: const Text('Batal', style: TextStyle(fontSize: 13)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -387,7 +387,7 @@ class AdminClaimCard extends StatelessWidget {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('$action success'),
+                      content: Text('Permintaan $action berhasil diproses'),
                       backgroundColor: Colors.green,
                     ),
                   );
@@ -410,7 +410,7 @@ class AdminClaimCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
-            child: const Text('Confirm', style: TextStyle(color: Colors.white, fontSize: 13)),
+            child: const Text('Konfirmasi', style: TextStyle(color: Colors.white, fontSize: 13)),
           ),
         ],
       ),
