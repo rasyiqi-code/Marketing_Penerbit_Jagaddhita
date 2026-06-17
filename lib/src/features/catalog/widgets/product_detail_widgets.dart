@@ -8,57 +8,104 @@ import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 
 /// Renders the Hero product image with safe fallback.
-class ProductDetailImage extends StatelessWidget {
+class ProductDetailImage extends StatefulWidget {
   final ProductModel product;
 
   const ProductDetailImage({super.key, required this.product});
 
   @override
+  State<ProductDetailImage> createState() => _ProductDetailImageState();
+}
+
+class _ProductDetailImageState extends State<ProductDetailImage> {
+  int _currentPage = 0;
+
+  @override
   Widget build(BuildContext context) {
+    final images = widget.product.imageUrls;
+    final fallbackImages = (images.isEmpty &&
+            widget.product.marketingKitUrl != null &&
+            widget.product.marketingKitUrl!.isNotEmpty)
+        ? [widget.product.marketingKitUrl!]
+        : images;
+
+    if (fallbackImages.isEmpty) {
+      return Container(
+        height: 250,
+        width: double.infinity,
+        color: Theme.of(context).cardColor,
+        child: Center(
+          child: Icon(
+            Icons.broken_image_rounded,
+            size: 64,
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+          ),
+        ),
+      );
+    }
+
     return Hero(
-      tag: 'product_${product.id}',
+      tag: 'product_${widget.product.id}',
       child: Container(
+        height: 300,
         width: double.infinity,
         decoration: BoxDecoration(
-          color: product.houseType == 1
+          color: widget.product.houseType == 1
               ? AppTheme.primaryColor.withValues(alpha: 0.1)
               : AppTheme.secondaryColor.withValues(alpha: 0.1),
         ),
-        child: (product.imageUrl != null && product.imageUrl!.isNotEmpty)
-            ? NetworkImageWeb(
-                imageUrl: product.imageUrl!,
-                width: double.infinity,
-                fit: BoxFit.fitWidth,
-                errorWidget: Container(
-                  height: 200,
-                  color: Theme.of(context).cardColor,
-                  child: Center(
-                    child: Icon(
-                      Icons.broken_image_rounded,
-                      size: 64,
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            PageView.builder(
+              itemCount: fallbackImages.length,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              itemBuilder: (context, index) {
+                return NetworkImageWeb(
+                  imageUrl: fallbackImages[index],
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  errorWidget: Container(
+                    color: Theme.of(context).cardColor,
+                    child: Center(
+                      child: Icon(
+                        Icons.broken_image_rounded,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            if (fallbackImages.length > 1)
+              Positioned(
+                bottom: 12,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    fallbackImages.length,
+                    (index) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: _currentPage == index ? 16 : 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(3),
+                        color: _currentPage == index
+                            ? AppTheme.primaryColor
+                            : Colors.grey.withValues(alpha: 0.5),
+                      ),
                     ),
                   ),
                 ),
-              )
-            : (product.marketingKitUrl != null && product.marketingKitUrl!.isNotEmpty)
-                ? NetworkImageWeb(
-                    imageUrl: product.marketingKitUrl!,
-                    width: double.infinity,
-                    fit: BoxFit.fitWidth,
-                    errorWidget: Container(
-                      height: 200,
-                      color: Theme.of(context).cardColor,
-                      child: Center(
-                        child: Icon(
-                          Icons.broken_image_rounded,
-                          size: 64,
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                        ),
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
+              ),
+          ],
+        ),
       ),
     );
   }

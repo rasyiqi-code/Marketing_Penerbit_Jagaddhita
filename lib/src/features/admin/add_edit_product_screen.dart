@@ -30,6 +30,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   int _houseType = 1;
   String? _uploadedImageUrl;
   bool _isSibi = false;
+  List<String> _productImageUrls = [];
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     _copywritingController = TextEditingController(text: p?.copywriting ?? '');
     _houseType = p?.houseType ?? 1;
     _isSibi = p?.isSibi ?? false;
+    _productImageUrls = List<String>.from(p?.imageUrls ?? []);
   }
 
   Future<void> _saveProduct() async {
@@ -55,19 +57,14 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
       final productService = Provider.of<ProductService>(context, listen: false);
 
       final product = ProductModel(
-        id:
-            widget.product?.id ??
-            '', // ID handled by productService if empty but we use .add() or .update
+        id: widget.product?.id ?? '',
         houseType: _houseType,
         name: _nameController.text,
         category: _categoryController.text,
         price: double.tryParse(_priceController.text) ?? 0,
         description: _descriptionController.text,
         copywriting: _copywritingController.text,
-        // Use the uploaded image URL or keep existing one
-        imageUrl: widget
-            .product
-            ?.imageUrl, // We haven't added image upload for main image yet
+        imageUrls: _productImageUrls,
         marketingKitUrl: _uploadedImageUrl,
         isSibi: _isSibi,
       );
@@ -177,6 +174,213 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 icon: Icons.description_outlined,
                 maxLines: 3,
               ),
+              const SizedBox(height: 16),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Gambar Produk (Multiple)',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.collections_outlined),
+                        tooltip: 'Pilih dari Galeri',
+                        onPressed: () async {
+                          final String? selectedUrl = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ImageManagementScreen(isPicker: true),
+                            ),
+                          );
+
+                          if (selectedUrl != null && mounted) {
+                            setState(() {
+                              _productImageUrls.add(selectedUrl);
+                            });
+                          }
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.cloud_upload_outlined),
+                        tooltip: 'Upload Baru',
+                        onPressed: () async {
+                          try {
+                            final ImagePicker picker = ImagePicker();
+                            final XFile? image = await picker.pickImage(
+                              source: ImageSource.gallery,
+                              maxWidth: 1080,
+                              maxHeight: 1080,
+                              imageQuality: 85,
+                            );
+
+                            if (image == null) return;
+                            if (!context.mounted) return;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Uploading image...')),
+                            );
+
+                            final storage = Provider.of<StorageService>(
+                              context,
+                              listen: false,
+                            );
+
+                            final bytes = await image.readAsBytes();
+                            final url = await storage.uploadBytes(
+                              bytes,
+                              image.name,
+                              'products',
+                            );
+
+                            if (!context.mounted) return;
+
+                            setState(() {
+                              _productImageUrls.add(url);
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Upload Successful!')),
+                            );
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Upload failed: $e')),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              _productImageUrls.isEmpty
+                  ? Container(
+                      height: 100,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey.withValues(alpha: 0.3),
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Belum ada gambar produk.\nTambahkan dari galeri atau upload baru.',
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _productImageUrls.length,
+                        itemBuilder: (context, index) {
+                          final url = _productImageUrls[index];
+                          final isPrimary = index == 0;
+                          return Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            width: 100,
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: NetworkImageWeb(
+                                    imageUrl: url,
+                                    width: 100,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                if (isPrimary)
+                                  Positioned(
+                                    top: 4,
+                                    left: 4,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: const Text(
+                                        'Utama',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _productImageUrls.removeAt(index);
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                        size: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (!isPrimary)
+                                  Positioned(
+                                    bottom: 4,
+                                    left: 4,
+                                    right: 4,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          final primary =
+                                              _productImageUrls.removeAt(index);
+                                          _productImageUrls.insert(0, primary);
+                                        });
+                                      },
+                                      child: Container(
+                                        padding:
+                                            const EdgeInsets.symmetric(vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withValues(alpha: 0.6),
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: const Text(
+                                          'Set Utama',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 9,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
               const SizedBox(height: 16),
               const Divider(),
               const Text(

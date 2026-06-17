@@ -5,10 +5,12 @@ class ProductModel {
   final String category;
   final double price;
   final String description;
-  final String? imageUrl;
+  final List<String> imageUrls;
   final String? marketingKitUrl;
   final String? copywriting;
   final bool isSibi;
+
+  String? get imageUrl => imageUrls.isNotEmpty ? imageUrls.first : null;
 
   ProductModel({
     required this.id,
@@ -17,11 +19,12 @@ class ProductModel {
     required this.category,
     required this.price,
     required this.description,
-    this.imageUrl,
+    String? imageUrl,
+    List<String>? imageUrls,
     this.marketingKitUrl,
     this.copywriting,
     this.isSibi = false,
-  });
+  }) : imageUrls = imageUrls ?? (imageUrl != null && imageUrl.isNotEmpty ? [imageUrl] : const []);
 
   factory ProductModel.fromMap(Map<String, dynamic> data, String id) {
     final categoryStr = data['category'] ?? '';
@@ -30,6 +33,14 @@ class ProductModel {
         categoryStr.toLowerCase().contains('kemendikbud') ||
         nameStr.toLowerCase().contains('sibi');
 
+    final rawImageUrls = data['image_urls'];
+    List<String> imageUrlsList = [];
+    if (rawImageUrls is List) {
+      imageUrlsList = rawImageUrls.map((e) => e.toString()).toList();
+    } else if (data['image_url'] != null && data['image_url'].toString().isNotEmpty) {
+      imageUrlsList = [data['image_url'].toString()];
+    }
+
     return ProductModel(
       id: id,
       houseType: data['house_type'] ?? 1,
@@ -37,7 +48,7 @@ class ProductModel {
       category: categoryStr,
       price: (data['price'] ?? 0).toDouble(),
       description: data['description'] ?? '',
-      imageUrl: data['image_url'],
+      imageUrls: imageUrlsList,
       marketingKitUrl: data['marketing_kit_url'],
       copywriting: data['copywriting'],
       isSibi: data['is_sibi'] ?? fallbackIsSibi,
@@ -51,7 +62,8 @@ class ProductModel {
       'category': category,
       'price': price,
       'description': description,
-      'image_url': imageUrl,
+      'image_url': imageUrls.isNotEmpty ? imageUrls.first : null,
+      'image_urls': imageUrls,
       'marketing_kit_url': marketingKitUrl,
       'copywriting': copywriting,
       'is_sibi': isSibi,
