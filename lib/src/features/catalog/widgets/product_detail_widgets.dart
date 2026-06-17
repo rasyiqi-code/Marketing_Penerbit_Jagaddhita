@@ -47,89 +47,74 @@ class _ProductDetailImageState extends State<ProductDetailImage> {
     return Hero(
       tag: 'product_${widget.product.id}',
       child: Container(
-        height: 360,
         width: double.infinity,
         decoration: BoxDecoration(
           color: widget.product.houseType == 1
               ? AppTheme.primaryColor.withValues(alpha: 0.05)
               : AppTheme.secondaryColor.withValues(alpha: 0.05),
         ),
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 36),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.25),
-                        blurRadius: 16,
-                        offset: const Offset(0, 8),
-                        spreadRadius: -2,
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: AspectRatio(
-                      aspectRatio: 3 / 4, // Rasio aspek buku portrait standard
-                      child: PageView.builder(
-                        itemCount: fallbackImages.length,
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentPage = index;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          return NetworkImageWeb(
-                            imageUrl: fallbackImages[index],
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover, // Memenuhi rasio buku dengan rapi
-                            errorWidget: Container(
-                              color: Theme.of(context).cardColor,
-                              child: Center(
-                                child: Icon(
-                                  Icons.broken_image_rounded,
-                                  size: 48,
-                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                                ),
-                              ),
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(
+              maxHeight: 500, // Batas tinggi maksimum agar tidak melar ekstrem di desktop
+            ),
+            child: AspectRatio(
+              aspectRatio: 3 / 4, // Rasio aspek buku portrait standard
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  PageView.builder(
+                    itemCount: fallbackImages.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentPage = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return NetworkImageWeb(
+                        imageUrl: fallbackImages[index],
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover, // Memenuhi seluruh wadah dengan rapi
+                        errorWidget: Container(
+                          color: Theme.of(context).cardColor,
+                          child: Center(
+                            child: Icon(
+                              Icons.broken_image_rounded,
+                              size: 48,
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  if (fallbackImages.length > 1)
+                    Positioned(
+                      bottom: 16,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          fallbackImages.length,
+                          (index) => AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: _currentPage == index ? 16 : 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(3),
+                              color: _currentPage == index
+                                  ? AppTheme.primaryColor
+                                  : Colors.grey.withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                ],
               ),
             ),
-            if (fallbackImages.length > 1)
-              Positioned(
-                bottom: 16,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    fallbackImages.length,
-                    (index) => AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: _currentPage == index ? 16 : 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3),
-                        color: _currentPage == index
-                            ? AppTheme.primaryColor
-                            : Colors.grey.withValues(alpha: 0.5),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );
