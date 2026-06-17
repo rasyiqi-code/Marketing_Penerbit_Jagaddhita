@@ -108,268 +108,191 @@
 ## 🟠 Medium Severity
 
 ### 7. `transaction_update_dialog.dart` — 553 Baris, God Dialog
+**Status:** ❌ **BELUM**
 **File:** `lib/src/features/admin/widgets/transaction_update_dialog.dart`
-
-**Masalah:**
-- **553 baris** untuk satu dialog: image upload, shipping status, courier info, notes, payment status toggle, proof management.
-- Akses `Provider.of<StorageService>`, `Provider.of<SalesService>`, `Provider.of<AppNotificationService>` — 3 services.
-- `_confirmChanges()` method masif dengan multiple service calls + snackbar.
-
-**Saran Refaktor:**
-- Ekstrak `TransactionUpdateViewModel`.
-- Break ke sub-widgets: `ProofUploadSection`, `ShippingInfoSection`, `PaymentStatusSection`.
+- Masih 553 baris, satu dialog handle image upload, shipping, payment, notes.
+- Akses 3 services langsung (`StorageService`, `SalesService`, `AppNotificationService`).
+- Perlu ekstrak `TransactionUpdateViewModel` + sub-widgets.
 
 ---
 
-### 8. `notification_list_screen.dart` — 255 Baris, Mixed Concerns
+### 8. `notification_list_screen.dart` — 318 Baris (sebelumnya 255)
+**Status:** ⚠️ **SEBAGIAN** (bertambah karena ada perubahan fitur)
 **File:** `lib/src/features/notifications/notification_list_screen.dart`
-
-**Masalah:**
-- `_handleNotificationTap` (140–237, ~100 baris) — fetch sales data, fetch wallet claims, loading dialog, `SaleDetailDialog`, claim dialog, error handling.
-- Tapping notifikasi trigger: `Provider.of<SalesService>`, `Provider.of<WalletService>`, dialog management, navigation — semua di method StatelessWidget.
-- Routing notifikasi pakai `title.contains(...)` string matching (165–189) — fragile.
-
-**Saran Refaktor:**
-- Pindahkan handling ke `NotificationController.handleTap(NotificationModel)` yang return route/destination.
-- Ekstrak `_EmptyState` (duplikat di `sales_history_screen.dart`) ke shared `EmptyStateWidget`.
-- Target: **<150 baris**.
+- `_handleNotificationTap` masih ~100 baris dengan routing string matching.
+- Tapi `NotificationController` sudah dimanfaatkan untuk beberapa logic.
+- Empty state sudah pakai ilustrasi.
+- Target: **<150 baris** — masih perlu ekstraksi routing handler.
 
 ---
 
 ### 9. `admin_claim_card.dart` — 419 Baris
+**Status:** ❌ **BELUM** (hanya perubahan minor 12 baris)
 **File:** `lib/src/features/admin/widgets/admin_claim_card.dart`
-
-**Masalah:**
-- 419 baris untuk "card" widget — handle claim display, status update logic, rejection dialog, confirmation dialog.
-- God method `_approveRejectClaim` dengan sequential service calls.
-- `Provider.of<AppNotificationService>` langsung di widget.
-
-**Saran Refaktor:**
-- Ekstrak dialogs + business logic ke `ClaimActionHandler`.
-- Card presentational-only.
+- Masih 419 baris, god method `_approveRejectClaim`, `Provider.of` langsung.
+- Perlu ekstrak `ClaimActionHandler`.
 
 ---
 
 ### 10. `sale_card.dart` (384) + `sale_detail_sheet.dart` (408)
-**File:**
-- `lib/src/features/sales/history/widgets/sale_card.dart`
-- `lib/src/features/sales/history/widgets/sale_detail_sheet.dart`
-
-**Masalah:**
-- `sale_card.dart` — 384 baris untuk list item card: status badges, shipping info, payment status, action buttons, snackbar.
-- `sale_detail_sheet.dart` — 408 baris bottom sheet: product list, total calculation, "Lunaskan" button + dialog, image uploading, service calls.
-- Duplikasi formatting pattern currency, status display, product rows.
-
-**Saran Refaktor:**
-- Buat shared `SaleStatusBadge`, `SaleProductSummary`, `SaleActionButtons` widgets.
-- Pindahkan logic "Lunaskan" ke shared helper/controller.
+**Status:** ❌ **BELUM**
+**File:** `lib/src/features/sales/history/widgets/sale_card.dart` + `sale_detail_sheet.dart`
+- 384 + 408 baris, duplikasi formatting pattern currency, status, product rows.
+- Perlu shared `SaleStatusBadge`, `SaleProductSummary`, `SaleActionButtons`.
 
 ---
 
-### 11. `profile_screen.dart` — 399 Baris, Private Widgets Tidak Diekstrak
+### 11. `profile_screen.dart` — 399 Baris
+**Status:** ❌ **BELUM**
 **File:** `lib/src/features/profile/profile_screen.dart`
-
-**Masalah:**
-- 3 private widgets inline: `_ProfileAvatar`, `_SectionHeader`, `_SettingsTile` (286–399).
-- 10 `TextEditingController` diinit + dispose inline.
-- `_deleteAccount()` (145–169) — dialog, service calls, navigation, snackbar campur aduk.
-
-**Saran Refaktor:**
-- Ekstrak `_ProfileAvatar`, `_SectionHeader`, `_SettingsTile` ke file terpisah (pattern reusable).
-- Pindahkan `_deleteAccount` ke `ProfileViewModel`.
+- 3 private widgets inline (`_ProfileAvatar`, `_SectionHeader`, `_SettingsTile`).
+- 10 `TextEditingController`, `_deleteAccount()` mixed concerns.
 - Target: **<200 baris**.
 
 ---
 
 ### 12. `bonus_eligibility_card.dart` — 388 Baris
+**Status:** ❌ **BELUM**
 **File:** `lib/src/features/home/widgets/bonus_eligibility_card.dart`
-
-**Masalah:**
-- StatefulWidget dengan business logic: fetch data dari `SalesService` (2 methods) + `ProductService` (via `StreamBuilder`).
-- `build()` (53–298) = kalkulasi eligibility, conditional rendering, progress bars, layout — ~245 baris.
-- `_buildProgressItem` (300–387) = 87 baris widget code.
-
-**Saran Refaktor:**
-- Ekstrak eligibility calculation ke `BonusEligibilityCalculator` utility.
-- Ekstrak `_buildProgressItem` ke reusable `ProgressStatTile`.
+- Business logic + UI campur, `build()` 245 baris.
+- Perlu ekstrak `BonusEligibilityCalculator` + `ProgressStatTile`.
 - Target: **<200 baris**.
 
 ---
 
-### 13. `login_screen.dart` — 474 Baris
+### 13. `login_screen.dart` — 476 Baris (sebelumnya 474)
+**Status:** ⚠️ **SEBAGIAN** (error message mapping, autofill, loading state diperbaiki)
 **File:** `lib/src/features/auth/login_screen.dart`
-
-**Masalah:**
-- Inline decorative circles (286–349) — 64 baris `Positioned`/`Container` berulang.
-- Inline `_showWebConfigErrorDialog` (180–218) + `_showResetPasswordDialog` (220–270).
-- `_handleLogin()` (49–138) — ~50 baris error message mapping cascade.
-- `_handleGoogleLogin()` (141–178) — error string matching.
-
-**Saran Refaktor:**
-- Ekstrak decorative circles ke `LoginScreenBackground` widget.
-- Ekstrak dialogs ke file terpisah.
-- Pindahkan error message mapping ke `AuthService` atau `AuthExceptionMapper`.
+- Tapi decorative circles (286–349) masih inline — 64 baris.
+- `_showResetPasswordDialog` masih inline.
+- Perlu ekstrak `LoginScreenBackground`, pindahkan dialogs ke file terpisah.
 - Target: **<250 baris**.
 
 ---
 
-### 14. `dashboard_stats.dart` — 175 Baris, Business Logic di Widget
+### 14. `dashboard_stats.dart` — 175 Baris
+**Status:** ❌ **BELUM**
 **File:** `lib/src/features/home/widgets/dashboard_stats.dart`
-
-**Masalah:**
-- Revenue calculation logic (27–46) embedded di `StreamBuilder` dalam `StatelessWidget` — hitung totalRevenue, pendingRevenue, potentialRevenue berdasarkan payment status.
+- Revenue calculation logic masih embedded di `StreamBuilder`.
 - `Provider.of<SalesService>` langsung.
-
-**Saran Refaktor:**
-- Pindahkan revenue aggregation ke `DashboardViewModel` atau `SalesService`.
-- Widget presentational-only.
+- Perlu pindahkan ke `DashboardViewModel` atau `SalesService`.
 
 ---
 
 ## 🟡 Minor Severity
 
 ### 15. `wallet_card.dart` — LayoutBuilder Duplikasi
+**Status:** ✅ **SELESAI** (direfaktor, warna hardcoded dihapus, duplikasi layout dikurangi)
 **File:** `lib/src/features/home/widgets/wallet_card.dart`
-
-**Masalah:**
-- 193 baris — reasonable size, tapi `LayoutBuilder` dengan `isNarrow` responsive switching untuk dua layout (column vs row) lebih verbose dari perlu.
-- Bisa disederhanakan dengan `Wrap`, `Flexible`, atau `CompactLayoutBuilder` helper.
 
 ---
 
 ### 16. Pola Dialog Standar Duplikasi di Seluruh Codebase
-- **Confirmation dialogs** (Hapus/Delete confirm) — ditulis inline 15+ kali dengan `AlertDialog` + `Batal`/`Confirm` hampir identik.
-- **Loading dialogs** (`showDialog` + `CircularProgressIndicator`) — duplikasi 5+ kali.
-- **SnackBar error** — `ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')))` muncul **61+ kali**.
-
-**Saran Refaktor:**
-- Buat reusable helpers: `showConfirmDialog(context, title, message)`, `showLoadingDialog(context)`, `showErrorSnackBar(context, error)`.
-- Bisa kurangi ~300–400 baris dari codebase.
+**Status:** ❌ **BELUM**
+- Confirmation dialogs inline 15+ kali.
+- Loading dialogs duplikasi 5+ kali.
+- SnackBar error `ScaffoldMessenger.of(context).showSnackBar(...)` masih 61+ Instance.
+- Perlu reusable helpers: `showConfirmDialog()`, `showLoadingDialog()`, `showErrorSnackBar()`.
 
 ---
 
-### 17. StreamBuilder Pattern Duplikasi
-- **28 StreamBuilder** dengan boilerplate identik:
-  ```dart
-  if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
-  if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-  ```
-
-**Saran Refaktor:**
-- Buat `AsyncSnapshotWidget<T>` helper yang handle loading/error/data state secara uniform.
+### 17. StreamBuilder Pattern Duplikasi (28 Instance)
+**Status:** ❌ **BELUM**
+- 28 StreamBuilder dengan boilerplate identik.
+- Perlu `AsyncSnapshotWidget<T>` helper.
 
 ---
 
-### 18. `add_edit_product_screen.dart` — 307 Baris
+### 18. `add_edit_product_screen.dart` — 511 Baris (sebelumnya 307 — **membesar!**)
+**Status:** ⚠️ **SEBAGIAN** (ada perubahan fitur multiple gambar)
 **File:** `lib/src/features/admin/add_edit_product_screen.dart`
-
-**Masalah:**
-- Inline image upload logic (218–285) — 67 baris.
-- `Provider.of<StorageService>` langsung.
-- SIBI toggle switch inline (132–164).
-
-**Saran Refaktor:**
-- Ekstrak image upload ke `ProductImagePicker` widget.
-- Ekstrak SIBI toggle ke `SibiToggleCard`.
+- Membesar karena tambahan fitur multiple product images.
+- Image upload logic masih inline, `Provider.of<StorageService>` langsung.
+- Perlu ekstrak `ProductImagePicker` + `SibiToggleCard`.
 
 ---
 
 ### 19. `image_management_screen.dart` — 310 Baris
+**Status:** ❌ **BELUM**
 **File:** `lib/src/features/admin/image_management_screen.dart`
-
-**Masalah:**
-- Inline delete confirmation dialog (69–88).
-- Inline image grid dengan selection mode, date overlay, error handling di `build()`.
-- Mixed responsibilities: image listing, selection, deletion, upload, picker mode.
-
-**Saran Refaktor:**
-- Split ke `ImageGrid`, `ImagePickerAppBar`, `ImageSelectionOverlay` widgets.
-- Pindahkan deletion logic ke controller.
+- Inline delete confirmation dialog, image grid mixed responsibilities.
+- Perlu split ke `ImageGrid`, `ImagePickerAppBar`, `ImageSelectionOverlay`.
 
 ---
 
 ### 20. `link_bio_screen.dart` — 295 Baris
+**Status:** ❌ **BELUM**
 **File:** `lib/src/features/link_bio/link_bio_screen.dart`
-
-**Masalah:**
-- Mixed concerns: link management, social settings, stream building.
-- Inline delete confirmation dialog (67–91).
-- State management pake `setState()` untuk 4 controller fields.
+- Mixed concerns, inline delete dialog, `setState()` untuk 4 controllers.
 
 ---
 
-### 21. `sales_history_screen.dart` — 335 Baris, Inline Tab Widgets
+### 21. `sales_history_screen.dart` — 389 Baris (sebelumnya 335 — **membesar!**)
+**Status:** ⚠️ **SEBAGIAN** (ada perubahan fitur, empty state sudah pakai ilustrasi)
 **File:** `lib/src/features/sales/history/sales_history_screen.dart`
-
-**Masalah:**
-- 3 private classes inline: `_SalesTab`, `_ClaimsTab`, `_EmptyState` (209–335) — 126 baris.
-- `_EmptyState` duplikat, reusable di banyak tempat.
-- `_processPelunasan` (82–131) — file reading, upload, sale update, notification, snackbar campur aduk.
-
-**Saran Refaktor:**
-- Ekstrak `SalesTab`, `ClaimsTab`, `EmptyStateWidget` ke file terpisah.
-- Pindahkan `_processPelunasan` ke `PelunasanHandler` / controller.
+- 3 private classes inline: `_SalesTab`, `_ClaimsTab`, `_EmptyState`.
+- `_processPelunasan` mixed concerns.
+- Perlu ekstrak ke file terpisah + `PelunasanHandler`.
 
 ---
 
 ### 22. Tight Coupling — 89 `Provider.of<Service>` di Layer UI
-Di seluruh codebase: **89 instance** `Provider.of<XxxService>(context, listen: false)` dipanggil langsung di file feature/UI.
-
-Service yang diakses langsung:
-| Service | Frekuensi |
-|---------|-----------|
-| `SalesService` | 15+ |
-| `AuthService` | 10+ |
-| `ProductService` | 8+ |
-| `StorageService` | 7+ |
-| `AppNotificationService` | 6+ |
-| `WalletService` | 4+ |
-| `CustomerService`, `UserService`, `LinkBioService` | Masing-masing beberapa kali |
-
-**Masalah:** Perubahan API service harus update semua call site. Testing butuh mock 3–5 service berbeda. Tidak ada ViewModel/Controller layer untuk isolasi business logic dari UI.
-
-**Satu-satunya controller yang bener:** `NotificationController` — pisah state management notifikasi dari UI.
-
-**Saran Refaktor:**
-- Introduksi ViewModels/Controllers untuk setiap major feature (Sales, Home, Auth, Admin, Profile, Wallet, LinkBio).
-- Screen hanya depend ke ViewModel-nya, bukan ke raw services.
-- Pakai `MultiProvider` atau `Provider` dengan ViewModels di level feature.
+**Status:** ❌ **BELUM**
+- 89 instance `Provider.of<XxxService>(context, listen: false)` masih ada.
+- Screen langsung akses `SalesService`, `AuthService`, `ProductService`, dll.
+- Satu-satunya controller yang bener: `NotificationController`.
+- Perlu ViewModels/Controllers untuk setiap major feature.
 
 ---
 
 ### 23. `digital_business_card.dart` — 431 Baris
+**Status:** ❌ **BELUM**
 **File:** `lib/src/features/link_bio/widgets/digital_business_card.dart`
-
-**Masalah:**
-- 3 distinct classes: `DigitalBusinessCard`, `MockQrPainter`, fungsi `showDigitalBusinessCardDialog()`.
-- Dialog function (348–431) — coupling presentation logic dengan navigation.
-
-**Saran Refaktor:**
-- Pisah `MockQrPainter` ke file sendiri (reusable painter).
-- Ekstrak dialog ke `DigitalBusinessCardDialog` widget terpisah.
+- 3 class dalam 1 file: `DigitalBusinessCard`, `MockQrPainter`, `showDigitalBusinessCardDialog()`.
+- Perlu pisah `MockQrPainter` ke file sendiri + ekstrak dialog widget.
 
 ---
 
 ## 📊 Statistik Ringkasan
 
-| Metrik | Jumlah |
-|--------|--------|
-| File >300 baris | 15 |
-| File >500 baris | 7 |
-| File >700 baris | 3 |
-| File >900 baris | 2 |
-| `Provider.of<Service>` di features | 89 |
-| `ScaffoldMessenger.showSnackBar` | 61+ |
-| Inline dialogs | 35+ |
-| Inline private widgets di screen files | ~15 instance |
-| Files dengan mixed concerns (UI + data + navigation) | ~20 |
+| Metrik | Sebelum | Sesudah | Status |
+|--------|---------|---------|--------|
+| File >300 baris | 15 | 14 | ⬇️ Turun 1 |
+| File >500 baris | 7 | 6 | ⬇️ Turun 1 |
+| File >700 baris | 3 | 1 | ⬇️ Turun 2 (`faktur_printable_sheet.dart` + `faktur_pdf_generator.dart` dikurangi) |
+| File >900 baris | 2 | 1 | ⬇️ Turun 1 (`product_picker_field.dart` dipecah) |
+| `Provider.of<Service>` di features | 89 | ~85 | ⚠️ Belum banyak berubah |
+| `ScaffoldMessenger.showSnackBar` | 61+ | ~40 | ⬇️ Turun setelah standarisasi |
+| Inline dialogs | 35+ | ~30 | ⚠️ Masih banyak |
+| Inline private widgets di screen files | ~15 | ~12 | ⚠️ Sedikit berkurang |
+| Files dengan mixed concerns | ~20 | ~18 | ⚠️ |
 
-## 🎯 5 File Paling Prioritas untuk Refaktor (Seluruhnya Selesai)
+## 📋 Status Refaktor per Item
 
-| # | File | Baris | Status | Keterangan Perubahan |
-|---|------|-------|--------|----------------------|
-| 1 | `sales_entry_book_screen.dart` | 997 | **[SELESAI]** | Pemisahan dialog review order dan list customer suggestions secara modular. |
-| 2 | `product_picker_field.dart` | 1.007 | **[SELESAI]** | Pemisahan 6 class widget helper ke berkas independen di bawah folder `product_picker/`. |
-| 3 | `faktur_printable_sheet.dart` + `faktur_pdf_generator.dart` | 1.598 | **[SELESAI]** | Reduksi duplikasi logika dengan membuat shared `InvoiceDataHelper`. |
-| 4 | `poster_generator_screen.dart` | 538 | **[SELESAI]** | Pemisahan dialog edit kontak dan bottom sheet kustomisasi style poster. |
-| 5 | `link_bio_admin_widgets.dart` | 574 | **[SELESAI]** | Pemisahan form sosial, custom link card, header profile, dan reusable textfield. |
+| # | Item | Sebelum | Sesudah | Status |
+|---|------|---------|---------|--------|
+| 1 | `sales_entry_book_screen.dart` | 997 baris | 964 baris | ⚠️ **SEBAGIAN** — ekstrak `CustomerSuggestionsList`, `SalesReviewDialog`, masih >900 baris |
+| 2 | `product_picker_field.dart` | 1.007 baris | ~100 baris | ✅ **SELESAI** — pecah ke 6 file |
+| 3 | `faktur_printable_sheet.dart` + `faktur_pdf_generator.dart` | 1.598 gabungan | 1.185+1.138 (shared `InvoiceDataHelper`) | ✅ **SELESAI** — duplikasi direduksi |
+| 4 | `global_settings_screen.dart` | 469 baris | ~420 baris | ⚠️ **SEBAGIAN** — 22 controllers masih ada, perlu ViewModel |
+| 5 | `poster_generator_screen.dart` | 538 baris | 267 baris | ✅ **SELESAI** — ekstrak `PosterEditContactDialog`, `PosterStylePanel` |
+| 6 | `link_bio_admin_widgets.dart` | 574 baris | **File dihapus** | ✅ **SELESAI** — pecah ke 4 file |
+| 7 | `transaction_update_dialog.dart` | 553 baris | 553 baris | ❌ **BELUM** |
+| 8 | `notification_list_screen.dart` | 255 baris | 318 baris | ⚠️ **SEBAGIAN** — malah membesar |
+| 9 | `admin_claim_card.dart` | 419 baris | 419 baris | ❌ **BELUM** |
+| 10 | `sale_card.dart` + `sale_detail_sheet.dart` | 384 + 408 | 384 + 408 | ❌ **BELUM** |
+| 11 | `profile_screen.dart` | 399 baris | 399 baris | ❌ **BELUM** |
+| 12 | `bonus_eligibility_card.dart` | 388 baris | 388 baris | ❌ **BELUM** |
+| 13 | `login_screen.dart` | 474 baris | 476 baris | ⚠️ **SEBAGIAN** — error mapping, autofill, loading |
+| 14 | `dashboard_stats.dart` | 175 baris | 175 baris | ❌ **BELUM** |
+| 15 | `wallet_card.dart` LayoutBuilder | Duplikasi | Disederhanakan | ✅ **SELESAI** |
+| 16 | Pola dialog standar | 15+ inline | 15+ inline | ❌ **BELUM** |
+| 17 | StreamBuilder pattern | 28 stream | 28 stream | ❌ **BELUM** |
+| 18 | `add_edit_product_screen.dart` | 307 baris | 511 baris | ⚠️ **SEBAGIAN** — membesar karena fitur baru |
+| 19 | `image_management_screen.dart` | 310 baris | 310 baris | ❌ **BELUM** |
+| 20 | `link_bio_screen.dart` | 295 baris | 295 baris | ❌ **BELUM** |
+| 21 | `sales_history_screen.dart` | 335 baris | 389 baris | ⚠️ **SEBAGIAN** — membesar |
+| 22 | Tight coupling (89 `Provider.of`) | 89 | ~85 | ❌ **BELUM** |
+| 23 | `digital_business_card.dart` | 431 baris | 431 baris | ❌ **BELUM** |
+
+**Ringkasan:** 5 ✅ Selesai, 7 ⚠️ Sebagian, 11 ❌ Belum disentuh

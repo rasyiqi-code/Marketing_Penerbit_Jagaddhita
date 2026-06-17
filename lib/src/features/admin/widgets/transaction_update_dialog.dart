@@ -5,8 +5,10 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/storage_service.dart';
-import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:provider/provider.dart';
+import 'transaction_update/proof_upload_section.dart';
+import 'transaction_update/shipping_status_section.dart';
+import 'transaction_update/payment_actions_section.dart';
 
 class TransactionUpdateDialog extends StatefulWidget {
   final SaleModel sale;
@@ -181,99 +183,24 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Proof Section
-          if (_hasProof && _currentProofUrl != null) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: NetworkImageWeb(
-                imageUrl: _currentProofUrl!,
-                height: 120,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 6),
-            TextButton.icon(
-              onPressed: () async {
-                final newUrl = await _uploadProofForSale(
-                  widget.sale,
-                  oldUrl: _currentProofUrl,
-                );
-                if (newUrl != null) {
-                  setState(() {
-                    _currentProofUrl = newUrl;
-                    _hasProof = true;
-                  });
-                }
-              },
-              icon: const Icon(Icons.edit, size: 14),
-              label: const Text('Ubah Bukti Transaksi', style: TextStyle(fontSize: 12)),
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              ),
-            ),
-          ] else ...[
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: (widget.sale.paymentStatus == SaleModel.statusCod ? Colors.orange : Colors.red).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: (widget.sale.paymentStatus == SaleModel.statusCod ? Colors.orange : Colors.red).withValues(alpha: 0.3)),
-              ),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: widget.sale.paymentStatus == SaleModel.statusCod ? Colors.orange : Colors.red,
-                    size: 24,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.sale.paymentStatus == SaleModel.statusCod ? 'Bukti Pencairan Ekspedisi Belum Ada' : 'Bukti Pembayaran Belum Ada',
-                    style: TextStyle(
-                      color: widget.sale.paymentStatus == SaleModel.statusCod ? Colors.orange : Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                  Text(
-                    widget.sale.paymentStatus == SaleModel.statusCod ? 'Wajib upload bukti pencairan dana ekspedisi sebelum set ke COMPLETE.' : 'Wajib upload bukti sebelum update ke DP/LUNAS.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 6),
-            ElevatedButton.icon(
-              onPressed: () async {
-                final newUrl = await _uploadProofForSale(
-                  widget.sale,
-                  oldUrl: _currentProofUrl,
-                );
-                if (newUrl != null) {
-                  setState(() {
-                    _currentProofUrl = newUrl;
-                    _hasProof = true;
-                  });
-                }
-              },
-              icon: const Icon(Icons.upload_file, size: 14),
-              label: const Text('Upload Bukti Sekarang', style: TextStyle(fontSize: 12)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-          ],
+          ProofUploadSection(
+            sale: widget.sale,
+            currentProofUrl: _currentProofUrl,
+            hasProof: _hasProof,
+            onUpload: () async {
+              final newUrl = await _uploadProofForSale(
+                widget.sale,
+                oldUrl: _currentProofUrl,
+              );
+              if (newUrl != null) {
+                setState(() {
+                  _currentProofUrl = newUrl;
+                  _hasProof = true;
+                });
+              }
+            },
+          ),
           const Divider(height: 16),
-
           TextField(
             controller: _noteController,
             decoration: const InputDecoration(
@@ -289,68 +216,17 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
             maxLines: 2,
           ),
           const Divider(height: 24),
-          const Text(
-            'Status Pengiriman (Admin)',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-          ),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            initialValue: _selectedShippingStatus,
-            decoration: const InputDecoration(
-              labelText: 'Pilih Status Pengiriman',
-              border: OutlineInputBorder(),
-              isDense: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              labelStyle: TextStyle(fontSize: 12),
-            ),
-            style: TextStyle(fontSize: 13, color: Theme.of(context).textTheme.bodyMedium?.color),
-            dropdownColor: Theme.of(context).cardColor,
-            items: const [
-              DropdownMenuItem(value: null, child: Text('Belum Diproses')),
-              DropdownMenuItem(value: 'DISIAPKAN', child: Text('Disiapkan')),
-              DropdownMenuItem(value: 'DIKIRIM', child: Text('Dikirim')),
-              DropdownMenuItem(value: 'SAMPAI', child: Text('Sampai')),
-              DropdownMenuItem(value: 'SELESAI', child: Text('Selesai')),
-            ],
-            onChanged: (val) {
+          ShippingStatusSection(
+            sale: widget.sale,
+            selectedShippingStatus: _selectedShippingStatus,
+            courierController: _courierController,
+            resiController: _resiController,
+            onStatusChanged: (val) {
               setState(() {
                 _selectedShippingStatus = val;
               });
             },
-          ),
-          if (_selectedShippingStatus == 'DIKIRIM') ...[
-            const SizedBox(height: 10),
-            TextField(
-              controller: _courierController,
-              decoration: const InputDecoration(
-                labelText: 'Nama Ekspedisi (Kurir)',
-                hintText: 'JNE, J&T, Sicepat, POS, dll.',
-                border: OutlineInputBorder(),
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                labelStyle: TextStyle(fontSize: 12),
-                hintStyle: TextStyle(fontSize: 12),
-              ),
-              style: const TextStyle(fontSize: 13),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _resiController,
-              decoration: const InputDecoration(
-                labelText: 'Nomor Resi',
-                hintText: 'Masukkan nomor resi pengiriman...',
-                border: OutlineInputBorder(),
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                labelStyle: TextStyle(fontSize: 12),
-                hintStyle: TextStyle(fontSize: 12),
-              ),
-              style: const TextStyle(fontSize: 13),
-            ),
-          ],
-          const SizedBox(height: 10),
-          ElevatedButton.icon(
-            onPressed: () async {
+            onSave: () async {
               if (_selectedShippingStatus == 'DIKIRIM') {
                 if (_courierController.text.trim().isEmpty || _resiController.text.trim().isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -385,159 +261,26 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
                 }
               }
             },
-            icon: const Icon(Icons.local_shipping_rounded, size: 16),
-            label: const Text('Simpan Status Pengiriman', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
           ),
-          const SizedBox(height: 8),
-          if (widget.sale.paymentStatus == SaleModel.statusPending) ...[
-            (() {
-              final req = widget.sale.details['requested_status'];
-              if (req == 'COD') {
-                return ListTile(
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Setujui Pembayaran COD', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Pesanan disetujui untuk dikirim dengan metode COD.', style: TextStyle(fontSize: 11)),
-                  trailing: const Icon(Icons.delivery_dining, color: Colors.orange, size: 20),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _updateStatus(widget.sale, SaleModel.statusCod, note: _noteController.text);
-                  },
-                );
-              } else if (req == 'DP') {
-                return ListTile(
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Setujui Pembayaran DP', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                  subtitle: !_hasProof
-                      ? const Text('Wajib bukti foto!', style: TextStyle(color: Colors.red, fontSize: 11))
-                      : null,
-                  enabled: _hasProof,
-                  trailing: Icon(Icons.payments_outlined, color: _hasProof ? Colors.blue : Colors.grey, size: 20),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _updateStatus(widget.sale, SaleModel.statusDp, note: _noteController.text);
-                  },
-                );
-              } else {
-                return ListTile(
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Setujui Pembayaran LUNAS', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                  subtitle: Text(
-                    !_hasProof
-                        ? 'Wajib bukti foto!'
-                        : 'Status LUNAS belum mencairkan bonus.',
-                    style: TextStyle(color: !_hasProof ? Colors.red : Colors.grey[600], fontSize: 11),
-                  ),
-                  trailing: Icon(Icons.check_circle, color: _hasProof ? Colors.green : Colors.grey, size: 20),
-                  enabled: _hasProof,
-                  onTap: () {
-                    Navigator.pop(context);
-                    _updateStatus(widget.sale, SaleModel.statusLunas, note: _noteController.text);
-                  },
-                );
-              }
-            })(),
-          ],
-          if (widget.sale.paymentStatus == SaleModel.statusDp) ...[
-            const Divider(height: 8),
-            ListTile(
-              dense: true,
-              visualDensity: VisualDensity.compact,
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Setujui Pelunasan (LUNAS)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-              subtitle: Text(
-                !_hasProof
-                    ? 'Wajib bukti foto pelunasan!'
-                    : 'Status LUNAS belum mencairkan bonus.',
-                style: TextStyle(
-                  color: !_hasProof ? Colors.red : Colors.grey[600],
-                  fontSize: 11,
-                ),
-              ),
-              trailing: Icon(
-                Icons.check_circle,
-                color: _hasProof ? Colors.green : Colors.grey,
-                size: 20,
-              ),
-              enabled: _hasProof,
-              onTap: () {
-                Navigator.pop(context);
-                _updateStatus(
-                  widget.sale,
-                  SaleModel.statusLunas,
-                  note: _noteController.text,
-                );
-              },
-            ),
-          ],
-          if (widget.sale.paymentStatus == SaleModel.statusLunas ||
-              widget.sale.paymentStatus == SaleModel.statusCod) ...[
-            const Divider(height: 8),
-            ListTile(
-              dense: true,
-              visualDensity: VisualDensity.compact,
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Tandai SELESAI (COMPLETE)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-              subtitle: Text(
-                widget.sale.paymentStatus == SaleModel.statusCod
-                    ? 'Konfirmasi uang COD telah disetor/masuk rekening penerbit.'
-                    : 'Pesanan diterima/selesai.',
-                style: const TextStyle(fontSize: 11),
-              ),
-              trailing: const Icon(Icons.done_all, color: Colors.purple, size: 20),
-              onTap: () {
-                if (widget.sale.paymentStatus == SaleModel.statusCod && !_hasProof) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Upload bukti pencairan dana ekspedisi dulu!')),
-                  );
-                  return;
-                }
-                Navigator.pop(context);
-                _updateStatus(
-                  widget.sale,
-                  SaleModel.statusComplete,
-                  note: _noteController.text,
-                );
-              },
-            ),
-          ],
           const Divider(height: 8),
-          ListTile(
-            dense: true,
-            visualDensity: VisualDensity.compact,
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Tandai BERMASALAH', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.red)),
-            subtitle: const Text('Ada masalah pembayaran/pesanan.', style: TextStyle(fontSize: 11)),
-            trailing: const Icon(Icons.report_problem, color: Colors.red, size: 20),
-            textColor: Colors.red,
-            onTap: () {
-              if (_noteController.text.isEmpty) {
+          PaymentActionsSection(
+            sale: widget.sale,
+            hasProof: _hasProof,
+            noteController: _noteController,
+            onUploadProofPrompt: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Upload bukti pencairan dana ekspedisi dulu!')),
+              );
+            },
+            onUpdateStatus: (status) {
+              if (status == SaleModel.statusProblem && _noteController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Wajib isi catatan masalahnya ya'),
-                  ),
+                  const SnackBar(content: Text('Wajib isi catatan masalahnya ya')),
                 );
                 return;
               }
               Navigator.pop(context);
-              _updateStatus(
-                widget.sale,
-                SaleModel.statusProblem,
-                note: _noteController.text,
-              );
+              _updateStatus(widget.sale, status, note: _noteController.text);
             },
           ),
         ],

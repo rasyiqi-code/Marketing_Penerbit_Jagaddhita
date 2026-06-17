@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
-import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/image_management_screen.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/profile/widgets/bank_settings_sheet.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/profile/widgets/edit_profile_sheet.dart';
 import 'package:provider/provider.dart';
+import 'widgets/profile_avatar.dart';
+import 'widgets/profile_section_header.dart';
+import 'widgets/profile_settings_tile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -210,20 +212,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           // ── Admin Menu ────────────────────────────────────────────────
           if (isAdmin) ...[
-            _SectionHeader('Menu Admin'),
-            _SettingsTile(
+            ProfileSectionHeader(title: 'Menu Admin'),
+            ProfileSettingsTile(
               icon: Icons.inventory_2_outlined,
               title: 'Manajemen Produk',
               subtitle: 'Tambah, edit, atau hapus produk',
               onTap: () => Navigator.pushNamed(context, '/admin/products'),
             ),
-            _SettingsTile(
+            ProfileSettingsTile(
               icon: Icons.settings_outlined,
               title: 'Pengaturan Global',
               subtitle: 'Atur bonus dan variabel sistem',
               onTap: () => Navigator.pushNamed(context, '/admin/settings'),
             ),
-            _SettingsTile(
+            ProfileSettingsTile(
               icon: Icons.image_outlined,
               title: 'Kelola Gambar',
               subtitle: 'Lihat dan hapus gambar',
@@ -237,8 +239,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
 
           // ── Informasi Pribadi ─────────────────────────────────────────
-          _SectionHeader('Informasi Pribadi'),
-          _SettingsTile(
+          ProfileSectionHeader(title: 'Informasi Pribadi'),
+          ProfileSettingsTile(
             icon: Icons.person_outline_rounded,
             title: 'Edit Profil',
             subtitle: 'Perbarui nama dan detail pribadi',
@@ -247,8 +249,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 12),
 
           // ── Detail Pembayaran ─────────────────────────────────────────
-          _SectionHeader('Detail Pembayaran'),
-          _SettingsTile(
+          ProfileSectionHeader(title: 'Detail Pembayaran'),
+          ProfileSettingsTile(
             icon: Icons.account_balance_rounded,
             title: 'Informasi Bank',
             subtitle: 'Kelola akun penarikan',
@@ -257,8 +259,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 12),
 
           // ── Akun ──────────────────────────────────────────────────────
-          _SectionHeader('Akun'),
-          _SettingsTile(
+          ProfileSectionHeader(title: 'Akun'),
+          ProfileSettingsTile(
             icon: Icons.logout,
             title: 'Keluar',
             subtitle: 'Keluar dari perangkat ini',
@@ -267,7 +269,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               await Provider.of<AuthService>(context, listen: false).signOut();
             },
           ),
-          _SettingsTile(
+          ProfileSettingsTile(
             icon: Icons.delete_forever_rounded,
             title: 'Hapus Akun',
             subtitle: 'Hapus permanen akun dan data Anda',
@@ -281,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-// ── Local UI widgets (simple enough to stay in-file) ──────────────────────────
+// ── Local UI widgets (Stayed in-file for profile layout) ──────────────────────────
 
 class _ProfileAvatar extends StatelessWidget {
   final UserModel? user;
@@ -289,111 +291,6 @@ class _ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppTheme.primaryColor.withValues(alpha: 0.1),
-        border: Border.all(
-          color: AppTheme.primaryColor.withValues(alpha: 0.2),
-          width: 2,
-        ),
-      ),
-      child: ClipOval(
-        child: user?.photoUrl != null
-            ? NetworkImageWeb(imageUrl: user!.photoUrl!, fit: BoxFit.cover)
-            : Center(
-                child: Text(
-                  (user?.email ?? 'U').substring(0, 1).toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryColor,
-                  ),
-                ),
-              ),
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-              ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-  final bool isRed;
-
-  const _SettingsTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-    this.isRed = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isRed ? Colors.red : AppTheme.primaryColor;
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Theme.of(context).dividerColor),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-        leading: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 11,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-        trailing: Icon(
-          Icons.chevron_right,
-          size: 16,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
+    return ProfileAvatar(user: user);
   }
 }

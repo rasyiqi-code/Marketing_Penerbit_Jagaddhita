@@ -4,6 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'shared/sale_status_badge.dart';
+import 'shared/sale_shipping_badge.dart';
+import 'shared/sale_payment_info_row.dart';
 
 /// Card ringkasan transaksi penjualan di halaman riwayat (didesain ulang menjadi Flat List Item).
 class SaleCard extends StatelessWidget {
@@ -52,14 +55,14 @@ class SaleCard extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _StatusBadge(
-                        status: sale.paymentStatus.toUpperCase(),
+                      SaleStatusBadge(
+                        status: sale.paymentStatus,
                         label: isComplete ? 'COMPLETE' : (isLunas ? 'PAID' : sale.paymentStatus.toUpperCase()),
                       ),
                       if (sale.shippingStatus != null) ...[
                         const SizedBox(width: 6),
-                        _ShippingBadge(
-                          status: sale.shippingStatus!.toUpperCase(),
+                        SaleShippingBadge(
+                          status: sale.shippingStatus!,
                         ),
                       ],
                     ],
@@ -146,7 +149,7 @@ class SaleCard extends StatelessWidget {
                           'Bonus: ${AppFormatters.currency(sale.pulsaBonusAmount)}',
                           style: GoogleFonts.outfit(
                             color: isComplete
-                                ? AppTheme.primaryColor
+                               ? AppTheme.primaryColor
                                 : AppTheme.secondaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
@@ -198,186 +201,14 @@ class SaleCard extends StatelessWidget {
                 ),
               ],
 
-              // ── DP info + pelunasan button ────────────────────────────
-              if (sale.paymentStatus == 'DP' && sale.paidAmount > 0) ...[
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: AppTheme.secondaryColor.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: AppTheme.secondaryColor.withValues(alpha: 0.15)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.info_outline, size: 14, color: AppTheme.secondaryColor),
-                            const SizedBox(width: 6),
-                            Text(
-                              'DP Terbayar: ${AppFormatters.currency(sale.paidAmount)}',
-                              style: GoogleFonts.outfit(
-                                  fontSize: 11,
-                                  color: AppTheme.secondaryColor,
-                                  fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton.icon(
-                      onPressed: onPelunasan,
-                      icon: const Icon(Icons.payment, size: 14),
-                      label: Text(
-                        'Lunasi',
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(0, 32),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                        elevation: 1,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-
-              // ── COD info + pelunasan button ────────────────────────────
-              if (sale.paymentStatus == 'COD') ...[
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF3B82F6).withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.15)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.delivery_dining_outlined, size: 14, color: Color(0xFF3B82F6)),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Bayar di Tempat (COD)',
-                              style: GoogleFonts.outfit(
-                                fontSize: 11,
-                                color: const Color(0xFF3B82F6),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton.icon(
-                      onPressed: onPelunasan,
-                      icon: const Icon(Icons.payment, size: 14),
-                      label: Text(
-                        'Lunasi',
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(0, 32),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                        elevation: 1,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              // ── DP & COD info + pelunasan button ──────────────────────
+              SalePaymentInfoRow(
+                sale: sale,
+                onPelunasan: onPelunasan,
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _StatusBadge extends StatelessWidget {
-  final String status;
-  final String label;
-  const _StatusBadge({required this.status, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    Color color;
-    if (status == 'LUNAS' || status == 'COMPLETE') {
-      color = AppTheme.primaryColor;
-    } else if (status == 'COD') {
-      color = const Color(0xFF3B82F6);
-    } else {
-      color = AppTheme.secondaryColor;
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.5)),
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.outfit(
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          color: color,
-        ),
-      ),
-    );
-  }
-}
-
-class _ShippingBadge extends StatelessWidget {
-  final String status;
-  const _ShippingBadge({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    Color color;
-    if (status == 'DISIAPKAN') {
-      color = Colors.orange;
-    } else if (status == 'DIKIRIM') {
-      color = Colors.blue;
-    } else if (status == 'SAMPAI') {
-      color = Colors.teal;
-    } else {
-      color = Colors.green; // SELESAI
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.5)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.local_shipping_outlined, size: 10, color: color),
-          const SizedBox(width: 4),
-          Text(
-            status,
-            style: GoogleFonts.outfit(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-        ],
       ),
     );
   }
