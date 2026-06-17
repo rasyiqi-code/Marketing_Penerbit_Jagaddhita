@@ -47,44 +47,69 @@ class _ProductDetailImageState extends State<ProductDetailImage> {
     return Hero(
       tag: 'product_${widget.product.id}',
       child: Container(
-        height: 300,
+        height: 360,
         width: double.infinity,
         decoration: BoxDecoration(
           color: widget.product.houseType == 1
-              ? AppTheme.primaryColor.withValues(alpha: 0.1)
-              : AppTheme.secondaryColor.withValues(alpha: 0.1),
+              ? AppTheme.primaryColor.withValues(alpha: 0.05)
+              : AppTheme.secondaryColor.withValues(alpha: 0.05),
         ),
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            PageView.builder(
-              itemCount: fallbackImages.length,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
-              itemBuilder: (context, index) {
-                return NetworkImageWeb(
-                  imageUrl: fallbackImages[index],
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                  errorWidget: Container(
-                    color: Theme.of(context).cardColor,
-                    child: Center(
-                      child: Icon(
-                        Icons.broken_image_rounded,
-                        size: 64,
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 36),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.25),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                        spreadRadius: -2,
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: AspectRatio(
+                      aspectRatio: 3 / 4, // Rasio aspek buku portrait standard
+                      child: PageView.builder(
+                        itemCount: fallbackImages.length,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentPage = index;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          return NetworkImageWeb(
+                            imageUrl: fallbackImages[index],
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover, // Memenuhi rasio buku dengan rapi
+                            errorWidget: Container(
+                              color: Theme.of(context).cardColor,
+                              child: Center(
+                                child: Icon(
+                                  Icons.broken_image_rounded,
+                                  size: 48,
+                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
             if (fallbackImages.length > 1)
               Positioned(
-                bottom: 12,
+                bottom: 16,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
