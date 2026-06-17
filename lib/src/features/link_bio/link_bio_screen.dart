@@ -67,13 +67,11 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Hapus Link?'),
-        content: const Text('Apakah Anda yakin ingin menghapus link ini?'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        title: const Text('Hapus Link?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        content: const Text('Apakah Anda yakin ingin menghapus link ini?', style: TextStyle(fontSize: 13)),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Batal'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Hapus', style: TextStyle(color: Colors.red)),
@@ -83,12 +81,10 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
     );
 
     if (confirm == true && mounted) {
-      await Provider.of<LinkBioService>(
-        context,
-        listen: false,
-      ).deleteLink(linkId);
+      await Provider.of<LinkBioService>(context, listen: false).deleteLink(linkId);
     }
   }
+
 
   Future<void> _toggleActive(LinkBioModel link, bool newVal) async {
     final updated = link.copyWith(isActive: newVal);

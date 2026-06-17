@@ -4,6 +4,8 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dar
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/auth/widgets/login_form.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/auth/widgets/login_screen_background.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/auth/widgets/reset_password_dialog.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -217,57 +219,6 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  void _showResetPasswordDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        titlePadding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        actionsPadding: const EdgeInsets.only(right: 12, bottom: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: const Text('Reset Password', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        content: Text(
-          'Send password reset email to ${_emailController.text}?',
-          style: const TextStyle(fontSize: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(fontSize: 13)),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                await Provider.of<AuthService>(
-                  context,
-                  listen: false,
-                ).resetPassword(_emailController.text);
-                if (!context.mounted) return;
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Reset email sent! Check your inbox.'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              } catch (e) {
-                if (!context.mounted) return;
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Error: $e'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-            child: const Text('Send', style: TextStyle(fontSize: 13)),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -276,79 +227,10 @@ class _LoginScreenState extends State<LoginScreen>
       child: Scaffold(
         body: Stack(
         children: [
-          // 1. Background putih
-          Container(color: Colors.white),
+          // 1. Latar belakang dekoratif
+          const LoginScreenBackground(),
 
 
-          // 2. (Aksen dekoratif saja — banner hijau dipindah ke inline Column)
-
-          // Merah — lingkaran pojok kanan atas
-          Positioned(
-            top: -20,
-            right: -20,
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppTheme.secondaryColor.withValues(alpha: 0.3),
-              ),
-            ),
-          ),
-          // Kuning — dot kanan tengah atas
-          Positioned(
-            top: 30,
-            right: 20,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppTheme.accentColor,
-              ),
-            ),
-          ),
-          // Merah — dot kecil kiri bawah
-          Positioned(
-            bottom: 70,
-            left: 28,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppTheme.secondaryColor.withValues(alpha: 0.5),
-              ),
-            ),
-          ),
-          // Kuning — dot kecil kanan bawah
-          Positioned(
-            bottom: 36,
-            right: 52,
-            child: Container(
-              width: 26,
-              height: 26,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppTheme.accentColor.withValues(alpha: 0.85),
-              ),
-            ),
-          ),
-          // Hijau — dot kecil bawah kiri
-          Positioned(
-            bottom: 110,
-            left: 64,
-            child: Container(
-              width: 18,
-              height: 18,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppTheme.primaryColor.withValues(alpha: 0.4),
-              ),
-            ),
-          ),
-
-          // 3. Main Content
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -421,9 +303,7 @@ class _LoginScreenState extends State<LoginScreen>
                           onGoogleLogin: _handleGoogleLogin,
                           onForgotPassword: () {
                             if (_emailController.text.isEmpty) {
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(
+                              ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
                                     'Please enter email to reset password',
@@ -433,7 +313,7 @@ class _LoginScreenState extends State<LoginScreen>
                               );
                               return;
                             }
-                            _showResetPasswordDialog(context);
+                            showResetPasswordDialog(context, _emailController.text);
                           },
                         ),
   

@@ -185,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         children: [
           const SizedBox(height: 10),
-          _ProfileAvatar(user: _currentUser),
+          ProfileAvatar(user: _currentUser),
           const SizedBox(height: 8),
           Text(
             _currentUser?.name ?? _currentUser?.email ?? 'Unknown User',
@@ -283,14 +283,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-// ── Local UI widgets (Stayed in-file for profile layout) ──────────────────────────
-
-class _ProfileAvatar extends StatelessWidget {
-  final UserModel? user;
-  const _ProfileAvatar({required this.user});
-
-  @override
-  Widget build(BuildContext context) {
-    return ProfileAvatar(user: user);
-  }
-}
