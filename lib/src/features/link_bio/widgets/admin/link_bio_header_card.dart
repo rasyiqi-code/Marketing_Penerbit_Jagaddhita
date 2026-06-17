@@ -5,7 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/link_bio_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/link_bio_preview_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/screens/link_bio_preview_screen.dart';
 
 class LinkBioHeaderCard extends StatelessWidget {
   final UserModel user;

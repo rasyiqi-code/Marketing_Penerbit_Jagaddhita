@@ -4,7 +4,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/link_bio_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/link_bio_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/link_bio_preview_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/screens/link_bio_preview_screen.dart';
 
 class LinkBioLoadingScreen extends StatelessWidget {
   final String userId;

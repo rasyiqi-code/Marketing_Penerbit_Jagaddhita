@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/storage_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/image_management_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/image_management_screen.dart';
 import 'package:provider/provider.dart';
 
 /// Seksi pengelolaan multiple gambar produk (pilih/upload/hapus/set-utama).

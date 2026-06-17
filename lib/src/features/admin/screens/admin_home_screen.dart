@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_list_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/controllers/notification_controller.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/screens/notification_list_screen.dart';
 
 // New Widgets
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/dashboard/admin_pending_claims_card.dart';

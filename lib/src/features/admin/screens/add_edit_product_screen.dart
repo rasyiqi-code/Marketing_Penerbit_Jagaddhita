@@ -5,7 +5,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/produc
 import 'package:marketing_penerbit_jagaddhita/src/core/services/storage_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/app_text_field.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/image_management_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/image_management_screen.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/product/product_form_widgets.dart';
 import 'package:provider/provider.dart';
 

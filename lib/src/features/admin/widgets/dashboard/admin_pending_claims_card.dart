@@ -4,7 +4,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/async_snapshot_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/admin_withdrawals_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/admin_withdrawals_screen.dart';
 
 class AdminPendingClaimsCard extends StatelessWidget {
   const AdminPendingClaimsCard({super.key});

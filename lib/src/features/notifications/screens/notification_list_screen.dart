@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/empty_state_widget.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_tap_handler.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/controllers/notification_controller.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/services/notification_tap_handler.dart';
 import 'package:provider/provider.dart';
 
 class NotificationListScreen extends StatelessWidget {

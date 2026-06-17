@@ -4,17 +4,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/controllers/notification_controller.dart';
 
 // Screens
-import 'package:marketing_penerbit_jagaddhita/src/features/home/home_screen.dart'; // Marketing Home
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/link_bio_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/catalog/catalog_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/screens/home_screen.dart'; // Marketing Home
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/screens/link_bio_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/catalog/screens/catalog_screen.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/profile/profile_screen.dart';
 
 // Admin Screens
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/product_management_screen.dart'; // Manage Catalog
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/admin_home_screen.dart'; // NEW Admin Home
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/product_management_screen.dart'; // Manage Catalog
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/admin_home_screen.dart'; // NEW Admin Home
 
 // Widgets
 import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/navigation/main_bottom_nav_bar.dart';

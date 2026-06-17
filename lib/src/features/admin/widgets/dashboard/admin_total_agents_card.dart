@@ -5,7 +5,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_s
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/async_snapshot_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/admin_user_list_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/admin_user_list_screen.dart';
 
 class AdminTotalAgentsCard extends StatelessWidget {
   const AdminTotalAgentsCard({super.key});

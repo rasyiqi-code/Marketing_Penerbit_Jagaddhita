@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/image_management_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/image_management_screen.dart';
 import 'profile_section_header.dart';
 import 'profile_settings_tile.dart';
 

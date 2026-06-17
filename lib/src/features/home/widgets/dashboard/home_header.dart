@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_list_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/controllers/notification_controller.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/screens/notification_list_screen.dart';
 import 'package:provider/provider.dart';
 
 class HomeHeader extends StatelessWidget {

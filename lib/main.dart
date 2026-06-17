@@ -6,19 +6,19 @@ import 'package:intl/date_symbol_data_local.dart'; // Import for date formatting
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/auth/login_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/auth/register_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/main_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/poster_generator_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/auth/screens/login_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/auth/screens/register_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/screens/main_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/screens/poster_generator_screen.dart';
 
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/product_management_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/add_edit_product_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/global_settings_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/admin_transactions_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/admin_withdrawals_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/admin_user_list_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/catalog/catalog_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/catalog/product_detail_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/product_management_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/add_edit_product_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/global_settings_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/admin_transactions_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/admin_withdrawals_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/admin_user_list_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/catalog/screens/catalog_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/catalog/screens/product_detail_screen.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
@@ -29,11 +29,11 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/link_b
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/customer_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/notification_service.dart' as local;
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/sales_entry_book_screen.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/link_bio_loading_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/screens/link_bio_loading_screen.dart';
 import 'firebase_options.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv
-import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/controllers/notification_controller.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/storage_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/responsive_web_layout.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/splash/splash_screen.dart'; // Splash Screen Import

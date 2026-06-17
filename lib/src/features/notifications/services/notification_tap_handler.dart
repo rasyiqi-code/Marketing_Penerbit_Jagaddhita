@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/notifications/controllers/notification_controller.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sale_detail_dialog.dart';
 import 'package:provider/provider.dart';
 

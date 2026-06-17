@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/auth/login_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/auth/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 

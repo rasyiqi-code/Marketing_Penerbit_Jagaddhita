@@ -6,7 +6,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/produc
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/add_edit_product_screen.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/screens/add_edit_product_screen.dart';
 
 class AdminProductCard extends StatelessWidget {
   final ProductModel product;
