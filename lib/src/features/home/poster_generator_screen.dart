@@ -40,9 +40,9 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
   bool _isBgEnabled = true;
   int _fontTier = 2; // 1: Small, 2: Medium, 3: Large
 
-  // Draggable position
-  Offset _position = const Offset(50, 400);
-  bool _positionInitialized = false;
+  // Draggable position (relative)
+  double _relativeX = 0.3;
+  double _relativeY = 0.7;
   final GlobalKey _imageKey = GlobalKey();
 
   @override
@@ -94,7 +94,8 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
       if (response.statusCode == 200) {
         setState(() {
           _originalImageBytes = response.bodyBytes;
-          _positionInitialized = false;
+          _relativeX = 0.3;
+          _relativeY = 0.7;
         });
         _showEditDialog();
       } else {
@@ -119,7 +120,8 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
         _originalImageBytes = bytes;
-        _positionInitialized = false;
+        _relativeX = 0.3;
+        _relativeY = 0.7;
       });
       _showEditDialog();
     }
@@ -160,9 +162,24 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
           ),
           ElevatedButton(
             onPressed: () {
+              final name = nameController.text.trim();
+              final phone = phoneController.text.trim();
+              final cleanPhone = phone.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+              if (name.length < 2) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Nama harus minimal 2 karakter')),
+                );
+                return;
+              }
+              if (cleanPhone.length < 8) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Nomor WhatsApp harus minimal 8 karakter alfanumerik')),
+                );
+                return;
+              }
               setState(() {
-                _name = nameController.text;
-                _phone = phoneController.text;
+                _name = name;
+                _phone = phone;
               });
               Navigator.pop(context);
             },
@@ -345,49 +362,52 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
   Future<void> _processAndDownloadPoster() async {
     if (_originalImageBytes == null) return;
 
-    final RenderBox? renderBox =
-        _imageKey.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox == null) return;
-
-    final originalImage = img.decodeImage(_originalImageBytes!);
-    if (originalImage == null) return;
-
-    final originalSize = Size(
-      originalImage.width.toDouble(),
-      originalImage.height.toDouble(),
-    );
-    final displaySize = renderBox.size;
-
-    double scale = 1.0;
-    double xOffset = 0.0;
-    double yOffset = 0.0;
-
-    final double aspectOriginal = originalSize.width / originalSize.height;
-    final double aspectDisplay = displaySize.width / displaySize.height;
-
-    if (aspectOriginal > aspectDisplay) {
-      scale = displaySize.width / originalSize.width;
-      yOffset = (displaySize.height - (originalSize.height * scale)) / 2;
-    } else {
-      scale = displaySize.height / originalSize.height;
-      xOffset = (displaySize.width - (originalSize.width * scale)) / 2;
-    }
-
-    final double actualImageX = _position.dx - xOffset;
-    final double actualImageY = _position.dy - yOffset;
-
-    final dxRelative = (actualImageX / (originalSize.width * scale)).clamp(
-      0.0,
-      1.0,
-    );
-    final dyRelative = (actualImageY / (originalSize.height * scale)).clamp(
-      0.0,
-      1.0,
-    );
-
     setState(() => _isLoading = true);
 
     try {
+      final RenderBox? renderBox =
+          _imageKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox == null) throw Exception('RenderBox tidak ditemukan');
+
+      final originalImage = img.decodeImage(_originalImageBytes!);
+      if (originalImage == null) throw Exception('Gagal mendekode gambar asli');
+
+      final originalSize = Size(
+        originalImage.width.toDouble(),
+        originalImage.height.toDouble(),
+      );
+      final displaySize = renderBox.size;
+
+      double scale = 1.0;
+      double xOffset = 0.0;
+      double yOffset = 0.0;
+
+      final double aspectOriginal = originalSize.width / originalSize.height;
+      final double aspectDisplay = displaySize.width / displaySize.height;
+
+      if (aspectOriginal > aspectDisplay) {
+        scale = displaySize.width / originalSize.width;
+        yOffset = (displaySize.height - (originalSize.height * scale)) / 2;
+      } else {
+        scale = displaySize.height / originalSize.height;
+        xOffset = (displaySize.width - (originalSize.width * scale)) / 2;
+      }
+
+      final double positionX = _relativeX * displaySize.width;
+      final double positionY = _relativeY * displaySize.height;
+
+      final double actualImageX = positionX - xOffset;
+      final double actualImageY = positionY - yOffset;
+
+      final dxRelative = (actualImageX / (originalSize.width * scale)).clamp(
+        0.0,
+        1.0,
+      );
+      final dyRelative = (actualImageY / (originalSize.height * scale)).clamp(
+        0.0,
+        1.0,
+      );
+
       final double M = 1.0 / scale;
       final double logicFontSize = _fontTier == 3
           ? 24
@@ -475,13 +495,9 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
   Widget _buildEditorStack() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (!_positionInitialized) {
-          _position = Offset(
-            (constraints.maxWidth / 2 - 100).clamp(0.0, constraints.maxWidth),
-            (constraints.maxHeight * 0.75).clamp(0.0, constraints.maxHeight),
-          );
-          _positionInitialized = true;
-        }
+        final double absoluteX = (_relativeX * constraints.maxWidth).clamp(0.0, constraints.maxWidth - 100);
+        final double absoluteY = (_relativeY * constraints.maxHeight).clamp(0.0, constraints.maxHeight - 40);
+
         return Stack(
           alignment: Alignment.center,
           children: [
@@ -491,12 +507,13 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
               fit: BoxFit.contain,
             ),
             Positioned(
-              left: _position.dx,
-              top: _position.dy,
+              left: absoluteX,
+              top: absoluteY,
               child: GestureDetector(
                 onPanUpdate: (details) {
                   setState(() {
-                    _position += details.delta;
+                    _relativeX = (_relativeX + details.delta.dx / constraints.maxWidth).clamp(0.0, 1.0);
+                    _relativeY = (_relativeY + details.delta.dy / constraints.maxHeight).clamp(0.0, 1.0);
                   });
                 },
                 child: PosterOverlayText(

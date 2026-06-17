@@ -39,6 +39,18 @@ class NetworkImageWeb extends StatelessWidget {
       width: width,
       height: height,
       fit: fit,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        final totalBytes = loadingProgress.expectedTotalBytes;
+        final cumulativeBytes = loadingProgress.cumulativeBytesLoaded;
+        final value = totalBytes != null ? cumulativeBytes / totalBytes : null;
+        return Center(
+          child: CircularProgressIndicator(
+            value: value,
+            strokeWidth: 2,
+          ),
+        );
+      },
       errorBuilder: (context, error, stackTrace) =>
           errorWidget ??
           const Center(

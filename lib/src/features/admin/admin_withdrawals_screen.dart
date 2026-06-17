@@ -56,11 +56,20 @@ class AdminWithdrawalsScreen extends StatelessWidget {
   }
 }
 
-class _RequestsTab extends StatelessWidget {
+class _RequestsTab extends StatefulWidget {
   const _RequestsTab();
 
   @override
+  State<_RequestsTab> createState() => _RequestsTabState();
+}
+
+class _RequestsTabState extends State<_RequestsTab> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final walletService = Provider.of<WalletService>(context);
 
     return StreamBuilder<List<ClaimModel>>(
@@ -112,11 +121,20 @@ class _RequestsTab extends StatelessWidget {
   }
 }
 
-class _HistoryTab extends StatelessWidget {
+class _HistoryTab extends StatefulWidget {
   const _HistoryTab();
 
   @override
+  State<_HistoryTab> createState() => _HistoryTabState();
+}
+
+class _HistoryTabState extends State<_HistoryTab> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final walletService = Provider.of<WalletService>(context);
 
     return StreamBuilder<List<ClaimModel>>(

@@ -204,8 +204,6 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
   }
 }
 
-// ── Tab widgets ────────────────────────────────────────────────────────────────
-
 class _SalesTab extends StatelessWidget {
   final Stream<List<SaleModel>> stream;
   final ScrollController scrollController;
@@ -223,48 +221,55 @@ class _SalesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<SaleModel>>(
-      stream: stream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting &&
-            limitSales == 20) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-
-        final sales = snapshot.data ?? [];
-
-        if (sales.isEmpty) {
-          return _EmptyState(
-            icon: Icons.receipt_long_rounded,
-            message: 'Belum ada penjualan',
-          );
-        }
-
-        return ListView.builder(
-          controller: scrollController,
-          padding: const EdgeInsets.all(16),
-          itemCount: sales.length + 1,
-          itemBuilder: (_, i) {
-            if (i == sales.length) {
-              return limitSales > sales.length
-                  ? const SizedBox.shrink()
-                  : const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-            }
-            final sale = sales[i];
-            return SaleCard(
-              sale: sale,
-              onTap: () => onShowDetail(sale),
-              onPelunasan: () => onPelunasan(sale),
-            );
-          },
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        await Future.delayed(const Duration(milliseconds: 500));
       },
+      child: StreamBuilder<List<SaleModel>>(
+        stream: stream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              limitSales == 20) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final sales = snapshot.data ?? [];
+
+          if (sales.isEmpty) {
+            return const _EmptyState(
+              icon: Icons.receipt_long_rounded,
+              title: 'Belum Ada Penjualan',
+              message: 'Transaksi penjualan Anda akan tercatat di sini.',
+            );
+          }
+
+          return ListView.builder(
+            controller: scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16),
+            itemCount: sales.length + 1,
+            itemBuilder: (_, i) {
+              if (i == sales.length) {
+                return limitSales > sales.length
+                    ? const SizedBox.shrink()
+                    : const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+              }
+              final sale = sales[i];
+              return SaleCard(
+                sale: sale,
+                onTap: () => onShowDetail(sale),
+                onPelunasan: () => onPelunasan(sale),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -275,60 +280,109 @@ class _ClaimsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<ClaimModel>>(
-      stream: stream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-
-        final claims = snapshot.data ?? [];
-
-        if (claims.isEmpty) {
-          return _EmptyState(
-            icon: Icons.history_edu_rounded,
-            message: 'Belum ada riwayat penarikan',
-          );
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: claims.length,
-          itemBuilder: (_, i) => SalesClaimCard(claim: claims[i]),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        await Future.delayed(const Duration(milliseconds: 500));
       },
+      child: StreamBuilder<List<ClaimModel>>(
+        stream: stream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final claims = snapshot.data ?? [];
+
+          if (claims.isEmpty) {
+            return const _EmptyState(
+              icon: Icons.history_edu_rounded,
+              title: 'Belum Ada Penarikan',
+              message: 'Riwayat klaim komisi Anda akan ditampilkan di sini.',
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: claims.length,
+            itemBuilder: (_, i) => SalesClaimCard(claim: claims[i]),
+          );
+        },
+      ),
     );
   }
 }
 
 class _EmptyState extends StatelessWidget {
   final IconData icon;
+  final String title;
   final String message;
-  const _EmptyState({required this.icon, required this.message});
+  const _EmptyState({
+    required this.icon,
+    required this.title,
+    required this.message,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 64,
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            style: GoogleFonts.outfit(
-              fontSize: 18,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+    final theme = Theme.of(context);
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.6,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    theme.colorScheme.primary.withValues(alpha: 0.15),
+                    theme.colorScheme.primary.withValues(alpha: 0.01),
+                  ],
+                ),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                ),
+                child: Icon(
+                  icon,
+                  size: 48,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+            Text(
+              title,
+              style: GoogleFonts.outfit(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

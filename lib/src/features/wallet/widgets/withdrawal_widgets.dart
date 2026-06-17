@@ -183,6 +183,11 @@ class WithdrawalForm extends StatelessWidget {
             fillColor: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
             contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             prefixText: 'Rp ',
+            helperText: 'Minimal penarikan: ${AppFormatters.currency(minWithdrawalAmount)}',
+            helperStyle: TextStyle(
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+              fontSize: 11,
+            ),
             suffixIcon: TextButton(
               onPressed: isAllowedDay ? onTarikSemua : null,
               child: const Text('Tarik Semua'),

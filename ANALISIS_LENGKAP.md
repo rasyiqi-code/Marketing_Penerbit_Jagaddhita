@@ -25,7 +25,7 @@
 ### 4. ~~Form registrasi tidak punya loading state per-field~~ `[Selesai]`
 `lib/src/features/auth/register_screen.dart` — Hanya satu boolean `_isLoading` global. Saat registrasi, semua field tidak di-disabled, pengguna bisa edit field saat proses berlangsung, menyebabkan race condition data.
 
-### 5. Login tidak show error spesifik yang user-friendly
+### 5. ~~Login tidak show error spesifik yang user-friendly~~ `[Selesai]`
 `lib/src/features/auth/login_screen.dart:49-95` — Error dari Firebase Auth ditampilkan via `SnackBar` dengan `.toString()`. Pesan error teknis (seperti "User not found", "Wrong password") dari Firebase **exposed ke user** tanpa diterjemahkan ke Bahasa Indonesia.
 
 ### 6. ~~`login_form.dart` tidak handle keyboard type untuk email~~ `[Selesai]`
@@ -37,88 +37,88 @@
 ### 8. ~~`app_text_field.dart` tidak handle `autofillHints` atau `autofocus`~~ `[Selesai]`
 `lib/src/core/widgets/app_text_field.dart` — Widget reusable `AppTextField` tidak menerima parameter `autofillHints`, `autofocus`, atau `textInputAction`. Setiap field harus manual menggunakan `TextField` langsung untuk fitur ini.
 
-### 9. Sales entry form: product picker bottom sheet tidak handle loading/error state
+### 9. ~~Sales entry form: product picker bottom sheet tidak handle loading/error state~~ `[Selesai]`
 `lib/src/features/sales/widgets/product_picker_field.dart:30-44` — `_CatalogModal` dibuka tanpa state loading. Jika daftar produk sedang tidak tersedia (error/null), modal menampilkan empty list tanpa feedback error.
 
-### 10. Sales entry: `_customerController` search tidak debounce
+### 10. ~~Sales entry: `_customerController` search tidak debounce~~ `[Selesai]`
 `lib/src/features/sales/sales_entry_book_screen.dart:154-163` — `onChanged` langsung filter customer list tanpa debounce. Di mobile dengan 100+ customer, ini menyebabkan lag pada tiap ketikan.
 
-### 11. Withdrawal form tidak ada konfirmasi sebelum submit
+### 11. ~~Withdrawal form tidak ada konfirmasi sebelum submit~~ `[Selesai]`
 `lib/src/features/wallet/withdrawal_request_screen.dart:125-150` — Tombol "Ajukan Pencairan" langsung memproses tanpa dialog konfirmasi. User bisa tidak sengaja klaim jumlah besar.
 
-### 12. Tidak ada validasi jumlah minimum withdrawal yang informatif
+### 12. ~~Tidak ada validasi jumlah minimum withdrawal yang informatif~~ `[Selesai]`
 `lib/src/features/wallet/withdrawal_request_screen.dart` — Validasi hanya di `_validateAmount()` dengan return boolean. User tidak diberitahu MINIMUM payout saat form invalid, harus membaca dari GlobalSettings.
 
-### 13. `_paymentStatus` selector tidak synced dengan settings enable/disable
+### 13. ~~`_paymentStatus` selector tidak synced dengan settings enable/disable~~ `[Selesai]`
 `lib/src/features/sales/sales_entry_book_screen.dart:58` — `_paymentStatus` default 'DP'. Jika admin menonaktifkan DP (`enablePaymentDP: false`), form tetap menampilkan DP sebagai default tanpa fallback ke opsi lain. User bisa submit dengan status yang tidak diizinkan.
 
 ---
 
 ## 🔵 NAVIGASI & ROUTING
 
-### 14. Deep link `/bio/{userId}` tidak validasi userId format
+### 14. ~~Deep link `/bio/{userId}` tidak validasi userId format~~ `[Selesai]`
 `lib/main.dart:111-121` — Tidak ada validasi userId/username. String apapun di `/bio/...` diterima, menghasilkan tampilan "User Not Found" yang jelek di `LinkBioLoadingScreen`.
 
-### 15. Tidak ada route error handling (404)
+### 15. ~~Tidak ada route error handling (404)~~ `[Selesai]`
 `lib/main.dart` — Route generator menggunakan `onGenerateRoute`. Jika ada route yang tidak dikenal, tidak ada fallback ke halaman 404. App hanya white screen.
 
-### 16. Bottom nav bar tidak maintain state per tab
+### 16. ~~Bottom nav bar tidak maintain state per tab~~ `[Selesai]`
 `lib/src/features/home/main_screen.dart:50-65` — Menggunakan `IndexedStack` dengan benar, tapi tab `CatalogScreen` dan `ProfileScreen` dibuat ulang tiap kali build karena tidak menggunakan `AutomaticKeepAliveClientMixin`. State hilang saat switch tab.
 
-### 17. Transaction filter reset tanpa animasi
+### 17. ~~Transaction filter reset tanpa animasi~~ `[Selesai]`
 `lib/src/features/admin/admin_transactions_screen.dart:96-110` — Saat filter status berubah, list langsung refresh tanpa transisi atau skeleton loader. User tidak melihat perubahan yang smooth.
 
-### 18. Admin withdrawals tab tidak persist scroll position
+### 18. ~~Admin withdrawals tab tidak persist scroll position~~ `[Selesai]`
 `lib/src/features/admin/admin_withdrawals_screen.dart:15` — Menggunakan `DefaultTabController` tanpa `TabBarView` dengan `AutomaticKeepAliveClientMixin`. Scroll position hilang saat switch tab Status (Pending ↔ History).
 
 ---
 
 ## 🟡 FEEDBACK VISUAL & ERROR HANDLING
 
-### 19. Tidak ada empty state untuk sales history
+### 19. ~~Tidak ada empty state untuk sales history~~ `[Selesai]`
 `lib/src/features/sales/history/sales_history_screen.dart` — Jika user tidak punya transaksi, list kosong ditampilkan tanpa ilustrasi atau pesan ramah.
 
-### 20. Notification list: empty state hanya teks
+### 20. ~~Notification list: empty state hanya teks~~ `[Selesai]`
 `lib/src/features/notifications/notification_list_screen.dart:42-49` — Empty state hanya `Text('Belum ada notifikasi')` tanpa ikon/ilustrasi. Tidak engaging.
 
-### 21. Global settings: success/error feedback tidak konsisten
+### 21. ~~Global settings: success/error feedback tidak konsisten~~ `[Selesai]`
 `lib/src/features/admin/global_settings_screen.dart` — Beberapa action menggunakan `SnackBar`, beberapa menggunakan `ScaffoldMessenger.showSnackBar`, tidak ada konsistensi. Setting yang berhasil disimpan tidak selalu feedback ke user.
 
-### 22. File upload di berbagai screen tidak menunjukkan progress
+### 22. ~~File upload di berbagai screen tidak menunjukkan progress~~ `[Selesai]`
 `lib/src/features/sales/sales_entry_book_screen.dart`, `edit_profile_sheet.dart`, `transaction_update_dialog.dart` — Semua upload file hanya pakai `CircularProgressIndicator` tanpa persentase atau estimasi waktu.
 
-### 23. Poster generator tidak show error saat download gagal
+### 23. ~~Poster generator tidak show error saat download gagal~~ `[Selesai]`
 `lib/src/features/home/poster_generator_screen.dart:380-400` — `_processAndDownloadPoster` hanya `catch (e)` dengan print ke console. User tidak melihat error jika download gagal.
 
-### 24. `_showEditDialog` di poster generator tidak ada validasi input
+### 24. ~~`_showEditDialog` di poster generator tidak ada validasi input~~ `[Selesai]`
 `lib/src/features/home/poster_generator_screen.dart:128-181` — Form untuk edit nama/telepon tidak ada validasi. User bisa submit nama kosong atau telepon tidak valid.
 
 ---
 
 ## 🟣 LAYOUT & RESPONSIVITAS
 
-### 25. Web wrapper memaksa maxWidth 480px
+### 25. ~~Web wrapper memaksa maxWidth 480px~~ `[Selesai]`
 `lib/src/core/utils/responsive_web_layout.dart:16-22` — Web layout dipaksa maksimal 480px (mobile width). Di layar 1920px, konten hanya 480px dengan grey background luas.
 
-### 26. Admin dashboard tidak optimized untuk tampilan web
+### 26. ~~Admin dashboard tidak optimized untuk tampilan web~~ `[Selesai]`
 `lib/src/features/admin/admin_home_screen.dart` — Admin dashboard menggunakan layout mobile (single column). Di web dengan layar lebar, semua widget ditumpuk vertikal.
 
 ### 27. ~~`WalletCard` menggunakan hardcoded dark background~~ `[Selesai]`
 `lib/src/features/home/widgets/wallet_card.dart:27` — `Color(0xFF1E1E1E)` hardcoded, tidak mengikuti tema. Di dark mode, kontras berkurang.
 
-### 28. `app_text_field.dart` tidak responsive
+### 28. ~~`app_text_field.dart` tidak responsive~~ `[Selesai]`
 `lib/src/core/widgets/app_text_field.dart` — Padding, font size, dan border radius semuanya fixed (const). Di tablet / web, field terlihat terlalu kecil.
 
-### 29. `SalesCalculationCard` tidak handle overflow di device kecil
+### 29. ~~`SalesCalculationCard` tidak handle overflow di device kecil~~ `[Selesai]`
 `lib/src/features/sales/widgets/sales_entry_shared_widgets.dart:38-50` — Di HP 320px, teks panjang bisa overflow tanpa scroll atau ellipsis.
 
-### 30. `login_form.dart` tidak safe area untuk notched phone
+### 30. ~~`login_form.dart` tidak safe area untuk notched phone~~ `[Selesai]`
 `lib/src/features/auth/widgets/login_form.dart` — Tidak ada `SafeArea` wrapper. Di iPhone dengan notch, form bisa tertutup oleh dynamic island.
 
 ### 31. ~~Headers di admin screens menggunakan `FittedBox` yang tidak perlu~~ `[Selesai]`
 `lib/src/features/admin/admin_home_screen.dart:21-31` — `FittedBox` pada AppBar title dengan `BoxFit.scaleDown`. FittedBox tidak berguna dan bisa menyebabkan render issue.
 
-### 32. `home_header.dart` mungkin overflow di landscape
+### 32. ~~`home_header.dart` mungkin overflow di landscape~~ `[Selesai]`
 Home header menampilkan avatar + nama + role. Di mode landscape HP, teks bisa terpotong karena layout horizontal terbatas.
 
 ---
@@ -131,10 +131,10 @@ Home header menampilkan avatar + nama + role. Di mode landscape HP, teks bisa te
 ### 34. ~~`_calculateValues()` dipanggil di build/render~~ `[Selesai]`
 `lib/src/features/sales/sales_entry_book_screen.dart:216-291` — Perhitungan berat ini bisa menyebabkan jank di setiap rebuild.
 
-### 35. Tombol switch dark/light theme ada di `AppTheme` tapi tidak digunakan
+### 35. ~~Tombol switch dark/light theme ada di `AppTheme` tapi tidak digunakan~~ `[Selesai]`
 `lib/src/core/theme/app_theme.dart` — ThemeData untuk light + dark sudah didefinisikan lengkap, tapi tidak ada toggle di UI.
 
-### 36. Tidak ada refresh indicator di sales history
+### 36. ~~Tidak ada refresh indicator di sales history~~ `[Selesai]`
 `lib/src/features/sales/history/sales_history_screen.dart` — Tidak ada `RefreshIndicator` untuk user yang ingin force refresh.
 
 ### 37. ~~Multiple notification mark-as-read tidak optimasi~~ `[Selesai]`
@@ -144,13 +144,13 @@ Home header menampilkan avatar + nama + role. Di mode landscape HP, teks bisa te
 
 ## ⚠️ KONSISTENSI & TYPO
 
-### 38. Inconsistent date formatting
+### 38. ~~Inconsistent date formatting~~ `[Selesai]`
 Beberapa screen menggunakan `DateFormat('dd MMM yyyy, HH:mm')`, beberapa pakai `DateFormat('d MMM yyyy')`, ada yang pakai `AppFormatters.formatFullDate()` jika tersedia.
 
 ### 39. ~~Tidak ada loading indicator di login Google~~ `[Selesai]`
 `lib/src/features/auth/login_screen.dart:85-98` — `_handleGoogleSignIn()` tidak ada `setState(() => _isLoading = true)`. User bisa tap tombol Google berulang kali.
 
-### 40. `splash_screen.dart` menggunakan hardcoded 2 detik delay
+### 40. ~~`splash_screen.dart` menggunakan hardcoded 2 detik delay~~ `[Selesai]`
 `lib/src/features/splash/splash_screen.dart:37` — `Future.delayed(const Duration(seconds: 2))` tanpa memperhitungkan waktu loading Firebase.
 
 ---

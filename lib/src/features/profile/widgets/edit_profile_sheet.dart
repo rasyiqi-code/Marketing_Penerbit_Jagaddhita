@@ -295,11 +295,24 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                     borderRadius: BorderRadius.circular(10)),
               ),
               child: _isUploading
-                  ? const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Memperbarui Profil...',
+                          style: GoogleFonts.outfit(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     )
                   : const Text('Simpan Perubahan'),
             ),

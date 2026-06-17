@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/global_settings_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
@@ -56,6 +57,7 @@ class _SalesEntryBookScreenState
   final _dpAmountController = TextEditingController();
 
   String _paymentStatus = 'DP';
+  Timer? _debounceTimer;
 
   // Calculated values
   double _bruto = 0;
@@ -150,22 +152,26 @@ class _SalesEntryBookScreenState
   }
 
   void _onCustomerNameChanged(String query) {
-    if (query.trim().isEmpty) {
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      if (query.trim().isEmpty) {
+        setState(() {
+          _filteredCustomers = [];
+          _showCustomerSuggestions = false;
+        });
+        return;
+      }
+
+      final filtered = _allCustomers.where((c) {
+        return c.name.toLowerCase().contains(query.toLowerCase()) ||
+            c.phoneNumber.contains(query);
+      }).toList();
+
       setState(() {
-        _filteredCustomers = [];
-        _showCustomerSuggestions = false;
+        _filteredCustomers = filtered;
+        _showCustomerSuggestions = filtered.isNotEmpty;
       });
-      return;
-    }
-
-    final filtered = _allCustomers.where((c) {
-      return c.name.toLowerCase().contains(query.toLowerCase()) ||
-          c.phoneNumber.contains(query);
-    }).toList();
-
-    setState(() {
-      _filteredCustomers = filtered;
-      _showCustomerSuggestions = filtered.isNotEmpty;
     });
   }
 
@@ -504,6 +510,7 @@ class _SalesEntryBookScreenState
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _customerNameController.dispose();
     _customerPhoneController.dispose();
     _customerAddressController.dispose();
@@ -958,7 +965,28 @@ class _SalesEntryBookScreenState
                         ),
                         onPressed: _isLoading ? null : _submitSale,
                         child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Mengirim Transaksi...',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              )
                             : Text(
                                 'Submit Order',
                                 style: GoogleFonts.outfit(

@@ -86,6 +86,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isLoading = true);
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      await authService.signInWithGoogle();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Pendaftaran berhasil! Mohon tunggu persetujuan admin.'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        String errorMessage = e.toString();
+        if (errorMessage.contains('Google Sign-In failed:')) {
+          errorMessage = errorMessage.replaceAll('Exception: Google Sign-In failed:', '').trim();
+        }
+
+        String displayMessage = 'Gagal daftar dengan Google: $errorMessage';
+        if (errorMessage.contains('sign_in_canceled') || errorMessage.contains('canceled')) {
+          displayMessage = 'Pendaftaran dibatalkan.';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(displayMessage),
+            backgroundColor: AppTheme.secondaryColor,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -218,6 +260,56 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             )
                           : const Text('Buat Akun'),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'ATAU',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: OutlinedButton.icon(
+                      onPressed: _isLoading ? null : _handleGoogleSignIn,
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white.withValues(alpha: 0.15)
+                              : Colors.black.withValues(alpha: 0.15),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      icon: Image.asset(
+                        'assets/google_logo.png',
+                        height: 24,
+                      ),
+                      label: Text(
+                        'Daftar dengan Google',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black87,
+                        ),
+                      ),
                     ),
                   ),
                   ],

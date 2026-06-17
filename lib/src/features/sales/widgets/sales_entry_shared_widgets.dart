@@ -91,7 +91,7 @@ class SalesCalculationCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           _CalcRow(
-            label: 'Diskon ${discountPercent.toStringAsFixed(0)}%',
+            label: 'Potongan Marketing (${discountPercent.toStringAsFixed(0)}%)',
             value: '- ${AppFormatters.currency(discountAmount)}',
             valueColor: AppTheme.secondaryColor,
           ),
@@ -145,7 +145,8 @@ class _CalcRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Flexible(
+        Expanded(
+          flex: 3,
           child: Text(
             label,
             style: GoogleFonts.outfit(
@@ -155,13 +156,17 @@ class _CalcRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Text(
-          value,
-          style: GoogleFonts.outfit(
-            fontSize: isBold ? 16 : 13,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-            color:
-                valueColor ?? Theme.of(context).colorScheme.onSurface,
+        Flexible(
+          flex: 2,
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: GoogleFonts.outfit(
+              fontSize: isBold ? 16 : 13,
+              fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+              color:
+                  valueColor ?? Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
       ],

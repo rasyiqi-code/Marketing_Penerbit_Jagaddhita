@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_web_plugins/url_strategy.dart'; // Add this for cleaner URLs
 import 'package:intl/date_symbol_data_local.dart'; // Import for date formatting initialization
 
+import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/auth/login_screen.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/auth/register_screen.dart';
@@ -109,10 +110,10 @@ class MyApp extends StatelessWidget {
 
         // 1. Check for Bio Link
         if (uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'bio') {
-          // Removed length > 1 strict check to see if it catches partials
           if (uri.pathSegments.length > 1) {
             final userId = uri.pathSegments[1];
-            if (userId.isNotEmpty) {
+            final validUser = RegExp(r'^[a-zA-Z0-9_]+$');
+            if (userId.isNotEmpty && validUser.hasMatch(userId)) {
               return MaterialPageRoute(
                 builder: (context) => LinkBioLoadingScreen(userId: userId),
               );
@@ -128,7 +129,68 @@ class MyApp extends StatelessWidget {
         // 3. Fallback for unknown routes (to prevent dropping to null/error silently)
         return MaterialPageRoute(
           builder: (context) => Scaffold(
-            body: Center(child: Text('Page Not Found: ${settings.name}')),
+            body: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppTheme.secondaryColor.withValues(alpha: 0.1),
+                      ),
+                      child: const Icon(
+                        Icons.error_outline_rounded,
+                        size: 80,
+                        color: AppTheme.secondaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Halaman Tidak Ditemukan',
+                      style: GoogleFonts.outfit(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Rute "${settings.name}" tidak dapat ditemukan di server kami.',
+                      style: GoogleFonts.outfit(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/auth_wrapper',
+                          (route) => false,
+                        );
+                      },
+                      icon: const Icon(Icons.home_rounded, color: Colors.white),
+                      label: const Text('Kembali ke Beranda'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         );
       },

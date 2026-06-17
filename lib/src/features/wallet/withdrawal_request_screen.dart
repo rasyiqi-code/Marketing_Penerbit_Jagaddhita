@@ -11,6 +11,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_s
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/wallet/widgets/withdrawal_widgets.dart';
 
 class WithdrawalRequestScreen extends StatefulWidget {
@@ -71,6 +72,9 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
   }
 
   Future<void> _submitRequest(GlobalSettingsModel settings) async {
+    final walletService = Provider.of<WalletService>(context, listen: false);
+    final notificationService = Provider.of<AppNotificationService>(context, listen: false);
+
     final amount =
         int.tryParse(
           _amountController.text.replaceAll(RegExp(r'[^0-9]'), ''),
@@ -121,6 +125,45 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
       return;
     }
 
+    final typeName = isBank ? 'Transfer Bank' : 'Klaim Pulsa';
+    final targetInfo = _infoController.text.trim();
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Konfirmasi Penarikan'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Apakah Anda yakin ingin mengajukan penarikan berikut?'),
+            const SizedBox(height: 16),
+            Text('Tipe Penarikan: $typeName', style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text('Nominal: ${AppFormatters.currency(amount)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text(isBank ? 'Rekening Tujuan: $targetInfo' : 'Nomor HP Tujuan: $targetInfo', style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Konfirmasi'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
     setState(() => _isLoading = true);
 
     final claim = ClaimModel(
@@ -129,14 +172,11 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
       amount: amount,
       type: widget.allowedType,
       status: ClaimModel.statusPending,
-      bankDetails: {'info': _infoController.text.trim()},
+      bankDetails: {'info': targetInfo},
       createdAt: DateTime.now(),
     );
 
     try {
-      final walletService = Provider.of<WalletService>(context, listen: false);
-      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
-
       final claimId = await walletService.requestClaim(claim);
 
       final notification = NotificationModel(

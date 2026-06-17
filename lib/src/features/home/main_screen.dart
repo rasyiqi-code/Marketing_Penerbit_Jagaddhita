@@ -62,6 +62,11 @@ class _MainScreenState extends State<MainScreen> {
                   Text('Error loading profile: ${snapshot.error}'),
                   const SizedBox(height: 16),
                   ElevatedButton(
+                    onPressed: () => setState(() {}),
+                    child: const Text('Coba Lagi'),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
                     onPressed: () => FirebaseAuth.instance.signOut(),
                     child: const Text('Logout'),
                   ),
@@ -121,7 +126,10 @@ class _MainScreenState extends State<MainScreen> {
 
         return Scaffold(
           extendBody: true,
-          body: pages[_currentIndex],
+          body: IndexedStack(
+            index: _currentIndex,
+            children: pages,
+          ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               if (isAdmin) {

@@ -494,7 +494,7 @@ class _CatalogModalState extends State<_CatalogModal> {
                           // ── Buku Jagaddhita Section ──────────────────
                           if (_jagaddhitaFiltered.isNotEmpty) ...[
                             _SectionHeader(
-                              icon: '📚',
+                              icon: Icons.menu_book_rounded,
                               title: 'Buku Jagaddhita Media Pustaka',
                               subtitle: 'Buku Paket & Buku Cerita',
                               color: widget.color,
@@ -521,7 +521,7 @@ class _CatalogModalState extends State<_CatalogModal> {
                           if (_sibiFiltered.isNotEmpty) ...[
                             const SizedBox(height: 24),
                             _SectionHeader(
-                              icon: '🏛️',
+                              icon: Icons.school_rounded,
                               title: 'Buku SIBI Kemendikbud',
                               subtitle: 'Buku Nonteks Kemendikbudristek',
                               color: Colors.indigo,
@@ -953,7 +953,7 @@ class _PlaceholderImage extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _SectionHeader extends StatelessWidget {
-  final String icon;
+  final IconData icon;
   final String title;
   final String subtitle;
   final Color color;
@@ -976,7 +976,7 @@ class _SectionHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text(icon, style: const TextStyle(fontSize: 22)),
+          Icon(icon, size: 22, color: color),
           const SizedBox(width: 10),
           Expanded(
             child: Column(

@@ -103,53 +103,101 @@ class AdminHomeScreen extends StatelessWidget {
               if (confirm == true && context.mounted) {
                 await Provider.of<AuthService>(context, listen: false).signOut();
                 if (context.mounted) {
-                  Navigator.pushReplacementNamed(context, '/auth_wrapper');
+                  Navigator.pushNamedAndRemoveUntil(context, '/auth_wrapper', (route) => false);
                 }
               }
             },
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Stats Section
-            const Row(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 600;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: AdminPendingClaimsCard()),
-                SizedBox(width: 8),
-                Expanded(child: AdminTotalAgentsCard()),
+                // Stats Section
+                const Row(
+                  children: [
+                    Expanded(child: AdminPendingClaimsCard()),
+                    SizedBox(width: 8),
+                    Expanded(child: AdminTotalAgentsCard()),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                if (isWide)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Transaksi Terkini',
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const AdminRecentTransactionsList(),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Agen Terbaik',
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const AdminTopAgentsList(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                else ...[
+                  // Top Agents Section
+                  Text(
+                    'Agen Terbaik',
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const AdminTopAgentsList(),
+                  const SizedBox(height: 16),
+
+                  // Recent Transactions Section
+                  Text(
+                    'Transaksi Terkini',
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const AdminRecentTransactionsList(),
+                ],
+                const SizedBox(height: 120), // Bottom padding
               ],
             ),
-            const SizedBox(height: 12),
-
-            // Top Agents Section
-            Text(
-              'Agen Terbaik',
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const AdminTopAgentsList(),
-            const SizedBox(height: 16),
-
-            // Recent Transactions Section
-            Text(
-              'Transaksi Terkini',
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const AdminRecentTransactionsList(),
-            const SizedBox(height: 120), // Bottom padding
-          ],
-        ),
+          );
+        },
       ),
     );
   }

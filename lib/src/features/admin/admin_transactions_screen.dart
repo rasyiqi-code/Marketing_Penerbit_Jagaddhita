@@ -123,78 +123,82 @@ class _AdminTransactionsScreenState extends State<AdminTransactionsScreen> {
           ),
         ],
       ),
-      body: StreamBuilder<List<SaleModel>>(
-        stream: Provider.of<SalesService>(context).getSales(
-          houseType: 1, // Penjualan Buku
-          status: _selectedStatus,
-          limit: _limit,
-        ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Only show full loading on first load
-            if (_limit == 20) {
-              return const Center(child: CircularProgressIndicator());
-            }
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Error: ${snapshot.error}',
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ),
-            );
-          }
-
-          final sales = snapshot.data ?? [];
-
-          if (sales.isEmpty) {
-            // ... Empty view code unchanged
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.receipt_long_outlined,
-                    size: 64,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurfaceVariant, // Colors.grey[300]
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Belum ada transaksi nih',
-                    style: GoogleFonts.outfit(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            itemCount: sales.length + 1, // +1 for loading indicator at bottom
-            itemBuilder: (context, index) {
-              if (index == sales.length) {
-                // Bottom Loader
-                return _limit > sales.length
-                    ? const SizedBox.shrink() // End of list probably
-                    : const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: StreamBuilder<List<SaleModel>>(
+          key: ValueKey<String>('sales_stream_${_selectedStatus ?? "all"}'),
+          stream: Provider.of<SalesService>(context).getSales(
+            houseType: 1, // Penjualan Buku
+            status: _selectedStatus,
+            limit: _limit,
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Only show full loading on first load
+              if (_limit == 20) {
+                return const Center(child: CircularProgressIndicator());
               }
-              final sale = sales[index];
-              return TransactionCard(sale: sale);
-            },
-          );
-        },
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              );
+            }
+
+            final sales = snapshot.data ?? [];
+
+            if (sales.isEmpty) {
+              // ... Empty view code unchanged
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.receipt_long_outlined,
+                      size: 64,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurfaceVariant, // Colors.grey[300]
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Belum ada transaksi nih',
+                      style: GoogleFonts.outfit(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              itemCount: sales.length + 1, // +1 for loading indicator at bottom
+              itemBuilder: (context, index) {
+                if (index == sales.length) {
+                  // Bottom Loader
+                  return _limit > sales.length
+                      ? const SizedBox.shrink() // End of list probably
+                      : const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                }
+                final sale = sales[index];
+                return TransactionCard(sale: sale);
+              },
+            );
+          },
+        ),
       ),
     );
   }

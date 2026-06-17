@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen>
       return;
     }
 
-    Navigator.of(context).pushReplacementNamed('/auth_wrapper');
+    Navigator.of(context).pushNamedAndRemoveUntil('/auth_wrapper', (route) => false);
   }
 
   @override
@@ -98,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen>
             right: 0,
             child: Center(
               child: Text(
-                'v1.1.1',
+                'v1.1.2',
                 style: TextStyle(
                   color: Colors.grey[500],
                   fontSize: 12,

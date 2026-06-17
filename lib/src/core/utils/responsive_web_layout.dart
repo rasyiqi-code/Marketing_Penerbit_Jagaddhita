@@ -13,12 +13,12 @@ class ResponsiveWebLayout extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth > 600) {
+        if (constraints.maxWidth > 768) {
           return Container(
             color: Colors.grey[200], // Background for empty space
             alignment: Alignment.center,
             child: Container(
-              constraints: const BoxConstraints(maxWidth: 480),
+              constraints: const BoxConstraints(maxWidth: 768),
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
