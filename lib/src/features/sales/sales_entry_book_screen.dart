@@ -15,6 +15,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/currency_input_formatter.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/utils/sales_calculator_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/product_picker_field.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/markup_input_field.dart';
@@ -23,6 +24,9 @@ import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transac
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_entry_shared_widgets.dart';
 import 'widgets/sales_entry/sales_review_dialog.dart';
 import 'widgets/sales_entry/customer_suggestions_list.dart';
+import 'widgets/sales_entry/cancel_input_dialog.dart';
+import 'widgets/sales_entry/sales_disabled_banner.dart';
+import 'widgets/sales_entry/selected_products_stepper_list.dart';
 
 class SalesEntryBookScreen extends StatefulWidget {
   const SalesEntryBookScreen({super.key});
@@ -177,99 +181,23 @@ class _SalesEntryBookScreenState
     });
   }
 
-  // ─── Discount Calculation Logic ───────────────────────────────
-  Map<String, double> _getDiscountPercents(double bruto) {
-    double percentSibi = _settings?.bonusPercentR1 ?? 0;
-    double percentJagaddhita = _settings?.bonusPercentR1 ?? 0;
-
-    if (_settings == null || !_settings!.enableR1Commission) {
-      return {'sibi': 0, 'jagaddhita': 0};
-    }
-
-    String method = _settings!.discountCalculationMethod;
-    if (method == 'manual') {
-      if (_marketingCategory == 'premium') {
-        percentSibi = _settings!.premiumCommissionPercentSibi;
-        percentJagaddhita = _settings!.premiumCommissionPercentJagaddhita;
-      } else if (_marketingCategory == 'platinum') {
-        percentSibi = _settings!.platinumCommissionPercentSibi;
-        percentJagaddhita = _settings!.platinumCommissionPercentJagaddhita;
-      } else if (_marketingCategory == 'gold') {
-        percentSibi = _settings!.goldCommissionPercentSibi;
-        percentJagaddhita = _settings!.goldCommissionPercentJagaddhita;
-      }
-    } else if (method == 'per_transaction') {
-      if (bruto >= _settings!.premiumThreshold) {
-        percentSibi = _settings!.premiumCommissionPercentSibi;
-        percentJagaddhita = _settings!.premiumCommissionPercentJagaddhita;
-      } else if (bruto >= _settings!.platinumThreshold) {
-        percentSibi = _settings!.platinumCommissionPercentSibi;
-        percentJagaddhita = _settings!.platinumCommissionPercentJagaddhita;
-      } else if (bruto >= _settings!.goldThreshold) {
-        percentSibi = _settings!.goldCommissionPercentSibi;
-        percentJagaddhita = _settings!.goldCommissionPercentJagaddhita;
-      }
-    } else if (method == 'cumulative_monthly') {
-      double totalAccumulated = _monthlySalesTotal + bruto;
-      if (totalAccumulated >= _settings!.premiumThreshold) {
-        percentSibi = _settings!.premiumCommissionPercentSibi;
-        percentJagaddhita = _settings!.premiumCommissionPercentJagaddhita;
-      } else if (totalAccumulated >= _settings!.platinumThreshold) {
-        percentSibi = _settings!.platinumCommissionPercentSibi;
-        percentJagaddhita = _settings!.platinumCommissionPercentJagaddhita;
-      } else if (totalAccumulated >= _settings!.goldThreshold) {
-        percentSibi = _settings!.goldCommissionPercentSibi;
-        percentJagaddhita = _settings!.goldCommissionPercentJagaddhita;
-      }
-    }
-
-    return {'sibi': percentSibi, 'jagaddhita': percentJagaddhita};
-  }
-
   void _calculateValues() {
-    double brutoSibi = 0;
-    double brutoJagaddhita = 0;
+    final result = SalesCalculatorHelper.calculate(
+      selectedProducts: _selectedProducts,
+      selectedProductQuantities: _selectedProductQuantities,
+      settings: _settings,
+      marketingCategory: _marketingCategory,
+      monthlySalesTotal: _monthlySalesTotal,
+      monthlySalesCount: _monthlySalesCount,
+      userMonthlyBonusCount: _userMonthlyBonusCount,
+    );
 
-    for (var p in _selectedProducts) {
-      final qty = _selectedProductQuantities[p.id] ?? 1;
-      if (p.isSibi) {
-        brutoSibi += p.price * qty;
-      } else {
-        brutoJagaddhita += p.price * qty;
-      }
-    }
-
-    _bruto = brutoSibi + brutoJagaddhita;
-
-    final percents = _getDiscountPercents(_bruto);
-    double discSibi = brutoSibi * (percents['sibi']! / 100);
-    double discJagaddhita = brutoJagaddhita * (percents['jagaddhita']! / 100);
-
-    _discountAmount = discSibi + discJagaddhita;
-    _discountPercent = _bruto > 0 ? (_discountAmount / _bruto) * 100 : 0;
-    _netto = _bruto - _discountAmount;
-    _commissionAmount = _discountAmount; // Marketing income = discount they get
-
-    // Pulsa bonus (crossing threshold logic)
-    _pulsaBonusAmount = 0;
-    if (_settings != null && _settings!.enableR1PulsaBonus) {
-      bool limitReached = _settings!.enableMaxPulsaBonusLimit &&
-          _userMonthlyBonusCount >= _settings!.maxPulsaBonusCount;
-
-      if (!limitReached) {
-        final target = _settings!.minSaleForPulsa;
-        final crossesNominal = _settings!.enableMinSalesLimit &&
-            _monthlySalesTotal < target &&
-            (_monthlySalesTotal + _bruto) >= target;
-        final crossesCount = _settings!.enableMinCompletedSalesLimit &&
-            _monthlySalesCount < _settings!.minCompletedSalesCount &&
-            (_monthlySalesCount + 1) >= _settings!.minCompletedSalesCount;
-
-        if (crossesNominal || crossesCount) {
-          _pulsaBonusAmount = _settings!.pulsaBonusAmount;
-        }
-      }
-    }
+    _bruto = result.bruto;
+    _discountPercent = result.discountPercent;
+    _discountAmount = result.discountAmount;
+    _netto = result.netto;
+    _commissionAmount = result.commissionAmount;
+    _pulsaBonusAmount = result.pulsaBonusAmount;
 
     if (mounted) setState(() {});
   }
@@ -511,28 +439,7 @@ class _SalesEntryBookScreenState
         }
         final shouldPop = await showDialog<bool>(
           context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text(
-              'Batal Menginput?',
-              style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
-            ),
-            content: const Text(
-              'Apakah Anda yakin ingin keluar? Semua data form yang telah diisi akan hilang.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Batal'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: Text(
-                  'Ya, Keluar',
-                  style: TextStyle(color: AppTheme.secondaryColor),
-                ),
-              ),
-            ],
-          ),
+          builder: (ctx) => const CancelInputDialog(),
         );
         if (shouldPop == true && context.mounted) {
           Navigator.of(context).pop(result);
@@ -573,62 +480,8 @@ class _SalesEntryBookScreenState
         body: _settings == null
             ? const Center(child: CircularProgressIndicator())
             : !_settings!.enableR1
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.warning_amber_rounded,
-                        size: 64,
-                        color: Colors.amber,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Input Penjualan Ditangguhkan',
-                      style: GoogleFonts.outfit(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Penginputan laporan penjualan buku saat ini dinonaktifkan oleh administrator.',
-                      style: GoogleFonts.outfit(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 14,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton.icon(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back),
-                      label: const Text('Kembali ke Dashboard'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : SingleChildScrollView(
+                ? const SalesDisabledBanner()
+                : SingleChildScrollView(
               padding: const EdgeInsets.all(10),
               child: Form(
                 key: _formKey,
@@ -704,103 +557,14 @@ class _SalesEntryBookScreenState
                     if (_selectedProducts.isNotEmpty) ...[
                       SalesSectionTitle('Daftar Buku Yang Dipesan'),
                       const SizedBox(height: 8),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _selectedProducts.length,
-                        itemBuilder: (ctx, idx) {
-                          final product = _selectedProducts[idx];
-                          final qty = _selectedProductQuantities[product.id] ?? 1;
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: (product.isSibi ? Colors.indigo : AppTheme.primaryColor)
-                                    .withValues(alpha: 0.15),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: (product.isSibi ? Colors.indigo : AppTheme.primaryColor)
-                                        .withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    product.isSibi ? Icons.account_balance : Icons.menu_book_rounded,
-                                    color: product.isSibi ? Colors.indigo : AppTheme.primaryColor,
-                                    size: 20,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        product.name,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.outfit(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        '${AppFormatters.currency(product.price)} • ${product.category}',
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 12,
-                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.remove_circle_outline, size: 22),
-                                      onPressed: qty > 1
-                                          ? () {
-                                              setState(() {
-                                                _selectedProductQuantities[product.id] = qty - 1;
-                                                _calculateValues();
-                                              });
-                                            }
-                                          : null,
-                                    ),
-                                    Container(
-                                      constraints: const BoxConstraints(minWidth: 24),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        '$qty',
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.add_circle_outline, size: 22),
-                                      onPressed: () {
-                                        setState(() {
-                                          _selectedProductQuantities[product.id] = qty + 1;
-                                          _calculateValues();
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
+                      SelectedProductsStepperList(
+                        selectedProducts: _selectedProducts,
+                        selectedProductQuantities: _selectedProductQuantities,
+                        onQuantityChanged: (product, qty) {
+                          setState(() {
+                            _selectedProductQuantities[product.id] = qty;
+                            _calculateValues();
+                          });
                         },
                       ),
                       const SizedBox(height: 12),

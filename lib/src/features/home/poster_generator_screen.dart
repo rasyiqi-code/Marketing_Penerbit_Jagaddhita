@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +6,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/poster_generator_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/poster_export_helper.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/poster_image_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/poster_generator_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -165,64 +165,6 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
     );
   }
 
-  Future<Uint8List> _createOverlayImageBytes({
-    required String text,
-    required double fontSize,
-    required Color textColor,
-    required Color bgColor,
-    required double bgOpacity,
-    required bool isBgEnabled,
-    required double hPadding,
-    required double vPadding,
-    required double borderRadius,
-  }) async {
-    final textStyle = TextStyle(
-      color: textColor,
-      fontSize: fontSize,
-      fontWeight: FontWeight.bold,
-      shadows: !isBgEnabled
-          ? [
-              const Shadow(
-                color: Colors.black45,
-                blurRadius: 4,
-                offset: Offset(2, 2),
-              ),
-            ]
-          : null,
-    );
-
-    final textPainter = TextPainter(
-      text: TextSpan(text: text, style: textStyle),
-      textDirection: TextDirection.ltr,
-    );
-
-    textPainter.layout();
-
-    final width = textPainter.width + hPadding * 2;
-    final height = textPainter.height + vPadding * 2;
-
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder);
-
-    if (isBgEnabled) {
-      final bgPaint = Paint()..color = bgColor.withValues(alpha: bgOpacity);
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(0, 0, width, height),
-          Radius.circular(borderRadius),
-        ),
-        bgPaint,
-      );
-    }
-
-    textPainter.paint(canvas, Offset(hPadding, vPadding));
-
-    final picture = recorder.endRecording();
-    final uiImage = await picture.toImage(width.toInt(), height.toInt());
-    final byteData = await uiImage.toByteData(format: ui.ImageByteFormat.png);
-    return byteData!.buffer.asUint8List();
-  }
-
   Future<void> _processAndDownloadPoster() async {
     if (_originalImageBytes == null) return;
 
@@ -242,42 +184,23 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
       );
       final displaySize = renderBox.size;
 
-      double scale = 1.0;
-      double xOffset = 0.0;
-      double yOffset = 0.0;
-
-      final double aspectOriginal = originalSize.width / originalSize.height;
-      final double aspectDisplay = displaySize.width / displaySize.height;
-
-      if (aspectOriginal > aspectDisplay) {
-        scale = displaySize.width / originalSize.width;
-        yOffset = (displaySize.height - (originalSize.height * scale)) / 2;
-      } else {
-        scale = displaySize.height / originalSize.height;
-        xOffset = (displaySize.width - (originalSize.width * scale)) / 2;
-      }
-
-      final double positionX = _relativeX * displaySize.width;
-      final double positionY = _relativeY * displaySize.height;
-
-      final double actualImageX = positionX - xOffset;
-      final double actualImageY = positionY - yOffset;
-
-      final dxRelative = (actualImageX / (originalSize.width * scale)).clamp(
-        0.0,
-        1.0,
+      final coords = PosterImageHelper.calculateRelativeCoordinates(
+        originalSize: originalSize,
+        displaySize: displaySize,
+        relativeX: _relativeX,
+        relativeY: _relativeY,
       );
-      final dyRelative = (actualImageY / (originalSize.height * scale)).clamp(
-        0.0,
-        1.0,
-      );
+
+      final double dxRelative = coords['dx']!;
+      final double dyRelative = coords['dy']!;
+      final double scale = coords['scale']!;
 
       final double M = 1.0 / scale;
       final double logicFontSize = _fontTier == 3
           ? 24
           : (_fontTier == 2 ? 16 : 10);
 
-      final Uint8List overlayBytes = await _createOverlayImageBytes(
+      final Uint8List overlayBytes = await PosterImageHelper.createOverlayImageBytes(
         text: '$_name | WA: $_phone',
         fontSize: logicFontSize * M,
         textColor: _textColor,

@@ -10,6 +10,7 @@ import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/setting
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/payment_options_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/withdrawal_settings_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/settings_scaffold_widgets.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/settings/confirm_reset_dialog.dart';
 import 'package:provider/provider.dart';
 
 class GlobalSettingsScreen extends StatefulWidget {
@@ -241,7 +242,7 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
   Future<void> _resetData() async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => _ConfirmResetDialog(
+      builder: (context) => ConfirmResetDialog(
         onConfirm: () => Navigator.pop(context, true),
         onCancel: () => Navigator.pop(context, false),
       ),
@@ -451,72 +452,6 @@ class _GlobalSettingsScreenState extends State<GlobalSettingsScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _ConfirmResetDialog extends StatefulWidget {
-  final VoidCallback onConfirm;
-  final VoidCallback onCancel;
-
-  const _ConfirmResetDialog({
-    required this.onConfirm,
-    required this.onCancel,
-  });
-
-  @override
-  State<_ConfirmResetDialog> createState() => _ConfirmResetDialogState();
-}
-
-class _ConfirmResetDialogState extends State<_ConfirmResetDialog> {
-  final _controller = TextEditingController();
-  bool _canDelete = false;
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Reset Semua Data?'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'PERINGATAN: Tindakan ini akan MENGHAPUS SEMUA data (Produk, Penjualan, Riwayat Saldo, Notifikasi, dan Reset Saldo Pengguna) secara permanen.\n\nData yang dihapus TIDAK BISA dipulihkan. Ketik "HAPUS" untuk mengonfirmasi.',
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _controller,
-            decoration: const InputDecoration(
-              hintText: 'HAPUS',
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (val) {
-              setState(() {
-                _canDelete = val.trim() == 'HAPUS';
-              });
-            },
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: widget.onCancel,
-          child: const Text('Batal'),
-        ),
-        TextButton(
-          onPressed: _canDelete ? widget.onConfirm : null,
-          style: TextButton.styleFrom(
-            foregroundColor: _canDelete ? Colors.red : Colors.grey,
-          ),
-          child: const Text('Hapus Semuanya'),
-        ),
-      ],
     );
   }
 }
