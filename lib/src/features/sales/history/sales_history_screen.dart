@@ -9,8 +9,8 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet
 import 'package:marketing_penerbit_jagaddhita/src/core/services/storage_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/laporan_excel_exporter.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/history/history_tab_widgets.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/pelunasan_dialog.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/sale_detail_sheet.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/shared/pelunasan_dialog.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/detail/sale_detail_sheet.dart';
 import 'package:provider/provider.dart';
 
 class SalesHistoryScreen extends StatefulWidget {

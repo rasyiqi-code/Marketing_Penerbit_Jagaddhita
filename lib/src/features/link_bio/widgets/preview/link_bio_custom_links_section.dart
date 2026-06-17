@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/link_bio_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_admin_widgets.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/admin/link_bio_admin_widgets.dart';
 
 /// Bagian form media sosial dan daftar link kustom pada halaman Link Bio.
 class LinkBioCustomLinksSection extends StatelessWidget {

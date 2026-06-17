@@ -3,8 +3,8 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/empty_state_widget.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/async_snapshot_widget.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/sale_card.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/sales_claim_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/shared/sale_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/shared/sales_claim_card.dart';
 
 /// Tab penjualan dengan infinite scroll dan StreamBuilder.
 class SalesTab extends StatelessWidget {

@@ -7,7 +7,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_timeline.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/faktur_view.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/faktur/faktur_view.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/history/widgets/detail/sale_income_section.dart';
 import 'package:provider/provider.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';

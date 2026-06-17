@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
-import 'product_picker/catalog_modal.dart';
+import 'catalog_modal.dart';
 
 class ProductPickerField extends StatelessWidget {
   final List<ProductModel> products;

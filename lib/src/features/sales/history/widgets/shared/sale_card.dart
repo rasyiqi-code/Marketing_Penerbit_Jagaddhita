@@ -4,9 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
-import 'shared/sale_status_badge.dart';
-import 'shared/sale_shipping_badge.dart';
-import 'shared/sale_payment_info_row.dart';
+import 'sale_status_badge.dart';
+import 'sale_shipping_badge.dart';
+import 'sale_payment_info_row.dart';
 
 /// Card ringkasan transaksi penjualan di halaman riwayat (didesain ulang menjadi Flat List Item).
 class SaleCard extends StatelessWidget {

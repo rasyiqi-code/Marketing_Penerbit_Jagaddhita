@@ -8,9 +8,9 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dar
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/link_bio_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/add_edit_link_dialog.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_admin_widgets.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_custom_links_section.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/dialogs/add_edit_link_dialog.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/admin/link_bio_admin_widgets.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/preview/link_bio_custom_links_section.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/async_snapshot_widget.dart';
 

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_user_card_components.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/user/admin_user_card_components.dart';
 
 class AdminUserCard extends StatelessWidget {
   final UserModel user;

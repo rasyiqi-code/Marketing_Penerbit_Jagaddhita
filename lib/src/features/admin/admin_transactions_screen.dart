@@ -6,7 +6,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/laporan_excel_exporter.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction/transaction_card.dart';
 
 class AdminTransactionsScreen extends StatefulWidget {
   const AdminTransactionsScreen({super.key});

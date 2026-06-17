@@ -4,10 +4,10 @@ import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notific
 import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_list_screen.dart';
 
 // New Widgets
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_pending_claims_card.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_total_agents_card.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_top_agents_list.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_recent_transactions_list.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/dashboard/admin_pending_claims_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/dashboard/admin_total_agents_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/dashboard/admin_top_agents_list.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/dashboard/admin_recent_transactions_list.dart';
 
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';

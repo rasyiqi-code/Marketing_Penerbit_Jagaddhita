@@ -17,9 +17,9 @@ import 'package:marketing_penerbit_jagaddhita/src/features/admin/product_managem
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/admin_home_screen.dart'; // NEW Admin Home
 
 // Widgets
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/main_bottom_nav_bar.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/marketing_fab_menu.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/admin_fab_menu.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/navigation/main_bottom_nav_bar.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/navigation/marketing_fab_menu.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/navigation/admin_fab_menu.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

@@ -5,8 +5,8 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/link_bio_model.dar
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/poster_export_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/digital_business_card/digital_business_card_dialog.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_book_catalog_section.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_profile_header.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/preview/link_bio_book_catalog_section.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/preview/link_bio_profile_header.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_shared_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';

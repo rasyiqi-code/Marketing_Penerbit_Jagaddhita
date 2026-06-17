@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/sale_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/global_settings_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
-import '../utils/invoice_data_helper.dart';
+import '../../utils/invoice_data_helper.dart';
 import 'slanted_clipper.dart';
 
 class FakturPrintableSheet extends StatelessWidget {

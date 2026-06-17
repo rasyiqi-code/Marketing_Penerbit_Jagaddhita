@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/async_snapshot_widget.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_product_card.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_product_empty_state.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/product/admin_product_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/product/admin_product_empty_state.dart';
 import 'package:provider/provider.dart';
 
 class ProductManagementScreen extends StatelessWidget {

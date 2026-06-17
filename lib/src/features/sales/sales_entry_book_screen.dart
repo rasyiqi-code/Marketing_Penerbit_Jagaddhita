@@ -17,11 +17,11 @@ import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/currency_input_formatter.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/utils/sales_calculator_helper.dart';
 import 'package:provider/provider.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/product_picker_field.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/markup_input_field.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/product_picker/product_picker_field.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_entry/markup_input_field.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/app_text_field.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_proof_input.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_entry_shared_widgets.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_entry/transaction_proof_input.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_entry/sales_entry_shared_widgets.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'widgets/sales_entry/sales_review_dialog.dart';
 import 'widgets/sales_entry/customer_suggestions_list.dart';

@@ -4,14 +4,14 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/dashboard/dashboard_stats.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/wallet_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/dashboard/wallet_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/wallet/withdrawal_request_screen.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/bonus/bonus_eligibility_card.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/marketing_category_card.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/home_header.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/recent_sales_list.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/top_marketers_list.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/home_latest_info.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/dashboard/marketing_category_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/dashboard/home_header.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/dashboard/recent_sales_list.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/dashboard/top_marketers_list.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/dashboard/home_latest_info.dart';
 
 import 'package:provider/provider.dart';
 
