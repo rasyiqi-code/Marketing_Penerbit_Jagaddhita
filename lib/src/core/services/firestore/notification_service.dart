@@ -40,6 +40,16 @@ class AppNotificationService extends BaseFirestoreService {
     });
   }
 
+  Future<void> markNotificationsAsRead(List<String> notificationIds) async {
+    if (notificationIds.isEmpty) return;
+    final batch = db.batch();
+    for (var id in notificationIds) {
+      final ref = db.collection('notifications').doc(id);
+      batch.update(ref, {'isRead': true});
+    }
+    await batch.commit();
+  }
+
   Future<void> cleanupOldNotifications(String userId) async {
     final cutoffDate = DateTime.now().subtract(const Duration(days: 30));
 

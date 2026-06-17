@@ -20,21 +20,20 @@ class NotificationListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Notifications',
+          'Notifikasi',
           style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
         ),
         actions: [
-          if (notifications.isNotEmpty)
+          if (notifications.any((n) => !n.isRead))
             IconButton(
               icon: const Icon(Icons.done_all),
-              tooltip: 'Mark all as read',
+              tooltip: 'Tandai semua dibaca',
               onPressed: () {
-                // Potential future improvement: Mark all as read method in controller
-                for (var n in notifications) {
-                  if (!n.isRead) {
-                    controller.markAsRead(n.id);
-                  }
-                }
+                final unreadIds = notifications
+                    .where((n) => !n.isRead)
+                    .map((n) => n.id)
+                    .toList();
+                controller.markAllAsRead(unreadIds);
               },
             ),
         ],
@@ -239,14 +238,18 @@ class NotificationListScreen extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
-    final diff = now.difference(date);
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final notificationDate = DateTime(date.year, date.month, date.day);
 
-    if (diff.inDays == 0) {
+    if (notificationDate == today) {
       return DateFormat('HH:mm').format(date);
-    } else if (diff.inDays < 7) {
-      return DateFormat('EEEE, HH:mm').format(date);
+    } else if (notificationDate == yesterday) {
+      return 'Kemarin, ${DateFormat('HH:mm').format(date)}';
+    } else if (now.difference(date).inDays < 7) {
+      return DateFormat('EEEE, HH:mm', 'id_ID').format(date);
     } else {
-      return DateFormat('dd MMM yyyy').format(date);
+      return DateFormat('dd MMM yyyy', 'id_ID').format(date);
     }
   }
 }

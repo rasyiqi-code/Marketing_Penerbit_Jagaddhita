@@ -10,6 +10,7 @@ import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_t
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_recent_transactions_list.dart';
 
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 class AdminHomeScreen extends StatelessWidget {
@@ -20,15 +21,11 @@ class AdminHomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            'Admin Dashboard',
-            style: GoogleFonts.outfit(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
+        title: Text(
+          'Admin Dashboard',
+          style: GoogleFonts.outfit(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
         centerTitle: false,
@@ -73,6 +70,42 @@ class AdminHomeScreen extends StatelessWidget {
                     ),
                 ],
               );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout_rounded),
+            tooltip: 'Logout',
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(
+                    'Konfirmasi Keluar',
+                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+                  ),
+                  content: const Text('Apakah Anda yakin ingin keluar dari akun admin?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: const Text('Batal'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: Text(
+                        'Keluar',
+                        style: TextStyle(color: AppTheme.secondaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirm == true && context.mounted) {
+                await Provider.of<AuthService>(context, listen: false).signOut();
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(context, '/auth_wrapper');
+                }
+              }
             },
           ),
         ],

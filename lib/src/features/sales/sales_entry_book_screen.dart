@@ -267,6 +267,13 @@ class _SalesEntryBookScreenState
   }
 
   Future<void> _submitSale() async {
+    FocusScope.of(context).unfocus();
+
+    final auth = Provider.of<AuthService>(context, listen: false);
+    final salesService = Provider.of<SalesService>(context, listen: false);
+    final customerService = Provider.of<CustomerService>(context, listen: false);
+    final notificationService = Provider.of<AppNotificationService>(context, listen: false);
+
     if (!_formKey.currentState!.validate()) return;
     if (_selectedProducts.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -320,14 +327,68 @@ class _SalesEntryBookScreenState
       }
     }
 
+    // Validasi bukti transfer sebelum submit
+    if (_paymentStatus != 'COD' && _transactionProofUrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Silakan unggah bukti transfer terlebih dahulu')),
+      );
+      return;
+    }
+
+    // Tampilkan dialog review pesanan sebelum mengirimkan data
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text(
+            'Review Order',
+            style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Customer:', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13)),
+                Text(customerName, style: GoogleFonts.outfit(fontSize: 13)),
+                Text(customerPhone, style: GoogleFonts.outfit(fontSize: 13)),
+                Text(customerAddress, style: GoogleFonts.outfit(fontSize: 13)),
+                const SizedBox(height: 12),
+                Text('Produk Dipesan:', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13)),
+                ..._selectedProducts.map((p) {
+                  final q = _selectedProductQuantities[p.id] ?? 1;
+                  return Text('- ${p.name} (x$q)', style: GoogleFonts.outfit(fontSize: 13));
+                }),
+                const SizedBox(height: 12),
+                Text('Detail Pembayaran:', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13)),
+                Text('Tipe Bayar: $_paymentStatus', style: GoogleFonts.outfit(fontSize: 13)),
+                Text('Total Bruto: ${AppFormatters.currency(_bruto)}', style: GoogleFonts.outfit(fontSize: 13)),
+                Text('Komisi: ${AppFormatters.currency(_commissionAmount)}', style: GoogleFonts.outfit(fontSize: 13)),
+                Text('Netto: ${AppFormatters.currency(_netto)}', style: GoogleFonts.outfit(fontSize: 13)),
+                if (_paymentStatus == 'DP')
+                  Text('Jumlah DP: Rp ${_dpAmountController.text}', style: GoogleFonts.outfit(fontSize: 13)),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Kirim Order', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm != true) return;
+
     setState(() => _isLoading = true);
 
     try {
-      final auth = Provider.of<AuthService>(context, listen: false);
-      final salesService = Provider.of<SalesService>(context, listen: false);
-      final customerService = Provider.of<CustomerService>(context, listen: false);
-      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
-      
       final user = await auth.getCurrentUserDetails();
       if (user == null) throw Exception('User not found');
 
@@ -451,44 +512,90 @@ class _SalesEntryBookScreenState
     super.dispose();
   }
 
+  bool get _isFormDirty {
+    return _customerNameController.text.isNotEmpty ||
+        _customerPhoneController.text.isNotEmpty ||
+        _customerAddressController.text.isNotEmpty ||
+        _selectedProducts.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     const color = AppTheme.primaryColor;
     final totalQty = _selectedProductQuantities.values.fold<int>(0, (sum, q) => sum + q);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.shopping_cart_checkout_rounded,
-                color: Colors.white),
-            const SizedBox(width: 8),
-            Text(
-              'Input Penjualan Buku',
-              style: GoogleFonts.outfit(
-                  fontWeight: FontWeight.bold, color: Colors.white),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        if (!_isFormDirty) {
+          if (context.mounted) Navigator.of(context).pop(result);
+          return;
+        }
+        final shouldPop = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(
+              'Batal Menginput?',
+              style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
             ),
-          ],
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: Row(
-            children: [
-              Expanded(child: Container(height: 4, color: AppTheme.secondaryColor)),
-              Expanded(child: Container(height: 4, color: Colors.white)),
+            content: const Text(
+              'Apakah Anda yakin ingin keluar? Semua data form yang telah diisi akan hilang.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Batal'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(
+                  'Ya, Keluar',
+                  style: TextStyle(color: AppTheme.secondaryColor),
+                ),
+              ),
             ],
           ),
+        );
+        if (shouldPop == true && context.mounted) {
+          Navigator.of(context).pop(result);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.shopping_cart_checkout_rounded,
+                  color: Colors.white),
+              const SizedBox(width: 8),
+              Text(
+                'Input Penjualan Buku',
+                style: GoogleFonts.outfit(
+                    fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+            ],
+          ),
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(4),
+            child: Row(
+              children: [
+                Expanded(child: Container(height: 4, color: AppTheme.secondaryColor)),
+                Expanded(child: Container(height: 4, color: Colors.white)),
+              ],
+            ),
+          ),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: _settings != null && !_settings!.enableR1
+        body: _settings == null
+            ? const Center(child: CircularProgressIndicator())
+            : !_settings!.enableR1
           ? Center(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -548,8 +655,10 @@ class _SalesEntryBookScreenState
               padding: const EdgeInsets.all(10),
               child: Form(
                 key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: AbsorbPointer(
+                  absorbing: _isLoading,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // ── Agent Banner ──────────────────────────────────────────────
                     if (_agentName.isNotEmpty)
@@ -560,88 +669,75 @@ class _SalesEntryBookScreenState
                     // ── Customer Info ─────────────────────────────────────────────
                     SalesSectionTitle('Informasi Pelanggan'),
                     const SizedBox(height: 8),
-                    Stack(
-                      clipBehavior: Clip.none,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            SalesTextField(
-                              controller: _customerNameController,
-                              label: 'Nama Customer',
-                              icon: Icons.person_outline_rounded,
-                              onChanged: _onCustomerNameChanged,
-                            ),
-                            const SizedBox(height: 10),
-                            SalesTextField(
-                              controller: _customerPhoneController,
-                              label: 'Nomor HP Customer',
-                              icon: Icons.phone_android_rounded,
-                              keyboardType: TextInputType.phone,
-                            ),
-                            const SizedBox(height: 10),
-                            SalesTextField(
-                              controller: _customerAddressController,
-                              label: 'Alamat Lengkap (Jl, RT/RW, Kec, Kota)',
-                              icon: Icons.location_on_outlined,
-                              maxLines: 3,
-                            ),
-                          ],
+                        SalesTextField(
+                          controller: _customerNameController,
+                          label: 'Nama Customer',
+                          icon: Icons.person_outline_rounded,
+                          onChanged: _onCustomerNameChanged,
                         ),
-                        if (_showCustomerSuggestions)
-                          Positioned(
-                            top: 50,
-                            left: 0,
-                            right: 0,
-                            child: Material(
-                              elevation: 6,
+                        if (_showCustomerSuggestions) ...[
+                          const SizedBox(height: 4),
+                          Container(
+                            constraints: const BoxConstraints(maxHeight: 180),
+                            decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              shadowColor: Colors.black26,
-                              color: Theme.of(context).cardColor,
-                              child: Container(
-                                constraints: const BoxConstraints(maxHeight: 180),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Theme.of(context).dividerColor,
-                                  ),
-                                ),
-                                child: ListView.separated(
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  itemCount: _filteredCustomers.length,
-                                  separatorBuilder: (ctx, idx) => const Divider(height: 1),
-                                  itemBuilder: (ctx, idx) {
-                                    final customer = _filteredCustomers[idx];
-                                    return ListTile(
-                                      dense: true,
-                                      leading: const CircleAvatar(
-                                        radius: 14,
-                                        child: Icon(Icons.person, size: 14),
-                                      ),
-                                      title: Text(
-                                        customer.name,
-                                        style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
-                                      ),
-                                      subtitle: Text(
-                                        customer.phoneNumber,
-                                        style: GoogleFonts.outfit(fontSize: 11),
-                                      ),
-                                      onTap: () {
-                                        setState(() {
-                                          _customerNameController.text = customer.name;
-                                          _customerPhoneController.text = customer.phoneNumber;
-                                          _showCustomerSuggestions = false;
-                                          _filteredCustomers = [];
-                                        });
-                                        FocusScope.of(context).unfocus();
-                                      },
-                                    );
-                                  },
-                                ),
+                              border: Border.all(
+                                color: Theme.of(context).dividerColor,
                               ),
+                              color: Theme.of(context).cardColor,
+                            ),
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemCount: _filteredCustomers.length,
+                              separatorBuilder: (ctx, idx) => const Divider(height: 1),
+                              itemBuilder: (ctx, idx) {
+                                final customer = _filteredCustomers[idx];
+                                return ListTile(
+                                  dense: true,
+                                  leading: const CircleAvatar(
+                                    radius: 14,
+                                    child: Icon(Icons.person, size: 14),
+                                  ),
+                                  title: Text(
+                                    customer.name,
+                                    style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                                  ),
+                                  subtitle: Text(
+                                    customer.phoneNumber,
+                                    style: GoogleFonts.outfit(fontSize: 11),
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      _customerNameController.text = customer.name;
+                                      _customerPhoneController.text = customer.phoneNumber;
+                                      _showCustomerSuggestions = false;
+                                      _filteredCustomers = [];
+                                    });
+                                    FocusScope.of(context).unfocus();
+                                  },
+                                );
+                              },
                             ),
                           ),
+                        ],
+                        const SizedBox(height: 10),
+                        SalesTextField(
+                          controller: _customerPhoneController,
+                          label: 'Nomor HP Customer',
+                          icon: Icons.phone_android_rounded,
+                          keyboardType: TextInputType.phone,
+                        ),
+                        const SizedBox(height: 10),
+                        SalesTextField(
+                          controller: _customerAddressController,
+                          label: 'Alamat Lengkap (Jl, RT/RW, Kec, Kota)',
+                          icon: Icons.location_on_outlined,
+                          maxLines: 3,
+                        ),
                       ],
                     ),
 
@@ -860,10 +956,7 @@ class _SalesEntryBookScreenState
                           elevation: 2,
                           shadowColor: color.withValues(alpha: 0.3),
                         ),
-                        onPressed:
-                            (_isLoading || (_paymentStatus != 'COD' && _transactionProofUrl == null))
-                                ? null
-                                : _submitSale,
+                        onPressed: _isLoading ? null : _submitSale,
                         child: _isLoading
                             ? const CircularProgressIndicator(color: Colors.white)
                             : Text(
@@ -880,6 +973,8 @@ class _SalesEntryBookScreenState
                 ),
               ),
             ),
+          ),
+        ),
     );
   }
 

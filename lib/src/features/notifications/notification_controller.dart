@@ -72,14 +72,57 @@ class NotificationController extends ChangeNotifier {
   }
 
   Future<void> markAsRead(String notificationId) async {
-    await _notificationService.markNotificationAsRead(notificationId);
-    // Optimistic update
     final index = _notifications.indexWhere((n) => n.id == notificationId);
+    final oldNotifications = List<NotificationModel>.from(_notifications);
     if (index != -1) {
-      // We can't modify the object since it's final, but the stream update will come soon.
-      // Or we can replace it in local list for instant UI feedback.
-      // Since Firestore is fast, let's rely on stream for simplicity,
-      // or implement optimistic if needed.
+      final oldNotif = _notifications[index];
+      _notifications[index] = NotificationModel(
+        id: oldNotif.id,
+        title: oldNotif.title,
+        body: oldNotif.body,
+        type: oldNotif.type,
+        recipientId: oldNotif.recipientId,
+        relatedId: oldNotif.relatedId,
+        isRead: true,
+        createdAt: oldNotif.createdAt,
+      );
+      notifyListeners();
+    }
+    try {
+      await _notificationService.markNotificationAsRead(notificationId);
+    } catch (e) {
+      _notifications = oldNotifications;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> markAllAsRead(List<String> notificationIds) async {
+    if (notificationIds.isEmpty) return;
+    final oldNotifications = List<NotificationModel>.from(_notifications);
+    _notifications = _notifications.map((n) {
+      if (notificationIds.contains(n.id)) {
+        return NotificationModel(
+          id: n.id,
+          title: n.title,
+          body: n.body,
+          type: n.type,
+          recipientId: n.recipientId,
+          relatedId: n.relatedId,
+          isRead: true,
+          createdAt: n.createdAt,
+        );
+      }
+      return n;
+    }).toList();
+    notifyListeners();
+
+    try {
+      await _notificationService.markNotificationsAsRead(notificationIds);
+    } catch (e) {
+      _notifications = oldNotifications;
+      notifyListeners();
+      rethrow;
     }
   }
 }

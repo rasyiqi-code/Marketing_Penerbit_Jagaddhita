@@ -109,50 +109,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
             constraints: const BoxConstraints(maxWidth: 400),
             child: Form(
               key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Gabung dengan Tim',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Buat akun marketing Anda',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 18),
-
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Username (Unik)',
-                      prefixIcon: Icon(Icons.person_outline),
-                      helperText: 'Ini akan digunakan untuk link bio Anda',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Harap masukkan username';
-                      }
-                      final validCharacters = RegExp(r'^[a-zA-Z0-9_]+$');
-                      if (!validCharacters.hasMatch(value)) {
-                        return 'Hanya huruf, angka, dan garis bawah yang diperbolehkan';
-                      }
-                      return null;
-                    },
-                  ),
+              child: AbsorbPointer(
+                absorbing: _isLoading,
+                child: AutofillGroup(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Gabung dengan Tim',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Buat akun marketing Anda',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 18),
+    
+                      AppTextField(
+                        controller: _usernameController,
+                        label: 'Username (Unik)',
+                        icon: Icons.person_outline,
+                        helperText: 'Ini akan digunakan untuk link bio Anda',
+                        autofillHints: const [AutofillHints.newUsername],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Harap masukkan username';
+                          }
+                          final validCharacters = RegExp(r'^[a-zA-Z0-9_]+$');
+                          if (!validCharacters.hasMatch(value)) {
+                            return 'Hanya huruf, angka, dan garis bawah yang diperbolehkan';
+                          }
+                          return null;
+                        },
+                      ),
                   const SizedBox(height: 12),
                   AppTextField(
                     controller: _emailController,
                     label: 'Alamat Email',
                     icon: Icons.email_outlined,
                     keyboardType: TextInputType.emailAddress,
+                    autofillHints: const [AutofillHints.email],
                     validator: (value) =>
                       value!.isEmpty ? 'Harap masukkan email Anda' : null,
                   ),
@@ -162,6 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     label: 'Kata Sandi',
                     icon: Icons.lock_outline,
                     obscureText: _obscurePassword,
+                    autofillHints: const [AutofillHints.newPassword],
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -190,6 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     label: 'Konfirmasi Kata Sandi',
                     icon: Icons.lock_outline,
                     obscureText: true,
+                    autofillHints: const [AutofillHints.newPassword],
                     validator: (value) {
                       if (value != _passwordController.text) {
                         return 'Kata sandi tidak cocok';
@@ -215,12 +220,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           : const Text('Buat Akun'),
                     ),
                   ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -19,16 +19,19 @@ class WalletCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Used AppFormatters instead
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E), // Dark card for contrast
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -40,80 +43,86 @@ class WalletCard extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 300;
+
+              // Shared balance info layout (DRY implementation)
+              final balanceInfo = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Saldo Tunai',
+                        style: GoogleFonts.outfit(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Tooltip(
+                        message: 'Gabungan Komisi & Markup',
+                        child: Icon(
+                          Icons.info_outline_rounded,
+                          size: 14,
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                          semanticLabel: 'Informasi Saldo',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    AppFormatters.currency(
+                      user.commissionBalance + user.markupBalance,
+                    ),
+                    style: GoogleFonts.outfit(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (user.markupBalance > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        '(Termasuk Markup ${AppFormatters.currency(user.markupBalance)})',
+                        style: GoogleFonts.outfit(
+                          color: Colors.greenAccent,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+
+              final claimButton = ElevatedButton.icon(
+                onPressed: onClaimTap,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                label: const Text('Tarik'),
+                icon: const Icon(
+                  Icons.account_balance_wallet_rounded,
+                  size: 14,
+                ),
+              );
+
               if (isNarrow) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Saldo Tunai',
-                              style: GoogleFonts.outfit(
-                                color: Colors.white.withValues(alpha: 0.6),
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Tooltip(
-                              message: 'Gabungan Komisi & Markup',
-                              child: Icon(
-                                Icons.info_outline_rounded,
-                                size: 14,
-                                color: Colors.white.withValues(alpha: 0.4),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          AppFormatters.currency(
-                            user.commissionBalance + user.markupBalance,
-                          ),
-                          style: GoogleFonts.outfit(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (user.markupBalance > 0)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              '(Termasuk Markup ${AppFormatters.currency(user.markupBalance)})',
-                              style: GoogleFonts.outfit(
-                                color: Colors.greenAccent,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                    balanceInfo,
                     const SizedBox(height: 12),
-                    ElevatedButton.icon(
-                      onPressed: onClaimTap,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      label: const Text('Tarik'),
-                      icon: const Icon(
-                        Icons.account_balance_wallet_rounded,
-                        size: 14,
-                      ),
-                    ),
+                    claimButton,
                   ],
                 );
               }
@@ -121,84 +130,16 @@ class WalletCard extends StatelessWidget {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Saldo Tunai',
-                              style: GoogleFonts.outfit(
-                                color: Colors.white.withValues(alpha: 0.6),
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Tooltip(
-                              message: 'Gabungan Komisi & Markup',
-                              child: Icon(
-                                Icons.info_outline_rounded,
-                                size: 14,
-                                color: Colors.white.withValues(alpha: 0.4),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          AppFormatters.currency(
-                            user.commissionBalance + user.markupBalance,
-                          ),
-                          style: GoogleFonts.outfit(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (user.markupBalance > 0)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              '(Termasuk Markup ${AppFormatters.currency(user.markupBalance)})',
-                              style: GoogleFonts.outfit(
-                                color: Colors.greenAccent,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
+                  Expanded(child: balanceInfo),
                   const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: onClaimTap,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryColor,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    label: const Text('Tarik'),
-                    icon: const Icon(
-                      Icons.account_balance_wallet_rounded,
-                      size: 14,
-                    ),
-                  ),
+                  claimButton,
                 ],
               );
             },
           ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 10.0),
-            child: Divider(color: Colors.white12),
+            child: Divider(),
           ),
 
           // Pulsa Section
@@ -207,9 +148,9 @@ class WalletCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.phone_android_rounded,
-                    color: AppTheme.accentColor,
+                    color: AppTheme.primaryColor,
                     size: 18,
                   ),
                   const SizedBox(width: 8),
@@ -219,14 +160,14 @@ class WalletCard extends StatelessWidget {
                       Text(
                         'Saldo Pulsa',
                         style: GoogleFonts.outfit(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 11,
                         ),
                       ),
                       Text(
                         AppFormatters.currency(user.pulsaBalance),
                         style: GoogleFonts.outfit(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
@@ -236,9 +177,9 @@ class WalletCard extends StatelessWidget {
                 ],
               ),
               TextButton(
-                onPressed: onClaimPulsaTap,
+                onPressed: user.pulsaBalance > 0 ? onClaimPulsaTap : null,
                 style: TextButton.styleFrom(
-                  foregroundColor: AppTheme.accentColor,
+                  foregroundColor: isDark ? AppTheme.accentColor : AppTheme.primaryColor,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 child: const Text('Klaim Pulsa'),

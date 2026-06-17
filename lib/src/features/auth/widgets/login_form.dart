@@ -53,40 +53,42 @@ class LoginForm extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Form(
         key: formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Selamat Datang Kembali',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.secondaryColor,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Masuk untuk mengakses dashboard Anda',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                fontSize: 13,
+        child: AutofillGroup(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Selamat Datang Kembali',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.secondaryColor,
+                    ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 20),
-
-            // Email Field
-            TextFormField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Alamat Email',
-                prefixIcon: Icon(Icons.email_outlined),
+              const SizedBox(height: 6),
+              Text(
+                'Masuk untuk mengakses dashboard Anda',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  fontSize: 13,
+                ),
               ),
-              keyboardType: TextInputType.emailAddress,
-              validator: (value) => value!.isEmpty
-                  ? 'Harap masukkan email Anda'
-                  : null,
-            ),
+              const SizedBox(height: 20),
+  
+              // Email Field
+              TextFormField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Alamat Email',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                autofillHints: const [AutofillHints.email],
+                validator: (value) => value!.isEmpty
+                    ? 'Harap masukkan email Anda'
+                    : null,
+              ),
             const SizedBox(height: 12),
 
             // Password Field
@@ -105,6 +107,7 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
               obscureText: obscurePassword,
+              autofillHints: const [AutofillHints.password],
               validator: (value) => value!.isEmpty
                   ? 'Harap masukkan kata sandi Anda'
                   : null,
@@ -214,6 +217,7 @@ class LoginForm extends StatelessWidget {
               ),
             ),
           ],
+          ),
         ),
       ),
     );
