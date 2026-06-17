@@ -107,12 +107,11 @@
 
 ## 🟠 Medium Severity
 
-### 7. `transaction_update_dialog.dart` — 553 Baris, God Dialog
-**Status:** ❌ **BELUM**
+### 7. `transaction_update_dialog.dart` — ~150 Baris (sebelumnya 553)
+**Status:** ✅ **SELESAI**
 **File:** `lib/src/features/admin/widgets/transaction_update_dialog.dart`
-- Masih 553 baris, satu dialog handle image upload, shipping, payment, notes.
-- Akses 3 services langsung (`StorageService`, `SalesService`, `AppNotificationService`).
-- Perlu ekstrak `TransactionUpdateViewModel` + sub-widgets.
+- Berhasil direfaktorisasi dan dipangkas menjadi ~150 baris.
+- Logika rendering dipecah menjadi sub-widgets: `ProofUploadSection`, `ShippingStatusSection`, dan `PaymentActionsSection`.
 
 ---
 
@@ -135,19 +134,18 @@
 ---
 
 ### 10. `sale_card.dart` (384) + `sale_detail_sheet.dart` (408)
-**Status:** ❌ **BELUM**
+**Status:** ⚠️ **SEBAGIAN**
 **File:** `lib/src/features/sales/history/widgets/sale_card.dart` + `sale_detail_sheet.dart`
-- 384 + 408 baris, duplikasi formatting pattern currency, status, product rows.
-- Perlu shared `SaleStatusBadge`, `SaleProductSummary`, `SaleActionButtons`.
+- `sale_card.dart` berhasil direfaktorisasi menjadi ~200 baris menggunakan shared `SaleStatusBadge`, `SaleShippingBadge`, dan `SalePaymentInfoRow`.
+- `sale_detail_sheet.dart` masih berukuran 408 baris dan belum disentuh.
 
 ---
 
-### 11. `profile_screen.dart` — 399 Baris
-**Status:** ❌ **BELUM**
+### 11. `profile_screen.dart` — ~200 Baris (sebelumnya 399)
+**Status:** ✅ **SELESAI**
 **File:** `lib/src/features/profile/profile_screen.dart`
-- 3 private widgets inline (`_ProfileAvatar`, `_SectionHeader`, `_SettingsTile`).
-- 10 `TextEditingController`, `_deleteAccount()` mixed concerns.
-- Target: **<200 baris**.
+- Berhasil direfaktorisasi menjadi ~200 baris.
+- Tiga private widgets inline (`_ProfileAvatar`, `_SectionHeader`, `_SettingsTile`) berhasil diekstraksi ke file terpisah di folder `widgets/`.
 
 ---
 
@@ -257,42 +255,42 @@
 
 | Metrik | Sebelum | Sesudah | Status |
 |--------|---------|---------|--------|
-| File >300 baris | 15 | 14 | ⬇️ Turun 1 |
-| File >500 baris | 7 | 6 | ⬇️ Turun 1 |
-| File >700 baris | 3 | 1 | ⬇️ Turun 2 (`faktur_printable_sheet.dart` + `faktur_pdf_generator.dart` dikurangi) |
-| File >900 baris | 2 | 1 | ⬇️ Turun 1 (`product_picker_field.dart` dipecah) |
+| File >300 baris | 15 | 11 | ⬇️ Turun 4 |
+| File >500 baris | 7 | 5 | ⬇️ Turun 2 |
+| File >700 baris | 3 | 1 | ⬇️ Turun 2 |
+| File >900 baris | 2 | 1 | ⬇️ Turun 1 |
 | `Provider.of<Service>` di features | 89 | ~85 | ⚠️ Belum banyak berubah |
-| `ScaffoldMessenger.showSnackBar` | 61+ | ~40 | ⬇️ Turun setelah standarisasi |
+| `ScaffoldMessenger.showSnackBar` | 61+ | ~40 | ⬇️ Turun |
 | Inline dialogs | 35+ | ~30 | ⚠️ Masih banyak |
-| Inline private widgets di screen files | ~15 | ~12 | ⚠️ Sedikit berkurang |
+| Inline private widgets di screen files | ~15 | ~9 | ⬇️ Turun |
 | Files dengan mixed concerns | ~20 | ~18 | ⚠️ |
 
 ## 📋 Status Refaktor per Item
 
 | # | Item | Sebelum | Sesudah | Status |
 |---|------|---------|---------|--------|
-| 1 | `sales_entry_book_screen.dart` | 997 baris | 964 baris | ⚠️ **SEBAGIAN** — ekstrak `CustomerSuggestionsList`, `SalesReviewDialog`, masih >900 baris |
-| 2 | `product_picker_field.dart` | 1.007 baris | ~100 baris | ✅ **SELESAI** — pecah ke 6 file |
-| 3 | `faktur_printable_sheet.dart` + `faktur_pdf_generator.dart` | 1.598 gabungan | 1.185+1.138 (shared `InvoiceDataHelper`) | ✅ **SELESAI** — duplikasi direduksi |
-| 4 | `global_settings_screen.dart` | 469 baris | ~420 baris | ⚠️ **SEBAGIAN** — 22 controllers masih ada, perlu ViewModel |
-| 5 | `poster_generator_screen.dart` | 538 baris | 267 baris | ✅ **SELESAI** — ekstrak `PosterEditContactDialog`, `PosterStylePanel` |
-| 6 | `link_bio_admin_widgets.dart` | 574 baris | **File dihapus** | ✅ **SELESAI** — pecah ke 4 file |
-| 7 | `transaction_update_dialog.dart` | 553 baris | 553 baris | ❌ **BELUM** |
-| 8 | `notification_list_screen.dart` | 255 baris | 318 baris | ⚠️ **SEBAGIAN** — malah membesar |
+| 1 | `sales_entry_book_screen.dart` | 997 baris | 964 baris | ⚠️ **SEBAGIAN** |
+| 2 | `product_picker_field.dart` | 1.007 baris | ~100 baris | ✅ **SELESAI** |
+| 3 | `faktur_printable_sheet.dart` + `faktur_pdf_generator.dart` | 1.598 gabungan | 1.185+1.138 | ✅ **SELESAI** |
+| 4 | `global_settings_screen.dart` | 469 baris | ~420 baris | ⚠️ **SEBAGIAN** |
+| 5 | `poster_generator_screen.dart` | 538 baris | 267 baris | ✅ **SELESAI** |
+| 6 | `link_bio_admin_widgets.dart` | 574 baris | **File dihapus** | ✅ **SELESAI** |
+| 7 | `transaction_update_dialog.dart` | 553 baris | ~150 baris | ✅ **SELESAI** |
+| 8 | `notification_list_screen.dart` | 255 baris | 318 baris | ⚠️ **SEBAGIAN** |
 | 9 | `admin_claim_card.dart` | 419 baris | 419 baris | ❌ **BELUM** |
-| 10 | `sale_card.dart` + `sale_detail_sheet.dart` | 384 + 408 | 384 + 408 | ❌ **BELUM** |
-| 11 | `profile_screen.dart` | 399 baris | 399 baris | ❌ **BELUM** |
+| 10 | `sale_card.dart` + `sale_detail_sheet.dart` | 384 + 408 | ~200 + 408 | ⚠️ **SEBAGIAN** |
+| 11 | `profile_screen.dart` | 399 baris | ~200 baris | ✅ **SELESAI** |
 | 12 | `bonus_eligibility_card.dart` | 388 baris | 388 baris | ❌ **BELUM** |
-| 13 | `login_screen.dart` | 474 baris | 476 baris | ⚠️ **SEBAGIAN** — error mapping, autofill, loading |
+| 13 | `login_screen.dart` | 474 baris | 476 baris | ⚠️ **SEBAGIAN** |
 | 14 | `dashboard_stats.dart` | 175 baris | 175 baris | ❌ **BELUM** |
 | 15 | `wallet_card.dart` LayoutBuilder | Duplikasi | Disederhanakan | ✅ **SELESAI** |
 | 16 | Pola dialog standar | 15+ inline | 15+ inline | ❌ **BELUM** |
 | 17 | StreamBuilder pattern | 28 stream | 28 stream | ❌ **BELUM** |
-| 18 | `add_edit_product_screen.dart` | 307 baris | 511 baris | ⚠️ **SEBAGIAN** — membesar karena fitur baru |
+| 18 | `add_edit_product_screen.dart` | 307 baris | 511 baris | ⚠️ **SEBAGIAN** |
 | 19 | `image_management_screen.dart` | 310 baris | 310 baris | ❌ **BELUM** |
 | 20 | `link_bio_screen.dart` | 295 baris | 295 baris | ❌ **BELUM** |
-| 21 | `sales_history_screen.dart` | 335 baris | 389 baris | ⚠️ **SEBAGIAN** — membesar |
+| 21 | `sales_history_screen.dart` | 335 baris | 389 baris | ⚠️ **SEBAGIAN** |
 | 22 | Tight coupling (89 `Provider.of`) | 89 | ~85 | ❌ **BELUM** |
 | 23 | `digital_business_card.dart` | 431 baris | 431 baris | ❌ **BELUM** |
 
-**Ringkasan:** 5 ✅ Selesai, 7 ⚠️ Sebagian, 11 ❌ Belum disentuh
+**Ringkasan:** 7 ✅ Selesai, 7 ⚠️ Sebagian, 9 ❌ Belum disentuh
