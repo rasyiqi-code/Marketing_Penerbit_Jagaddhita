@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -120,7 +118,10 @@ class _FakturViewState extends State<FakturView> {
       // 1. Generate PDF bytes using modular helper
       final pdfBytes = await generateFakturPdf(widget.sale, _settings);
 
-      // 2. Save using FilePicker
+      // 2. Simpan menggunakan FilePicker
+      // Parameter [bytes] akan menulis file secara otomatis di semua platform (termasuk Android/iOS).
+      // Kita tidak perlu menulis secara manual menggunakan File(path).writeAsBytes(pdfBytes) karena pada Android,
+      // path yang dikembalikan berupa virtual path / content URI (seperti '/document/26') yang akan memicu PathNotFoundException.
       final fileName = 'Faktur_${widget.sale.id.toUpperCase()}.pdf';
 
       final path = await FilePicker.saveFile(
@@ -129,10 +130,6 @@ class _FakturViewState extends State<FakturView> {
       );
 
       if (path != null) {
-        if (!kIsWeb) {
-          final file = File(path);
-          await file.writeAsBytes(pdfBytes);
-        }
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
