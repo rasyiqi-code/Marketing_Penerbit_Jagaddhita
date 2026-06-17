@@ -6,11 +6,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/poster_generator_service.dart';
-import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/poster_export_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/poster_generator_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'widgets/poster/poster_edit_contact_dialog.dart';
+import 'widgets/poster/poster_style_panel.dart';
 import 'package:image/image.dart' as img;
 
 class PosterGeneratorScreen extends StatefulWidget {
@@ -128,179 +129,38 @@ class _PosterGeneratorScreenState extends State<PosterGeneratorScreen> {
   }
 
   void _showEditDialog() async {
-    final nameController = TextEditingController(text: _name);
-    final phoneController = TextEditingController(text: _phone);
-
-    await showDialog(
+    final result = await showDialog<(String, String)>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Edit Kontak',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
-        ),
-        content: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          behavior: HitTestBehavior.translucent,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nama'),
-                textCapitalization: TextCapitalization.words,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: phoneController,
-                decoration: const InputDecoration(labelText: 'Nomor WhatsApp'),
-                keyboardType: TextInputType.phone,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final name = nameController.text.trim();
-              final phone = phoneController.text.trim();
-              final cleanPhone = phone.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-              if (name.length < 2) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Nama harus minimal 2 karakter')),
-                );
-                return;
-              }
-              if (cleanPhone.length < 8) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Nomor WhatsApp harus minimal 8 karakter alfanumerik')),
-                );
-                return;
-              }
-              setState(() {
-                _name = name;
-                _phone = phone;
-              });
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Simpan'),
-          ),
-        ],
+      builder: (context) => PosterEditContactDialog(
+        initialName: _name,
+        initialPhone: _phone,
       ),
     );
 
-    nameController.dispose();
-    phoneController.dispose();
+    if (result != null) {
+      setState(() {
+        _name = result.$1;
+        _phone = result.$2;
+      });
+    }
   }
 
   void _showStylePanel() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          padding: const EdgeInsets.all(24),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Kustomisasi Gaya',
-                  style: GoogleFonts.outfit(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Gunakan Background'),
-                    Switch(
-                      value: _isBgEnabled,
-                      onChanged: (val) {
-                        setState(() => _isBgEnabled = val);
-                        setModalState(() {});
-                      },
-                      activeThumbColor: AppTheme.primaryColor,
-                    ),
-                  ],
-                ),
-
-                if (_isBgEnabled) ...[
-                  const Text('Warna Background'),
-                  const SizedBox(height: 8),
-                  PosterColorPicker(
-                    selectedColor: _bgColor,
-                    onSelected: (col) {
-                      setState(() => _bgColor = col);
-                      setModalState(() {});
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  Text('Opasitas Background: ${(_bgOpacity * 100).toInt()}%'),
-                  Slider(
-                    value: _bgOpacity,
-                    min: 0.1,
-                    max: 1.0,
-                    onChanged: (val) {
-                      setState(() => _bgOpacity = val);
-                      setModalState(() {});
-                    },
-                    activeColor: AppTheme.primaryColor,
-                  ),
-                ],
-
-                const Text('Warna Font'),
-                const SizedBox(height: 8),
-                PosterColorPicker(
-                  selectedColor: _textColor,
-                  onSelected: (col) {
-                    setState(() => _textColor = col);
-                    setModalState(() {});
-                  },
-                ),
-
-                const SizedBox(height: 16),
-                const Text('Ukuran Font'),
-                PosterFontTierChips(
-                  fontTier: _fontTier,
-                  onChanged: (tier) {
-                    setState(() => _fontTier = tier);
-                    setModalState(() {});
-                  },
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: const Text('Selesai'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      builder: (context) => PosterStylePanel(
+        initialTextColor: _textColor,
+        initialBgColor: _bgColor,
+        initialBgOpacity: _bgOpacity,
+        initialIsBgEnabled: _isBgEnabled,
+        initialFontTier: _fontTier,
+        onTextColorChanged: (col) => setState(() => _textColor = col),
+        onBgColorChanged: (col) => setState(() => _bgColor = col),
+        onBgOpacityChanged: (val) => setState(() => _bgOpacity = val),
+        onIsBgEnabledChanged: (val) => setState(() => _isBgEnabled = val),
+        onFontTierChanged: (tier) => setState(() => _fontTier = tier),
       ),
     );
   }

@@ -21,6 +21,8 @@ import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/markup_
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_text_field.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_proof_input.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_entry_shared_widgets.dart';
+import 'widgets/sales_entry/sales_review_dialog.dart';
+import 'widgets/sales_entry/customer_suggestions_list.dart';
 
 class SalesEntryBookScreen extends StatefulWidget {
   const SalesEntryBookScreen({super.key});
@@ -344,50 +346,18 @@ class _SalesEntryBookScreenState
     // Tampilkan dialog review pesanan sebelum mengirimkan data
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text(
-            'Review Order',
-            style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Customer:', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13)),
-                Text(customerName, style: GoogleFonts.outfit(fontSize: 13)),
-                Text(customerPhone, style: GoogleFonts.outfit(fontSize: 13)),
-                Text(customerAddress, style: GoogleFonts.outfit(fontSize: 13)),
-                const SizedBox(height: 12),
-                Text('Produk Dipesan:', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13)),
-                ..._selectedProducts.map((p) {
-                  final q = _selectedProductQuantities[p.id] ?? 1;
-                  return Text('- ${p.name} (x$q)', style: GoogleFonts.outfit(fontSize: 13));
-                }),
-                const SizedBox(height: 12),
-                Text('Detail Pembayaran:', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13)),
-                Text('Tipe Bayar: $_paymentStatus', style: GoogleFonts.outfit(fontSize: 13)),
-                Text('Total Bruto: ${AppFormatters.currency(_bruto)}', style: GoogleFonts.outfit(fontSize: 13)),
-                Text('Komisi: ${AppFormatters.currency(_commissionAmount)}', style: GoogleFonts.outfit(fontSize: 13)),
-                Text('Netto: ${AppFormatters.currency(_netto)}', style: GoogleFonts.outfit(fontSize: 13)),
-                if (_paymentStatus == 'DP')
-                  Text('Jumlah DP: Rp ${_dpAmountController.text}', style: GoogleFonts.outfit(fontSize: 13)),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Batal'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Kirim Order', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
-            ),
-          ],
-        );
-      },
+      builder: (ctx) => SalesReviewDialog(
+        customerName: customerName,
+        customerPhone: customerPhone,
+        customerAddress: customerAddress,
+        selectedProducts: _selectedProducts,
+        selectedProductQuantities: _selectedProductQuantities,
+        paymentStatus: _paymentStatus,
+        bruto: _bruto,
+        commissionAmount: _commissionAmount,
+        netto: _netto,
+        dpAmountText: _dpAmountController.text,
+      ),
     );
 
     if (confirm != true) return;
@@ -687,48 +657,17 @@ class _SalesEntryBookScreenState
                         ),
                         if (_showCustomerSuggestions) ...[
                           const SizedBox(height: 4),
-                          Container(
-                            constraints: const BoxConstraints(maxHeight: 180),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Theme.of(context).dividerColor,
-                              ),
-                              color: Theme.of(context).cardColor,
-                            ),
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              itemCount: _filteredCustomers.length,
-                              separatorBuilder: (ctx, idx) => const Divider(height: 1),
-                              itemBuilder: (ctx, idx) {
-                                final customer = _filteredCustomers[idx];
-                                return ListTile(
-                                  dense: true,
-                                  leading: const CircleAvatar(
-                                    radius: 14,
-                                    child: Icon(Icons.person, size: 14),
-                                  ),
-                                  title: Text(
-                                    customer.name,
-                                    style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
-                                  ),
-                                  subtitle: Text(
-                                    customer.phoneNumber,
-                                    style: GoogleFonts.outfit(fontSize: 11),
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      _customerNameController.text = customer.name;
-                                      _customerPhoneController.text = customer.phoneNumber;
-                                      _showCustomerSuggestions = false;
-                                      _filteredCustomers = [];
-                                    });
-                                    FocusScope.of(context).unfocus();
-                                  },
-                                );
-                              },
-                            ),
+                          CustomerSuggestionsList(
+                            customers: _filteredCustomers,
+                            onSelected: (customer) {
+                              setState(() {
+                                _customerNameController.text = customer.name;
+                                _customerPhoneController.text = customer.phoneNumber;
+                                _showCustomerSuggestions = false;
+                                _filteredCustomers = [];
+                              });
+                              FocusScope.of(context).unfocus();
+                            },
                           ),
                         ],
                         const SizedBox(height: 10),

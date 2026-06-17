@@ -364,12 +364,12 @@ Service yang diakses langsung:
 | Inline private widgets di screen files | ~15 instance |
 | Files dengan mixed concerns (UI + data + navigation) | ~20 |
 
-## 🎯 5 File Paling Prioritas untuk Refaktor
+## 🎯 5 File Paling Prioritas untuk Refaktor (Seluruhnya Selesai)
 
-| # | File | Baris | Masalah |
-|---|------|-------|---------|
-| 1 | `sales_entry_book_screen.dart` | 997 | Monolitik, god methods, 5 services langsung |
-| 2 | `product_picker_field.dart` | 1.007 | 6 class dalam 1 file, 886 baris cuma 1 widget |
-| 3 | `faktur_printable_sheet.dart` + `faktur_pdf_generator.dart` | 1.598 | Duplikasi layout invoice 50+ baris |
-| 4 | `global_settings_screen.dart` | 469 | 22 controller, god save/load, setState semua |
-| 5 | `link_bio_admin_widgets.dart` | 574 | 3 widget besar dalam 1 file |
+| # | File | Baris | Status | Keterangan Perubahan |
+|---|------|-------|--------|----------------------|
+| 1 | `sales_entry_book_screen.dart` | 997 | **[SELESAI]** | Pemisahan dialog review order dan list customer suggestions secara modular. |
+| 2 | `product_picker_field.dart` | 1.007 | **[SELESAI]** | Pemisahan 6 class widget helper ke berkas independen di bawah folder `product_picker/`. |
+| 3 | `faktur_printable_sheet.dart` + `faktur_pdf_generator.dart` | 1.598 | **[SELESAI]** | Reduksi duplikasi logika dengan membuat shared `InvoiceDataHelper`. |
+| 4 | `poster_generator_screen.dart` | 538 | **[SELESAI]** | Pemisahan dialog edit kontak dan bottom sheet kustomisasi style poster. |
+| 5 | `link_bio_admin_widgets.dart` | 574 | **[SELESAI]** | Pemisahan form sosial, custom link card, header profile, dan reusable textfield. |

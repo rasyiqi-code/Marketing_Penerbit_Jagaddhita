@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +13,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart
 
 import 'faktur_printable_sheet.dart';
 import '../utils/faktur_pdf_generator.dart';
+import '../utils/invoice_data_helper.dart';
 
 class FakturView extends StatefulWidget {
   final SaleModel sale;
@@ -51,26 +51,16 @@ class _FakturViewState extends State<FakturView> {
 
   // Generates formatted invoice text for sharing / clipboard
   String _generateInvoiceText() {
-    final publisherName = _settings?.publisherName ?? 'Penerbit Jagaddhita';
-    final publisherSlogan = _settings?.publisherSlogan ?? 'Edukasi Bangsa';
-
-    final dateStr = DateFormat(
-      'dd MMMM yyyy, HH:mm',
-      'id_ID',
-    ).format(widget.sale.createdAt);
-    final statusStr = widget.sale.paymentStatus.toUpperCase();
-    final itemsNames = widget.sale.productNames;
-    final itemsPrices = widget.sale.productPrices;
-    final itemsQuantities = widget.sale.productQuantities;
+    final helper = InvoiceDataHelper(sale: widget.sale, settings: _settings);
 
     final buffer = StringBuffer();
     buffer.writeln('------------------------------------------');
     buffer.writeln('          FAKTUR PENJUALAN BUKU           ');
-    buffer.writeln('          ${publisherName.toUpperCase()}             ');
+    buffer.writeln('          ${helper.publisherName.toUpperCase()}             ');
     buffer.writeln('------------------------------------------');
     buffer.writeln('ID Transaksi : ${widget.sale.id.toUpperCase()}');
-    buffer.writeln('Tanggal      : $dateStr');
-    buffer.writeln('Status       : $statusStr');
+    buffer.writeln('Tanggal      : ${helper.formattedDate}');
+    buffer.writeln('Status       : ${helper.paymentStatusUpper}');
     buffer.writeln('Agen         : ${widget.sale.details['agent_name'] ?? 'Unknown'}');
     buffer.writeln('------------------------------------------');
     buffer.writeln('PELANGGAN:');
@@ -79,25 +69,20 @@ class _FakturViewState extends State<FakturView> {
     buffer.writeln('------------------------------------------');
     buffer.writeln('RINCIAN ITEM:');
 
-    for (int i = 0; i < itemsNames.length; i++) {
-      final name = itemsNames[i];
-      final price = itemsPrices.length > i ? itemsPrices[i] : 0.0;
-      final qty = itemsQuantities.length > i ? itemsQuantities[i] : 1;
-      final subtotal = price * qty;
-      buffer.writeln('- $name');
+    for (var item in helper.items) {
+      buffer.writeln('- ${item.name}');
       buffer.writeln(
-        '  $qty eks x ${AppFormatters.currency(price)} = ${AppFormatters.currency(subtotal)}',
+        '  ${item.quantity} eks x ${AppFormatters.currency(item.price)} = ${AppFormatters.currency(item.subtotal)}',
       );
     }
 
-    final sisa = widget.sale.totalPrice - widget.sale.paidAmount;
     buffer.writeln('------------------------------------------');
     buffer.writeln('Total Harga  : ${AppFormatters.currency(widget.sale.totalPrice)}');
     buffer.writeln('Jumlah Bayar : ${AppFormatters.currency(widget.sale.paidAmount)}');
-    buffer.writeln('Sisa Tagihan : ${AppFormatters.currency(sisa)}');
+    buffer.writeln('Sisa Tagihan : ${AppFormatters.currency(helper.totalOutstanding)}');
     buffer.writeln('------------------------------------------');
     buffer.writeln('Terima kasih telah berbelanja!');
-    buffer.writeln('$publisherName - $publisherSlogan');
+    buffer.writeln('${helper.publisherName} - ${helper.publisherSlogan}');
 
     return buffer.toString();
   }
