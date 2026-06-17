@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/image_management_screen.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/profile/widgets/bank_settings_sheet.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/profile/widgets/edit_profile_sheet.dart';
 import 'package:provider/provider.dart';
 import 'widgets/profile_avatar.dart';
-import 'widgets/profile_section_header.dart';
-import 'widgets/profile_settings_tile.dart';
+import 'widgets/profile_menu_section.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -210,71 +208,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 16),
 
-          // ── Admin Menu ────────────────────────────────────────────────
-          if (isAdmin) ...[
-            ProfileSectionHeader(title: 'Menu Admin'),
-            ProfileSettingsTile(
-              icon: Icons.inventory_2_outlined,
-              title: 'Manajemen Produk',
-              subtitle: 'Tambah, edit, atau hapus produk',
-              onTap: () => Navigator.pushNamed(context, '/admin/products'),
-            ),
-            ProfileSettingsTile(
-              icon: Icons.settings_outlined,
-              title: 'Pengaturan Global',
-              subtitle: 'Atur bonus dan variabel sistem',
-              onTap: () => Navigator.pushNamed(context, '/admin/settings'),
-            ),
-            ProfileSettingsTile(
-              icon: Icons.image_outlined,
-              title: 'Kelola Gambar',
-              subtitle: 'Lihat dan hapus gambar',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const ImageManagementScreen()),
-              ),
-            ),
-            const SizedBox(height: 12),
-          ],
-
-          // ── Informasi Pribadi ─────────────────────────────────────────
-          ProfileSectionHeader(title: 'Informasi Pribadi'),
-          ProfileSettingsTile(
-            icon: Icons.person_outline_rounded,
-            title: 'Edit Profil',
-            subtitle: 'Perbarui nama dan detail pribadi',
-            onTap: _openEditProfileSheet,
-          ),
-          const SizedBox(height: 12),
-
-          // ── Detail Pembayaran ─────────────────────────────────────────
-          ProfileSectionHeader(title: 'Detail Pembayaran'),
-          ProfileSettingsTile(
-            icon: Icons.account_balance_rounded,
-            title: 'Informasi Bank',
-            subtitle: 'Kelola akun penarikan',
-            onTap: _openBankSheet,
-          ),
-          const SizedBox(height: 12),
-
-          // ── Akun ──────────────────────────────────────────────────────
-          ProfileSectionHeader(title: 'Akun'),
-          ProfileSettingsTile(
-            icon: Icons.logout,
-            title: 'Keluar',
-            subtitle: 'Keluar dari perangkat ini',
-            isRed: true,
-            onTap: () async {
+          ProfileMenuSection(
+            isAdmin: isAdmin,
+            onOpenEditProfileSheet: _openEditProfileSheet,
+            onOpenBankSheet: _openBankSheet,
+            onSignOut: () async {
               await Provider.of<AuthService>(context, listen: false).signOut();
             },
-          ),
-          ProfileSettingsTile(
-            icon: Icons.delete_forever_rounded,
-            title: 'Hapus Akun',
-            subtitle: 'Hapus permanen akun dan data Anda',
-            isRed: true,
-            onTap: _showDeleteAccountDialog,
+            onShowDeleteAccountDialog: _showDeleteAccountDialog,
           ),
           const SizedBox(height: 120),
         ],

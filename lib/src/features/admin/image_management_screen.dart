@@ -5,8 +5,9 @@ import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/image_management/image_grid_item.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/image_management/image_delete_dialog.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/image_management/image_preview_dialog.dart';
 
 class ImageManagementScreen extends StatefulWidget {
   final bool isPicker;
@@ -67,23 +68,7 @@ class _ImageManagementScreenState extends State<ImageManagementScreen> {
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Hapus Gambar?'),
-        content: Text(
-          'Anda yakin ingin menghapus $count gambar terpilih? Tindakan ini tidak dapat dibatalkan.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Batal'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Hapus', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+      builder: (context) => ImageDeleteDialog(count: count),
     );
 
     if (confirmed == true) {
@@ -231,11 +216,7 @@ class _ImageManagementScreenState extends State<ImageManagementScreen> {
                           } else {
                             showDialog(
                               context: context,
-                              builder: (ctx) => Dialog(
-                                child: InteractiveViewer(
-                                  child: NetworkImageWeb(imageUrl: item.url),
-                                ),
-                              ),
+                              builder: (ctx) => ImagePreviewDialog(imageUrl: item.url),
                             );
                           }
                         },

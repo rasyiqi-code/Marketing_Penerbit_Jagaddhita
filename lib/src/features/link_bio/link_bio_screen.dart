@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart'; // For kIsWeb
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/global_settings_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/link_bio_model.dart';
@@ -9,9 +8,10 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dar
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/link_bio_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
-import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/add_edit_link_dialog.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_admin_widgets.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_delete_dialog.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_custom_links_section.dart';
 
 class LinkBioScreen extends StatefulWidget {
   const LinkBioScreen({super.key});
@@ -66,18 +66,7 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
   Future<void> _deleteLink(String linkId) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: const Text('Hapus Link?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        content: const Text('Apakah Anda yakin ingin menghapus link ini?', style: TextStyle(fontSize: 13)),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Hapus', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
+      builder: (ctx) => const LinkDeleteDialog(),
     );
 
     if (confirm == true && mounted) {
@@ -145,8 +134,6 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
     final linkBioService = Provider.of<LinkBioService>(context);
     final productService = Provider.of<ProductService>(context, listen: false);
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: StreamBuilder<List<LinkBioModel>>(
@@ -186,101 +173,27 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
               const SizedBox(height: 8),
 
               // ── Main Content Area ─────────────────────────────────────────
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    )
-                  ],
-                  border: Border.all(
-                    color: Theme.of(context).dividerColor.withValues(alpha: isDark ? 0.05 : 0.1),
-                  ),
-                ),
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    // ── Social & Catalogs Form ──────────────────────────────
-                    LinkBioSocialForm(
-                      formKey: _socialFormKey,
-                      showJagaddhita: _showJagaddhita,
-                      showSibi: _showSibi,
-                      isSavingSocial: _isSavingSocial,
-                      whatsappController: _whatsappController,
-                      instagramController: _instagramController,
-                      tiktokController: _tiktokController,
-                      facebookController: _facebookController,
-                      onShowJagaddhitaChanged: (val) {
-                        setState(() => _showJagaddhita = val);
-                      },
-                      onShowSibiChanged: (val) {
-                        setState(() => _showSibi = val);
-                      },
-                      onSave: _saveSocialSettings,
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // ── Custom Links Header ─────────────────────────────────
-                    if (links.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Text(
-                          'Link Custom',
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-
-                    // ── Custom Links List ───────────────────────────────────
-                    ...links.map(
-                      (link) => LinkBioCustomLinkCard(
-                        link: link,
-                        onToggleActive: (val) => _toggleActive(link, val),
-                        onEdit: () => _showAddEditDialog(link),
-                        onDelete: () => _deleteLink(link.id),
-                      ),
-                    ),
-
-                    // ── Add New Link Button ─────────────────────────────────
-                    const SizedBox(height: 8),
-                    Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: OutlinedButton.icon(
-                        onPressed: () => _showAddEditDialog(),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          side: BorderSide(
-                            color: AppTheme.primaryColor.withValues(alpha: 0.5),
-                            width: 1.5,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.05),
-                        ),
-                        icon: const Icon(Icons.add_circle_outline, size: 16),
-                        label: Text(
-                          'Tambah Link Custom Baru',
-                          style: GoogleFonts.outfit(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 120),
-                  ],
-                ),
+              LinkBioCustomLinksSection(
+                socialFormKey: _socialFormKey,
+                showJagaddhita: _showJagaddhita,
+                showSibi: _showSibi,
+                isSavingSocial: _isSavingSocial,
+                whatsappController: _whatsappController,
+                instagramController: _instagramController,
+                tiktokController: _tiktokController,
+                facebookController: _facebookController,
+                onShowJagaddhitaChanged: (val) {
+                  setState(() => _showJagaddhita = val);
+                },
+                onShowSibiChanged: (val) {
+                  setState(() => _showSibi = val);
+                },
+                onSave: _saveSocialSettings,
+                links: links,
+                onAddLink: () => _showAddEditDialog(),
+                onToggleActive: (link) => _toggleActive(link, !link.isActive),
+                onEdit: (link) => _showAddEditDialog(link),
+                onDelete: (link) => _deleteLink(link.id),
               ),
             ],
           );
