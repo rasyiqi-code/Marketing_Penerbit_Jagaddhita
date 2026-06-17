@@ -109,43 +109,49 @@ class LinkBioSocialForm extends StatelessWidget {
               ],
             ),
           ),
-          SwitchListTile(
-            dense: true,
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              'Katalog Jagaddhita Media Pustaka',
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
+          Material(
+            type: MaterialType.transparency,
+            child: SwitchListTile(
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Katalog Jagaddhita Media Pustaka',
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
+              subtitle: Text(
+                'Menampilkan buku anak & PAUD berkualitas',
+                style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+              value: showJagaddhita,
+              onChanged: onShowJagaddhitaChanged,
+              activeThumbColor: AppTheme.primaryColor,
             ),
-            subtitle: Text(
-              'Menampilkan buku anak & PAUD berkualitas',
-              style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
-            ),
-            value: showJagaddhita,
-            onChanged: onShowJagaddhitaChanged,
-            activeThumbColor: AppTheme.primaryColor,
           ),
-          SwitchListTile(
-            dense: true,
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              'Katalog SIBI Kemendikbudristek',
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
+          Material(
+            type: MaterialType.transparency,
+            child: SwitchListTile(
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Katalog SIBI Kemendikbudristek',
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
+              subtitle: Text(
+                'Menampilkan buku teks kurikulum nasional SIBI',
+                style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+              value: showSibi,
+              onChanged: onShowSibiChanged,
+              activeThumbColor: AppTheme.primaryColor,
             ),
-            subtitle: Text(
-              'Menampilkan buku teks kurikulum nasional SIBI',
-              style: TextStyle(fontSize: 11, color: isDark ? Colors.grey[400] : Colors.grey[600]),
-            ),
-            value: showSibi,
-            onChanged: onShowSibiChanged,
-            activeThumbColor: AppTheme.primaryColor,
           ),
           const Divider(height: 12),
           Text(
