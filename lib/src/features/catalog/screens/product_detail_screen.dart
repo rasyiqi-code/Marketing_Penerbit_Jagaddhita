@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/catalog/widgets/product_detail_widgets.dart';
 
@@ -39,6 +42,45 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
+            title: Text(
+              'Detail Buku',
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.titleLarge?.color,
+              ),
+            ),
+            centerTitle: true,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.5),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.share_rounded,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                    onPressed: () {
+                      final formattedPrice = NumberFormat.currency(
+                        locale: 'id',
+                        symbol: 'Rp',
+                        decimalDigits: 0,
+                      ).format(product.price);
+                      
+                      final shareText = '📚 *${product.name}*\n'
+                          'Kategori: ${product.category}\n'
+                          'Harga: $formattedPrice\n\n'
+                          '${product.description}';
+                      
+                      SharePlus.instance.share(
+                        ShareParams(text: shareText),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
 
           // Product Image Container
