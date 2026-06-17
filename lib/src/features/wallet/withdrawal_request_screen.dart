@@ -9,9 +9,9 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
-import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/wallet/widgets/withdrawal_widgets.dart';
 
 class WithdrawalRequestScreen extends StatefulWidget {
@@ -73,10 +73,9 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
 
   Future<void> _submitRequest(GlobalSettingsModel settings) async {
     final walletService = Provider.of<WalletService>(context, listen: false);
-    final notificationService = Provider.of<AppNotificationService>(context, listen: false);
+    final notificationService = Provider.of<FirestoreNotificationService>(context, listen: false);
 
-    final amount =
-        int.tryParse(
+    final amount = int.tryParse(
           _amountController.text.replaceAll(RegExp(r'[^0-9]'), ''),
         ) ??
         0;
@@ -119,47 +118,22 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
       currentBalance = widget.user.pulsaBalance;
     }
     if (amount > currentBalance) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Saldo tidak mencukupi')));
+      AppDialogs.showErrorSnackBar(context, 'Saldo tidak mencukupi');
       return;
     }
 
     final typeName = isBank ? 'Transfer Bank' : 'Klaim Pulsa';
     final targetInfo = _infoController.text.trim();
 
-    final confirm = await showDialog<bool>(
+    final confirm = await AppDialogs.showConfirmDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Konfirmasi Penarikan'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Apakah Anda yakin ingin mengajukan penarikan berikut?'),
-            const SizedBox(height: 16),
-            Text('Tipe Penarikan: $typeName', style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text('Nominal: ${AppFormatters.currency(amount)}', style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text(isBank ? 'Rekening Tujuan: $targetInfo' : 'Nomor HP Tujuan: $targetInfo', style: const TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Batal'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Konfirmasi'),
-          ),
-        ],
-      ),
+      title: 'Konfirmasi Penarikan',
+      content: 'Apakah Anda yakin ingin mengajukan penarikan berikut?\n\n'
+          '• Tipe Penarikan: $typeName\n'
+          '• Nominal: ${AppFormatters.currency(amount)}\n'
+          '• ${isBank ? "Rekening Tujuan" : "Nomor HP Tujuan"}: $targetInfo',
+      confirmLabel: 'Konfirmasi',
+      cancelLabel: 'Batal',
     );
 
     if (confirm != true) return;
@@ -192,16 +166,12 @@ class _WithdrawalRequestScreenState extends State<WithdrawalRequestScreen> {
       await notificationService.sendNotification(notification);
 
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Permintaan terkirim!')));
+        AppDialogs.showSuccessSnackBar(context, 'Permintaan terkirim!');
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Gagal: $e')));
+        AppDialogs.showErrorSnackBar(context, 'Gagal: $e');
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);

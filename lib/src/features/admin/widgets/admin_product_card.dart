@@ -5,6 +5,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/network_image_web_helper.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/add_edit_product_screen.dart';
 
 class AdminProductCard extends StatelessWidget {
@@ -181,33 +182,13 @@ class AdminProductCard extends StatelessWidget {
                         size: 20,
                       ),
                       onPressed: () async {
-                        final confirm = await showDialog(
+                        final confirm = await AppDialogs.showConfirmDialog(
                           context: context,
-                          builder: (c) => AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            title: const Text('Hapus Produk'),
-                            content: Text(
-                              'Apakah Anda yakin ingin menghapus "${product.name}"?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(c, false),
-                                child: const Text(
-                                  'Batal',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(c, true),
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.red,
-                                ),
-                                child: const Text('Hapus'),
-                              ),
-                            ],
-                          ),
+                          title: 'Hapus Produk',
+                          content: 'Apakah Anda yakin ingin menghapus "${product.name}"?',
+                          confirmLabel: 'Hapus',
+                          cancelLabel: 'Batal',
+                          isDanger: true,
                         );
                         if (confirm == true) {
                           await productService.deleteProduct(product.id);

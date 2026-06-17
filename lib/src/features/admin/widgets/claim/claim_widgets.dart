@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 
 /// Badge header untuk menampilkan tipe claim (PULSA / TRANSFER BANK) dan tanggal.
 class ClaimHeaderBadge extends StatelessWidget {
@@ -103,63 +104,32 @@ class ClaimActionsSection extends StatelessWidget {
     );
   }
 
-  void _confirmAction(BuildContext context, {required bool isApprove}) {
+  void _confirmAction(BuildContext context, {required bool isApprove}) async {
     final action = isApprove ? 'Setujui' : 'Tolak';
     final message = isApprove
         ? 'Pastikan Anda sudah transfer dana/pulsa. Lanjutkan?'
         : 'Saldo akan dikembalikan ke user. Lanjutkan?';
-    final color = isApprove ? Colors.green : Colors.red;
 
-    showDialog(
+    final confirm = await AppDialogs.showConfirmDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        titlePadding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        actionsPadding: const EdgeInsets.only(right: 12, bottom: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: Text(
-          'Konfirmasi $action',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        content: Text(message, style: const TextStyle(fontSize: 13)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal', style: TextStyle(fontSize: 13)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              try {
-                await onAction(claim, isApprove);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Permintaan $action berhasil diproses'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-                  );
-                }
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: color,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            ),
-            child: const Text(
-              'Konfirmasi',
-              style: TextStyle(color: Colors.white, fontSize: 13),
-            ),
-          ),
-        ],
-      ),
+      title: 'Konfirmasi $action',
+      content: message,
+      confirmLabel: 'Konfirmasi',
+      cancelLabel: 'Batal',
+      isDanger: !isApprove,
     );
+
+    if (confirm == true && context.mounted) {
+      try {
+        await onAction(claim, isApprove);
+        if (context.mounted) {
+          AppDialogs.showSuccessSnackBar(context, 'Permintaan $action berhasil diproses');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          AppDialogs.showErrorSnackBar(context, 'Error: $e');
+        }
+      }
+    }
   }
 }

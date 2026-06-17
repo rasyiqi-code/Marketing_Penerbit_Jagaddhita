@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/async_snapshot_widget.dart';
 import 'package:provider/provider.dart';
 
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_formatters.dart';
@@ -43,33 +44,30 @@ class CatalogList extends StatelessWidget {
 
     return StreamBuilder<List<ProductModel>>(
       stream: productService.getProducts(houseType),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.search_off, size: 48, color: AppTheme.secondaryColor.withValues(alpha: 0.5)),
-                const SizedBox(height: 16),
-                const Text('Belum ada produk tersedia.'),
-              ],
-            ),
+      builder: (context, snapshot) => AsyncSnapshotWidget<List<ProductModel>>(
+        snapshot: snapshot,
+        isEmpty: (data) => data.isEmpty,
+        emptyWidget: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.search_off, size: 48, color: AppTheme.secondaryColor.withValues(alpha: 0.5)),
+              const SizedBox(height: 16),
+              const Text('Belum ada produk tersedia.'),
+            ],
+          ),
+        ),
+        builder: (context, products) {
+          return ListView.builder(
+            padding: const EdgeInsets.fromLTRB(10, 8, 10, 120),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return _CatalogBookCard(product: product, houseType: houseType);
+            },
           );
-        }
-
-        final products = snapshot.data!;
-        return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(10, 8, 10, 120),
-          itemCount: products.length,
-          itemBuilder: (context, index) {
-            final product = products[index];
-            return _CatalogBookCard(product: product, houseType: houseType);
-          },
-        );
-      },
+        },
+      ),
     );
   }
 }

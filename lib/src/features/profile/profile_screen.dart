@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/profile/widgets/bank_settings_sheet.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/profile/widgets/edit_profile_sheet.dart';
 import 'package:provider/provider.dart';
@@ -119,51 +120,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showDeleteAccountDialog() {
-    showDialog(
+  void _showDeleteAccountDialog() async {
+    final confirm = await AppDialogs.showConfirmDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Hapus Akun?'),
-        content: const Text(
-          'Apakah Anda yakin ingin menghapus akun Anda secara permanen? Tindakan ini tidak dapat dibatalkan.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal'),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            onPressed: () => _deleteAccount(ctx),
-            child: const Text('Hapus Secara Permanen'),
-          ),
-        ],
-      ),
+      title: 'Hapus Akun?',
+      content: 'Apakah Anda yakin ingin menghapus akun Anda secara permanen? Tindakan ini tidak dapat dibatalkan.',
+      confirmLabel: 'Hapus Secara Permanen',
+      cancelLabel: 'Batal',
+      isDanger: true,
     );
+
+    if (confirm == true && mounted) {
+      _deleteAccount();
+    }
   }
 
-  Future<void> _deleteAccount(BuildContext dialogCtx) async {
-    Navigator.pop(dialogCtx);
+  Future<void> _deleteAccount() async {
     if (!mounted) return;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+    AppDialogs.showLoadingDialog(context, message: 'Menghapus akun...');
     try {
       await Provider.of<AuthService>(context, listen: false).deleteAccount();
       if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Akun berhasil dihapus.')),
-        );
+        Navigator.pop(context); // Tutup loading dialog
+        AppDialogs.showSuccessSnackBar(context, 'Akun berhasil dihapus.');
         Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
       }
     } catch (e) {
       if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Gagal: $e')));
+        Navigator.pop(context); // Tutup loading dialog
+        AppDialogs.showErrorSnackBar(context, 'Gagal: $e');
       }
     }
   }

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/digital_business_card.dart';
-
+import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/digital_business_card/digital_business_card.dart';
 /// Fungsi pembantu untuk menampilkan dialog visual Kartu Nama Digital dengan indah.
 void showDigitalBusinessCardDialog({
   required BuildContext context,

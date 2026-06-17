@@ -7,7 +7,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction_detail_modal.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction_update_dialog.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/transaction_update/transaction_update_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TransactionCard extends StatelessWidget {
@@ -18,7 +18,7 @@ class TransactionCard extends StatelessWidget {
   Future<void> _cancelTransaction(BuildContext context, SaleModel sale) async {
     try {
       final salesService = Provider.of<SalesService>(context, listen: false);
-      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
+      final notificationService = Provider.of<FirestoreNotificationService>(context, listen: false);
 
       await salesService.updateSaleStatus(
         sale,

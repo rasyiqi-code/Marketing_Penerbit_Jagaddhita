@@ -7,7 +7,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dar
 import 'package:marketing_penerbit_jagaddhita/src/core/services/poster_generator_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/poster_export_helper.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/poster_image_helper.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/poster_generator_widgets.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/home/widgets/poster/poster_generator_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'widgets/poster/poster_edit_contact_dialog.dart';

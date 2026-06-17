@@ -8,10 +8,10 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/base_f
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
 
 class SalesService extends BaseFirestoreService {
-  final AppNotificationService _notificationService;
+  final FirestoreNotificationService _notificationService;
 
   SalesService({super.firestore})
-      : _notificationService = AppNotificationService(firestore: firestore);
+      : _notificationService = FirestoreNotificationService(firestore: firestore);
 
   Future<void> addSale(SaleModel sale) {
     if (sale.paymentStatus != SaleModel.statusComplete) {

@@ -6,9 +6,9 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/sales_
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notification_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/storage_service.dart';
 import 'package:provider/provider.dart';
-import 'transaction_update/proof_upload_section.dart';
-import 'transaction_update/shipping_status_section.dart';
-import 'transaction_update/payment_actions_section.dart';
+import 'proof_upload_section.dart';
+import 'shipping_status_section.dart';
+import 'payment_actions_section.dart';
 
 class TransactionUpdateDialog extends StatefulWidget {
   final SaleModel sale;
@@ -124,7 +124,7 @@ class _TransactionUpdateDialogState extends State<TransactionUpdateDialog> {
   }) async {
     try {
       final salesService = Provider.of<SalesService>(context, listen: false);
-      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
+      final notificationService = Provider.of<FirestoreNotificationService>(context, listen: false);
 
       final Map<String, dynamic> extraData = {};
       if (newStatus == SaleModel.statusLunas ||

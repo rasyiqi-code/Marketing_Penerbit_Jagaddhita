@@ -11,6 +11,7 @@ import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_r
 
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/auth_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'package:provider/provider.dart';
 
 class AdminHomeScreen extends StatelessWidget {
@@ -76,28 +77,13 @@ class AdminHomeScreen extends StatelessWidget {
             icon: const Icon(Icons.logout_rounded),
             tooltip: 'Logout',
             onPressed: () async {
-              final confirm = await showDialog<bool>(
+              final confirm = await AppDialogs.showConfirmDialog(
                 context: context,
-                builder: (ctx) => AlertDialog(
-                  title: Text(
-                    'Konfirmasi Keluar',
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
-                  ),
-                  content: const Text('Apakah Anda yakin ingin keluar dari akun admin?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx, false),
-                      child: const Text('Batal'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx, true),
-                      child: Text(
-                        'Keluar',
-                        style: TextStyle(color: AppTheme.secondaryColor),
-                      ),
-                    ),
-                  ],
-                ),
+                title: 'Konfirmasi Keluar',
+                content: 'Apakah Anda yakin ingin keluar dari akun admin?',
+                confirmLabel: 'Keluar',
+                cancelLabel: 'Batal',
+                isDanger: true,
               );
 
               if (confirm == true && context.mounted) {

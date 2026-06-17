@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/user_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_user_card_components.dart';
 
 class AdminUserCard extends StatelessWidget {
@@ -183,71 +184,36 @@ class AdminUserCard extends StatelessWidget {
       ).showSnackBar(const SnackBar(content: Text('Recalculating stats...')));
       await userService.recalculateUserStats(user.id);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Stats updated successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        AppDialogs.showSuccessSnackBar(context, 'Stats updated successfully!');
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
+        AppDialogs.showErrorSnackBar(context, 'Error: $e');
       }
     }
   }
 
-  void _showDeleteConfirmDialog(BuildContext context) {
-    showDialog(
+  void _showDeleteConfirmDialog(BuildContext context) async {
+    final confirm = await AppDialogs.showConfirmDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        titlePadding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        actionsPadding: const EdgeInsets.only(right: 12, bottom: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: Text(
-          'Delete User?',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        content: Text(
-          'Are you sure you want to remove marketing agent "${user.name}"?\n\nThis action cannot be undone.',
-          style: const TextStyle(fontSize: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(fontSize: 13)),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                await userService.updateAdminUser(user.id, {'role': 'banned'});
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('User removed successfully'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: $e'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              }
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red, fontSize: 13)),
-          ),
-        ],
-      ),
+      title: 'Delete User?',
+      content: 'Are you sure you want to remove marketing agent "${user.name}"?\n\nThis action cannot be undone.',
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      isDanger: true,
     );
+
+    if (confirm == true && context.mounted) {
+      try {
+        await userService.updateAdminUser(user.id, {'role': 'banned'});
+        if (context.mounted) {
+          AppDialogs.showSuccessSnackBar(context, 'User removed successfully');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          AppDialogs.showErrorSnackBar(context, 'Error: $e');
+        }
+      }
+    }
   }
 }

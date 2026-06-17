@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/product_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/product_service.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/async_snapshot_widget.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_product_card.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_product_empty_state.dart';
 import 'package:provider/provider.dart';
@@ -39,29 +40,26 @@ class ProductList extends StatelessWidget {
 
     return StreamBuilder<List<ProductModel>>(
       stream: productService.getProducts(houseType),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return AdminProductEmptyState(houseType: houseType);
-        }
-
-        final products = snapshot.data!;
-        return ListView.separated(
-          padding: const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 120),
-          itemCount: products.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 8),
-          itemBuilder: (context, index) {
-            final product = products[index];
-            return AdminProductCard(
-              product: product,
-              productService: productService,
-              houseType: houseType,
-            );
-          },
-        );
-      },
+      builder: (context, snapshot) => AsyncSnapshotWidget<List<ProductModel>>(
+        snapshot: snapshot,
+        isEmpty: (data) => data.isEmpty,
+        emptyWidget: AdminProductEmptyState(houseType: houseType),
+        builder: (context, products) {
+          return ListView.separated(
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 120),
+            itemCount: products.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return AdminProductCard(
+                product: product,
+                productService: productService,
+                houseType: houseType,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

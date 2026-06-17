@@ -5,7 +5,7 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/notifi
 import 'package:marketing_penerbit_jagaddhita/src/core/services/notification_service.dart';
 
 class NotificationController extends ChangeNotifier {
-  final AppNotificationService _notificationService;
+  final FirestoreNotificationService _notificationService;
   final NotificationService _localNotifications;
 
   List<NotificationModel> _notifications = [];

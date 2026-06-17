@@ -19,12 +19,12 @@ import 'package:marketing_penerbit_jagaddhita/src/features/sales/utils/sales_cal
 import 'package:provider/provider.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/product_picker_field.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/markup_input_field.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_text_field.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/app_text_field.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/transaction_proof_input.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/sales/widgets/sales_entry_shared_widgets.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'widgets/sales_entry/sales_review_dialog.dart';
 import 'widgets/sales_entry/customer_suggestions_list.dart';
-import 'widgets/sales_entry/cancel_input_dialog.dart';
 import 'widgets/sales_entry/sales_disabled_banner.dart';
 import 'widgets/sales_entry/selected_products_stepper_list.dart';
 
@@ -208,7 +208,7 @@ class _SalesEntryBookScreenState
     final auth = Provider.of<AuthService>(context, listen: false);
     final salesService = Provider.of<SalesService>(context, listen: false);
     final customerService = Provider.of<CustomerService>(context, listen: false);
-    final notificationService = Provider.of<AppNotificationService>(context, listen: false);
+    final notificationService = Provider.of<FirestoreNotificationService>(context, listen: false);
 
     if (!_formKey.currentState!.validate()) return;
     if (_selectedProducts.isEmpty) {
@@ -437,9 +437,13 @@ class _SalesEntryBookScreenState
           if (context.mounted) Navigator.of(context).pop(result);
           return;
         }
-        final shouldPop = await showDialog<bool>(
+        final shouldPop = await AppDialogs.showConfirmDialog(
           context: context,
-          builder: (ctx) => const CancelInputDialog(),
+          title: 'Batal Menginput?',
+          content: 'Apakah Anda yakin ingin keluar? Semua data form yang telah diisi akan hilang.',
+          confirmLabel: 'Ya, Keluar',
+          cancelLabel: 'Batal',
+          isDanger: true,
         );
         if (shouldPop == true && context.mounted) {
           Navigator.of(context).pop(result);
@@ -502,11 +506,12 @@ class _SalesEntryBookScreenState
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SalesTextField(
+                        AppTextField(
                           controller: _customerNameController,
                           label: 'Nama Customer',
                           icon: Icons.person_outline_rounded,
                           onChanged: _onCustomerNameChanged,
+                          validator: (v) => v == null || v.isEmpty ? 'Wajib diisi ya' : null,
                         ),
                         if (_showCustomerSuggestions) ...[
                           const SizedBox(height: 4),
@@ -524,22 +529,23 @@ class _SalesEntryBookScreenState
                           ),
                         ],
                         const SizedBox(height: 10),
-                        SalesTextField(
+                        AppTextField(
                           controller: _customerPhoneController,
                           label: 'Nomor HP Customer',
                           icon: Icons.phone_android_rounded,
                           keyboardType: TextInputType.phone,
+                          validator: (v) => v == null || v.isEmpty ? 'Wajib diisi ya' : null,
                         ),
                         const SizedBox(height: 10),
-                        SalesTextField(
+                        AppTextField(
                           controller: _customerAddressController,
                           label: 'Alamat Lengkap (Jl, RT/RW, Kec, Kota)',
                           icon: Icons.location_on_outlined,
                           maxLines: 3,
+                          validator: (v) => v == null || v.isEmpty ? 'Wajib diisi ya' : null,
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 12),
                     const Divider(thickness: 1),
                     const SizedBox(height: 12),
@@ -604,13 +610,14 @@ class _SalesEntryBookScreenState
 
                     if (_paymentStatus == 'DP') ...[
                       const SizedBox(height: 10),
-                      SalesTextField(
+                      AppTextField(
                         controller: _dpAmountController,
                         label: 'Jumlah DP yang Dibayar',
                         icon: Icons.payments_outlined,
                         keyboardType: TextInputType.number,
                         prefixText: 'Rp ',
                         inputFormatters: [CurrencyInputFormatter()],
+                        validator: (v) => v == null || v.isEmpty ? 'Wajib diisi ya' : null,
                       ),
                     ],
 

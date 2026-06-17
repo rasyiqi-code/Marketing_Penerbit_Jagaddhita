@@ -30,9 +30,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      final notificationService = Provider.of<AppNotificationService>(context, listen: false);
+      final notificationService = Provider.of<FirestoreNotificationService>(context, listen: false);
 
-      // Default role is 'marketing'. Admin must approve or manually set admin role in DB.
       final cred = await authService.signUp(
         _emailController.text.trim(),
         _passwordController.text,

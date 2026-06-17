@@ -190,8 +190,7 @@ class AdminClaimCard extends StatelessWidget {
             ClaimActionsSection(
               claim: claim,
               onAction: (c, isApprove) async {
-                final notificationService =
-                    Provider.of<AppNotificationService>(context, listen: false);
+                final notificationService = Provider.of<FirestoreNotificationService>(context, listen: false);
                 if (isApprove) {
                   await walletService.approveClaim(c.id);
                   final notification = NotificationModel(

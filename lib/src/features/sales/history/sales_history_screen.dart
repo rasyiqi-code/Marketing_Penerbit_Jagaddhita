@@ -82,8 +82,7 @@ class _SalesHistoryScreenState extends State<SalesHistoryScreen> {
     try {
       final storage = Provider.of<StorageService>(context, listen: false);
       final salesService = Provider.of<SalesService>(context, listen: false);
-      final notifService =
-          Provider.of<AppNotificationService>(context, listen: false);
+      final notifService = Provider.of<FirestoreNotificationService>(context, listen: false);
 
       final bytes = await file.readAsBytes();
       final filename =

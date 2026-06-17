@@ -54,15 +54,13 @@ void main() async {
         Provider<SalesService>(create: (_) => SalesService()),
         Provider<CustomerService>(create: (_) => CustomerService()),
         Provider<WalletService>(create: (_) => WalletService()),
-        Provider<AppNotificationService>(create: (_) => AppNotificationService()),
+        Provider<FirestoreNotificationService>(create: (_) => FirestoreNotificationService()),
         Provider<LinkBioService>(create: (_) => LinkBioService()),
         Provider<local.NotificationService>(create: (_) => local.NotificationService()),
-        Provider<StorageService>(
-          create: (_) => StorageService(),
-        ),
+        Provider<StorageService>(create: (_) => StorageService()),
         ChangeNotifierProvider<NotificationController>(
           create: (context) => NotificationController(
-            Provider.of<AppNotificationService>(context, listen: false),
+            Provider.of<FirestoreNotificationService>(context, listen: false),
             Provider.of<local.NotificationService>(context, listen: false),
           ),
         ),

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/claim_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/wallet_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/theme/app_theme.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/admin_claim_card.dart';
+import 'package:marketing_penerbit_jagaddhita/src/features/admin/widgets/claim/admin_claim_card.dart';
 import 'package:provider/provider.dart';
 
 class AdminWithdrawalsScreen extends StatelessWidget {

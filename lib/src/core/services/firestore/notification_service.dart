@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/base_firestore_service.dart';
 
-class AppNotificationService extends BaseFirestoreService {
-  AppNotificationService({super.firestore});
+class FirestoreNotificationService extends BaseFirestoreService {
+  FirestoreNotificationService({super.firestore});
   Future<void> sendNotification(NotificationModel notification) {
     return db.collection('notifications').add(notification.toMap());
   }

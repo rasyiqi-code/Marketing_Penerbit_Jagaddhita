@@ -10,7 +10,6 @@ import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/produc
 import 'package:marketing_penerbit_jagaddhita/src/core/services/firestore/user_service.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/add_edit_link_dialog.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_admin_widgets.dart';
-import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_delete_dialog.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/link_bio/widgets/link_bio_custom_links_section.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/utils/app_dialogs.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/widgets/async_snapshot_widget.dart';
@@ -66,9 +65,13 @@ class _LinkBioScreenState extends State<LinkBioScreen> {
   }
 
   Future<void> _deleteLink(String linkId) async {
-    final confirm = await showDialog<bool>(
+    final confirm = await AppDialogs.showConfirmDialog(
       context: context,
-      builder: (ctx) => const LinkDeleteDialog(),
+      title: 'Hapus Link?',
+      content: 'Apakah Anda yakin ingin menghapus link ini?',
+      confirmLabel: 'Hapus',
+      cancelLabel: 'Batal',
+      isDanger: true,
     );
 
     if (confirm == true && mounted) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:marketing_penerbit_jagaddhita/src/core/models/notification_model.dart';
+import 'package:marketing_penerbit_jagaddhita/src/core/widgets/empty_state_widget.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_controller.dart';
 import 'package:marketing_penerbit_jagaddhita/src/features/notifications/notification_tap_handler.dart';
 import 'package:provider/provider.dart';
@@ -23,13 +24,11 @@ class NotificationListScreen extends StatelessWidget {
         actions: [
           if (notifications.any((n) => !n.isRead))
             IconButton(
-              icon: const Icon(Icons.done_all),
+              icon: const Icon(Icons.mark_as_unread_rounded),
               tooltip: 'Tandai semua dibaca',
               onPressed: () {
-                final unreadIds = notifications
-                    .where((n) => !n.isRead)
-                    .map((n) => n.id)
-                    .toList();
+                final unreadIds =
+                    notifications.where((n) => !n.isRead).map((n) => n.id).toList();
                 controller.markAllAsRead(unreadIds);
               },
             ),
@@ -40,7 +39,7 @@ class NotificationListScreen extends StatelessWidget {
           await Future.delayed(const Duration(milliseconds: 500));
         },
         child: notifications.isEmpty
-            ? const _EmptyState(
+            ? const EmptyStateWidget(
                 icon: Icons.notifications_off_outlined,
                 title: 'Tidak Ada Notifikasi',
                 message: 'Semua kabar terbaru akan muncul di sini saat tersedia.',
@@ -143,74 +142,3 @@ class NotificationListScreen extends StatelessWidget {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String message;
-  const _EmptyState({
-    required this.icon,
-    required this.title,
-    required this.message,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.6,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    theme.colorScheme.primary.withValues(alpha: 0.15),
-                    theme.colorScheme.primary.withValues(alpha: 0.01),
-                  ],
-                ),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: theme.colorScheme.primary.withValues(alpha: 0.08),
-                ),
-                child: Icon(
-                  icon,
-                  size: 48,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              title,
-              style: GoogleFonts.outfit(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
